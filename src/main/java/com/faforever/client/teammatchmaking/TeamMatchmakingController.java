@@ -337,20 +337,9 @@ public class TeamMatchmakingController extends NodeController<Node> {
 
   protected void onMapPoolClickedListener(MatchmakerQueueInfo queue) {
     TeamMatchmakingMapListController controller = uiService.loadFxml("theme/play/teammatchmaking/matchmaking_maplist_popup.fxml");
-    DialogLayout dialogLayout = new DialogLayout();
-    dialogLayout.setHeading(new Label(i18n.get("teammatchmaking.mapPool")));
-    dialogLayout.setBody(controller.getRoot());
-    Dialog dialog = new Dialog();
-    dialog.setContent(dialogLayout);
-    dialog.setTransitionType(DialogTransition.CENTER);
-    teamMatchmakingRoot.setOnKeyPressed(event -> {
-      if (event.getCode() == KeyCode.ESCAPE) {
-        dialog.close();
-      }
-    });
-    controller.init(queue, dialogLayout);
-    fxApplicationThreadExecutor.execute(() -> dialog.show(teamMatchmakingRoot));
-
+    controller.setQueue(queue);
+    Pane root = controller.getRoot();
+    uiService.showInDialog(teamMatchmakingRoot, root, null, true, DialogTransition.CENTER);
   }
 
   private void renderQueues() {
