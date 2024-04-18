@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -42,21 +43,21 @@ import java.util.stream.Collectors;
 
 public class TeamMatchmakingMapListController extends NodeController<Pane> {
 
-  public Pane root;
-  public FlowPane tilesContainer;
+  private static final int TILE_SIZE = 125;
+
   private final MapService mapService;
   private final UiService uiService;
-  private final I18n i18n;
   private final PlayerService playerService;
   private final FxApplicationThreadExecutor fxApplicationThreadExecutor;
-  private final int TILE_SIZE = 125;
+
+  public Pane root;
+  public FlowPane tilesContainer;
   public ScrollPane scrollContainer;
   public VBox loadingPane;
-  private Map<MatchmakerQueueMapPool, List<MapVersion>> rawBrackets;
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets;
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBracketsWithDuplicates;
   private Integer playerBracketIndex = null;
-  private Pane dialogRoot;
+
 
 
   @Override
@@ -70,26 +71,27 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   }
 
 
-  public void init(MatchmakerQueueInfo queue, Pane dialogRoot) {
-    this.dialogRoot = dialogRoot;
+
+  public void setQueue(MatchmakerQueueInfo queue) {
     mapService.getMatchmakerBrackets(queue).subscribe(rawBrackets -> {
       loadingPane.setVisible(false);
-      this.rawBrackets = rawBrackets;
+
       this.sortedBracketsWithDuplicates = this.getSortedBrackets(rawBrackets);
-      this.sortedBrackets = this.removeDuplicates(this.getSortedBrackets(rawBrackets));
+
+      this.sortedBrackets = new TreeMap<>(this.sortedBracketsWithDuplicates);
+      this.sortedBrackets.replaceAll((key, value) -> new ArrayList<>(value));
+      this.removeDuplicates(this.sortedBrackets);
 
       PlayerInfo player = playerService.getCurrentPlayer();
       LeaderboardRating ratingBean = player.getLeaderboardRatings().get(queue.getLeaderboard().technicalName());
-      double rating = ratingBean.mean() - 3 * ratingBean.deviation();
+      double rating = (ratingBean != null)? (ratingBean.mean() - 3 * ratingBean.deviation()) : 0;
       this.playerBracketIndex = this.getPlayerBracketIndex(this.sortedBrackets, rating);
 
       List<MapVersion> values = this.sortedBrackets.values().stream().flatMap(List::stream).toList();
-      this.resizeToContent(values.size(), this.TILE_SIZE);
+      this.resizeToContent(values.size(), TILE_SIZE);
 
-      Flux.fromIterable(values)
-          .publishOn(fxApplicationThreadExecutor.asScheduler())
-          .doOnNext(this::addMapTile)
-          .subscribe();
+
+      fxApplicationThreadExecutor.execute(()->values.forEach(this::addMapTile));
     });
 
   }
@@ -101,43 +103,43 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
                                                             .thenComparing(mapVersion -> mapVersion.map().displayName(),
                                                                            String.CASE_INSENSITIVE_ORDER);
 
-    Comparator<MatchmakerQueueMapPool> mapPoolComparator = Comparator.comparingDouble(MatchmakerQueueMapPool::minRating)
-                                                                     .thenComparingDouble(
-                                                                         MatchmakerQueueMapPool::maxRating);
+    Comparator<MatchmakerQueueMapPool> mapPoolComparator = Comparator.comparing(MatchmakerQueueMapPool::minRating, Comparator.nullsFirst(Double::compare))
+                                                                     .thenComparing(MatchmakerQueueMapPool::maxRating, Comparator.nullsLast(Double::compare));
 
     SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedMap = new TreeMap<>(mapPoolComparator);
 
     brackets.forEach((mapPool, mapVersions) -> {
-      List<MapVersion> sortedList = mapVersions.stream().sorted(mapVersionComparator).collect(Collectors.toList());
+      List<MapVersion> sortedList = mapVersions.stream().sorted(mapVersionComparator).toList();
       sortedMap.put(mapPool, sortedList);
     });
 
     return sortedMap;
   }
 
-  private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> removeDuplicates(SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets) {
-    HashSet<String> usedMaps = new HashSet<>();
+  private void removeDuplicates(SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets) {
+    Set<String> usedMaps = new HashSet<>();
     sortedBrackets.replaceAll((k, v) -> sortedBrackets.get(k).stream().filter(mapVersion -> {
       String name = mapVersion.map().displayName();
-      if (usedMaps.contains(name))
+      if (usedMaps.contains(name)) {
         return false;
+      }
       usedMaps.add(name);
       return true;
     }).collect(Collectors.toList()));
-    return sortedBrackets;
   }
 
   private Integer getPlayerBracketIndex(SortedMap <MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets, double rating) {
     int i = 0;
-    for (var entry : sortedBrackets.entrySet()) {
+    for (Map.Entry<MatchmakerQueueMapPool, List<MapVersion>> entry : sortedBrackets.entrySet()) {
       MatchmakerQueueMapPool pool = entry.getKey();
-      double min = pool.minRating();
-      double max = pool.maxRating();
-      if (min == 0.0) {min = Double.NEGATIVE_INFINITY;}
-      if (max == 0.0) {max = Double.POSITIVE_INFINITY;}
+      Double min = pool.minRating();
+      Double max = pool.maxRating();
+      if (min == null) {min = Double.NEGATIVE_INFINITY;}
+      if (max == null) {max = Double.POSITIVE_INFINITY;}
 
-      if (rating < max && rating > min)
+      if (rating < max && rating > min) {
         return i;
+      }
       i++;
     }
     return null;
@@ -146,8 +148,10 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   private void addMapTile(MapVersion mapVersion) {
     int i = 0;
     List<Integer> indexes = new ArrayList<>();
-    for (var maps : this.sortedBracketsWithDuplicates.values()) {
-      if (maps.contains(mapVersion)) indexes.add(i);
+    for (List<MapVersion> maps : this.sortedBracketsWithDuplicates.values()) {
+      if (maps.contains(mapVersion)) {
+        indexes.add(i);
+      }
       i++;
     }
     int diff = Collections.min(indexes.stream().map(idx -> Math.abs(idx - this.playerBracketIndex)).toList());
@@ -159,7 +163,8 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
 
     TeamMatchmakingMapTileController controller = uiService.loadFxml(
         "theme/play/teammatchmaking/matchmaking_map_tile.fxml");
-    controller.init(mapVersion, relevanceLevel);
+    controller.setRelevanceLevel(relevanceLevel);
+    controller.setMapVersion(mapVersion);
     this.tilesContainer.getChildren().add(controller.getRoot());
   }
 
@@ -170,9 +175,8 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     double vgap = tilesContainer.getVgap();
 
     int maxTilesInLine = (int) Math.min(10, Math.floor((viewportWidth * 0.9 + hgap) / (tileSize + hgap)));
-    double preservedSpace = this.dialogRoot.getBoundsInLocal().getHeight() - scrollContainer.getBoundsInLocal().getHeight();
 
-    int maxLinesWithoutScroll = (int) Math.floor((viewportHeight * 0.9 - preservedSpace + vgap) / (tileSize + vgap));
+    int maxLinesWithoutScroll = (int) Math.floor((viewportHeight * 0.9 + vgap) / (tileSize + vgap));
     int scrollWidth = 18;
     double maxScrollPaneHeight = maxLinesWithoutScroll * (tileSize + vgap) - vgap;
     this.scrollContainer.setMaxHeight(maxScrollPaneHeight);

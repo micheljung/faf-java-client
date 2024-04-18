@@ -33,6 +33,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.text.TextAlignment;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -55,6 +56,7 @@ public class TeamMatchmakingMapTileController extends NodeController<Pane> {
   private final I18n i18n;
   private final ImageViewHelper imageViewHelper;
   private final MapGeneratorService mapGeneratorService;
+  @Setter
   private double relevanceLevel = 1;
   protected final ObjectProperty<MapVersion> entity = new SimpleObjectProperty<>();
   public Pane root;
@@ -70,8 +72,7 @@ public class TeamMatchmakingMapTileController extends NodeController<Pane> {
   }
 
 
-  public void init(MapVersion mapVersion, double relevanceLevel) {
-    this.relevanceLevel = relevanceLevel;
+  public void setMapVersion(MapVersion mapVersion) {
     this.entity.set(mapVersion);
   }
 
@@ -89,19 +90,20 @@ public class TeamMatchmakingMapTileController extends NodeController<Pane> {
 
     nameLabel.textProperty().bind(mapObservable.map(map -> {
       String name = map.displayName();
-      if(mapGeneratorService.isGeneratedMap(name))
+      if (mapGeneratorService.isGeneratedMap(name)) {
         return "map generator";
+      }
       return name;
     }));
 
     authorBox.visibleProperty().bind(mapObservable.map(map -> (map.author() != null) || (mapGeneratorService.isGeneratedMap(map.displayName()))));
     authorLabel.textProperty().bind(mapObservable.map(map -> {
       if (map.author() != null) {
-        return map.author().usernameProperty().get();
+        return map.author().getUsername();
       } else if (mapGeneratorService.isGeneratedMap(map.displayName())) {
         return "Neroxis";
       } else {
-        return "";
+        return i18n.get("map.unknownAuthor");
       }
     }));
     sizeLabel.textProperty().bind(entity.map(MapVersion::size).map(size -> i18n.get("mapPreview.size", size.widthInKm(), size.heightInKm())));
