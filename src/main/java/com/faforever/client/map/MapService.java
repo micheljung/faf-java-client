@@ -632,16 +632,14 @@ public class MapService implements InitializingBean, DisposableBean {
   @Cacheable(value = CacheNames.MATCHMAKER_POOLS, sync = true)
   @SuppressWarnings({"rawtypes", "unchecked"})
   public Mono <java.util.Map<MatchmakerQueueMapPool, List<MapVersion>>> getMatchmakerBrackets(MatchmakerQueueInfo matchmakerQueue) {
-    ElideNavigatorOnCollection<MapPoolAssignment> navigator = ElideNavigator.of(MapPoolAssignment.class).collection();
-    List<Condition<?>> conditions = new ArrayList<>();
-    conditions.add(qBuilder().intNum("mapPool.matchmakerQueueMapPool.matchmakerQueue.id").eq(matchmakerQueue.getId()));
+    ElideNavigatorOnCollection<MapPoolAssignment> navigator = ElideNavigator
+        .of(MapPoolAssignment.class).collection()
+        .setFilter(qBuilder().intNum("mapPool.matchmakerQueueMapPool.matchmakerQueue.id").eq(matchmakerQueue.getId()));
 
-    String customFilter = ((String) new QBuilder().and(conditions).query(new RSQLVisitor()));
-
-    return fafApiAccessor.getMany(navigator, customFilter)
+    return fafApiAccessor.getMany(navigator)
                          .map(matchmakerMapper::map)
                          .collect(Collectors.groupingBy(assignment -> assignment.mapPool().mapPool(),
-                                                        Collectors.mapping(assignment -> assignment.mapVersion(), Collectors.toList())));
+                         Collectors.mapping(assignment -> assignment.mapVersion(), Collectors.toList())));
 
   }
 
