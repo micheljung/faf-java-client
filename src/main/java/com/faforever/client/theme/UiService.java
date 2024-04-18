@@ -103,8 +103,12 @@ public class UiService implements InitializingBean {
     return showInDialog(parent, content, null);
   }
 
-  public Dialog showInDialog(StackPane parent, Node content, String title) {
-    DialogLayout dialogLayout = new DialogLayout();
+  public Dialog showInDialog(StackPane parent, Node content, String title) { return showInDialog(parent, content, title, false); }
+
+  public Dialog showInDialog(StackPane parent, Node content, String title, boolean basicMode) { return showInDialog(parent, content, title, basicMode, DialogTransition.TOP); }
+
+  public Dialog showInDialog(StackPane parent, Node content, String title, boolean basicMode, DialogTransition transition) {
+    DialogLayout dialogLayout = new DialogLayout(basicMode);
     if (title != null) {
       dialogLayout.setHeading(new Label(title));
     }
@@ -112,7 +116,7 @@ public class UiService implements InitializingBean {
 
     Dialog dialog = new Dialog();
     dialog.setContent(dialogLayout);
-    dialog.setTransitionType(DialogTransition.TOP);
+    dialog.setTransitionType(transition);
 
     parent.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ESCAPE) {
