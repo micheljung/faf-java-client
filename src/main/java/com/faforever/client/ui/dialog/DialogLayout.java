@@ -12,18 +12,30 @@ import java.util.List;
 /** Ported from JFoenix since we wanted to get rid of the JFoenix dependency */
 public class DialogLayout extends VBox {
   private static final String DEFAULT_STYLE_CLASS = "dialog-layout";
+  private static final String BASIC_MODE_STYLE_CLASS = "dialog-layout_basic";
 
   private final StackPane heading = new StackPane();
   private final StackPane body = new StackPane();
   private final FlowPane actions = new FlowPane();
 
   public DialogLayout() {
+    this(false);
+  }
+
+  public DialogLayout(boolean basicMode) {
     initialize();
-    heading.getStyleClass().addAll("layout-heading", "title");
+
     body.getStyleClass().add("layout-body");
     VBox.setVgrow(body, Priority.ALWAYS);
-    actions.getStyleClass().add("layout-actions");
-    getChildren().setAll(heading, body, actions);
+
+    if (basicMode) {
+      this.getStyleClass().add(BASIC_MODE_STYLE_CLASS);
+      getChildren().setAll(body);
+    } else {
+      heading.getStyleClass().addAll("layout-heading", "title");
+      actions.getStyleClass().add("layout-actions");
+      getChildren().setAll(heading, body, actions);
+    }
   }
 
   public ObservableList<Node> getHeading() {
