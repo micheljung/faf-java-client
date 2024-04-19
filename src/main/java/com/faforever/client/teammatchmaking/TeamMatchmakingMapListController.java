@@ -8,6 +8,9 @@ import com.faforever.client.fx.JavaFxUtil;
 import com.faforever.client.player.LeaderboardRating;
 import com.faforever.client.player.PlayerService;
 import com.faforever.client.theme.UiService;
+import com.faforever.client.util.RatingUtil;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -17,6 +20,7 @@ import com.faforever.client.fx.NodeController;
 import com.faforever.client.map.MapService;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +49,14 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   private static final int TILE_SIZE = 125;
   private static final int PADDING = 20;
 
+  private static final Comparator<MapVersion> mapVersionComparator = Comparator.nullsFirst(Comparator.comparing(MapVersion::size))
+                                                          .thenComparing(mapVersion -> mapVersion.map().displayName(),
+                                                                         String.CASE_INSENSITIVE_ORDER);
+
+  private static final Comparator<MatchmakerQueueMapPool> mapPoolComparator = Comparator.comparing(MatchmakerQueueMapPool::minRating, Comparator.nullsFirst(Double::compare))
+                                                                   .thenComparing(MatchmakerQueueMapPool::maxRating, Comparator.nullsLast(Double::compare));
+
+
   private final MapService mapService;
   private final UiService uiService;
   private final PlayerService playerService;
@@ -57,10 +69,10 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets;
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBracketsWithDuplicates;
   private Integer playerBracketIndex = null;
-  @Setter
-  private double maxWidth = 0;
-  @Setter
-  private double maxHeight = 0;
+
+  private DoubleProperty maxWidthProperty = new SimpleDoubleProperty(0);
+
+  private DoubleProperty maxHeightProperty = new SimpleDoubleProperty(0);
 
 
   @Override
@@ -71,6 +83,26 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   @Override
   public Pane getRoot() {
     return root;
+  }
+
+  public double getMaxWidth(){
+    return this.maxWidthProperty.get();
+  }
+  public void setMaxWidth(double value) {
+    this.maxWidthProperty.set(value);
+  }
+  public DoubleProperty maxWidthProperty() {
+    return this.maxWidthProperty;
+  }
+
+  public double getMaxHeight(){
+    return this.maxHeightProperty.get();
+  }
+  public void setMaxHeight(double value) {
+    this.maxHeightProperty.set(value);
+  }
+  public DoubleProperty maxHeightProperty() {
+    return this.maxHeightProperty;
   }
 
 
@@ -85,8 +117,8 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
       this.removeDuplicates(this.sortedBrackets);
 
       PlayerInfo player = playerService.getCurrentPlayer();
-      LeaderboardRating ratingBean = player.getLeaderboardRatings().get(queue.getLeaderboard().technicalName());
-      double rating = (ratingBean != null) ? (ratingBean.mean() - 3 * ratingBean.deviation()) : 0;
+      Integer rating = RatingUtil.getLeaderboardRating(player, queue.getLeaderboard());
+
       this.playerBracketIndex = this.getPlayerBracketIndex(this.sortedBrackets, rating);
 
       List<MapVersion> values = this.sortedBrackets.values().stream().flatMap(List::stream).toList();
@@ -100,14 +132,6 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
 
 
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> getSortedBrackets(Map<MatchmakerQueueMapPool, List<MapVersion>> brackets) {
-
-    Comparator<MapVersion> mapVersionComparator = Comparator.nullsFirst(Comparator.comparing(MapVersion::size))
-                                                            .thenComparing(mapVersion -> mapVersion.map().displayName(),
-                                                                           String.CASE_INSENSITIVE_ORDER);
-
-    Comparator<MatchmakerQueueMapPool> mapPoolComparator = Comparator.comparing(MatchmakerQueueMapPool::minRating, Comparator.nullsFirst(Double::compare))
-                                                                     .thenComparing(MatchmakerQueueMapPool::maxRating, Comparator.nullsLast(Double::compare));
-
     SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedMap = new TreeMap<>(mapPoolComparator);
 
     brackets.forEach((mapPool, mapVersions) -> {
@@ -171,15 +195,12 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   }
 
   private void resizeToContent(int tilecount, int tileSize) {
-    double maxWidth = (this.maxWidth != 0) ? this.maxWidth :  Screen.getPrimary().getVisualBounds().getWidth();
-    double maxHeight = (this.maxHeight != 0) ? this.maxHeight : Screen.getPrimary().getVisualBounds().getHeight();
-
     double hgap = tilesContainer.getHgap();
     double vgap = tilesContainer.getVgap();
 
-    int maxTilesInLine = (int) Math.min(10, Math.floor((maxWidth * 0.95 - PADDING * 2 + hgap) / (tileSize + hgap)));
+    int maxTilesInLine = (int) Math.min(10, Math.floor((getMaxWidth() * 0.95 - PADDING * 2 + hgap) / (tileSize + hgap)));
 
-    int maxLinesWithoutScroll = (int) Math.floor((maxHeight * 0.95 - PADDING * 2 + vgap) / (tileSize + vgap));
+    int maxLinesWithoutScroll = (int) Math.floor((getMaxHeight() * 0.95 - PADDING * 2 + vgap) / (tileSize + vgap));
     int scrollWidth = 18;
     double maxScrollPaneHeight = maxLinesWithoutScroll * (tileSize + vgap) - vgap;
     this.scrollContainer.setMaxHeight(maxScrollPaneHeight);
