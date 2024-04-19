@@ -10,6 +10,7 @@ import com.faforever.client.player.PlayerService;
 import com.faforever.client.theme.UiService;
 import com.faforever.client.util.RatingUtil;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
@@ -68,7 +69,7 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   public VBox loadingPane;
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets;
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBracketsWithDuplicates;
-  private Integer playerBracketIndex = null;
+  private IntegerProperty playerBracketIndex = null;
 
   private DoubleProperty maxWidth = new SimpleDoubleProperty(0);
 
@@ -107,6 +108,7 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
 
 
   public void setQueue(MatchmakerQueueInfo queue) {
+    loadingPane.setVisible(true);
     mapService.getMatchmakerBrackets(queue).subscribe(rawBrackets -> {
       loadingPane.setVisible(false);
 
@@ -117,7 +119,7 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
       PlayerInfo player = playerService.getCurrentPlayer();
       Integer rating = RatingUtil.getLeaderboardRating(player, queue.getLeaderboard());
 
-      this.playerBracketIndex = this.getPlayerBracketIndex(this.sortedBrackets, rating);
+      this.playerBracketIndex.set(this.getPlayerBracketIndex(this.sortedBrackets, rating));
 
       List<MapVersion> values = this.sortedBrackets.values().stream().flatMap(List::stream).toList();
       this.resizeToContent(values.size(), TILE_SIZE);
@@ -182,7 +184,7 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
       }
       i++;
     }
-    int diff = Collections.min(indexes.stream().map(idx -> Math.abs(idx - this.playerBracketIndex)).toList());
+    int diff = Collections.min(indexes.stream().map(idx -> Math.abs(idx - this.playerBracketIndex.get())).toList());
     double relevanceLevel = switch (diff) {
       case 0 -> 1;
       case 1 -> 0.2;
