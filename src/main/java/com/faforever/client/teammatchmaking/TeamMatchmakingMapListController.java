@@ -112,9 +112,7 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
 
       this.sortedBracketsWithDuplicates = this.getSortedBrackets(rawBrackets);
 
-      this.sortedBrackets = new TreeMap<>(this.sortedBracketsWithDuplicates);
-      this.sortedBrackets.replaceAll((key, value) -> new ArrayList<>(value));
-      this.removeDuplicates(this.sortedBrackets);
+      this.sortedBrackets = this.removeDuplicates(this.sortedBracketsWithDuplicates);
 
       PlayerInfo player = playerService.getCurrentPlayer();
       Integer rating = RatingUtil.getLeaderboardRating(player, queue.getLeaderboard());
@@ -142,16 +140,20 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     return sortedMap;
   }
 
-  private void removeDuplicates(SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets) {
+  private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> removeDuplicates(SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets) {
     Set<String> usedMaps = new HashSet<>();
-    sortedBrackets.replaceAll((k, v) -> sortedBrackets.get(k).stream().filter(mapVersion -> {
-      String name = mapVersion.map().displayName();
-      if (usedMaps.contains(name)) {
-        return false;
-      }
-      usedMaps.add(name);
-      return true;
-    }).collect(Collectors.toList()));
+    return sortedBrackets.entrySet().stream()
+                         .collect(Collectors.toMap(
+                             Map.Entry::getKey,
+                             entry -> entry.getValue().stream()
+                                           .filter(mapVersion -> {
+                                             String name = mapVersion.map().displayName();
+                                             return usedMaps.add(name);
+                                           })
+                                           .collect(Collectors.toList()),
+                             (list1, list2) -> list1,
+                             () -> new TreeMap<>(mapPoolComparator)
+                         ));
   }
 
   private Integer getPlayerBracketIndex(SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets, double rating) {
