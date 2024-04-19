@@ -5,13 +5,13 @@ import com.faforever.client.domain.api.MatchmakerQueueMapPool;
 import com.faforever.client.domain.server.PlayerInfo;
 import com.faforever.client.fx.FxApplicationThreadExecutor;
 import com.faforever.client.fx.JavaFxUtil;
-import com.faforever.client.player.LeaderboardRating;
 import com.faforever.client.player.PlayerService;
 import com.faforever.client.theme.UiService;
 import com.faforever.client.util.RatingUtil;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -20,10 +20,7 @@ import com.faforever.client.domain.server.MatchmakerQueueInfo;
 import com.faforever.client.fx.NodeController;
 import com.faforever.client.map.MapService;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -69,7 +66,7 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   public VBox loadingPane;
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets;
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBracketsWithDuplicates;
-  private IntegerProperty playerBracketIndex = null;
+  private IntegerProperty playerBracketIndex = new SimpleIntegerProperty(0);
 
   private DoubleProperty maxWidth = new SimpleDoubleProperty(0);
 
