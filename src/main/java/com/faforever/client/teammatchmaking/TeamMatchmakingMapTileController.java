@@ -10,6 +10,8 @@ import com.faforever.client.map.MapService.PreviewSize;
 import com.faforever.client.map.generator.MapGeneratorService;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -65,9 +67,17 @@ public class TeamMatchmakingMapTileController extends NodeController<Pane> {
   public VBox authorBox;
 
   protected final ObjectProperty<MapVersion> entity = new SimpleObjectProperty<>();
-  @Setter
-  private double relevanceLevel = 1;
+  private DoubleProperty relevanceLevel = new SimpleDoubleProperty(0);;
 
+  public double getRelevanceLevel(){
+    return this.relevanceLevel.get();
+  }
+  public void setRelevanceLevel(double value) {
+    this.relevanceLevel.set(value);
+  }
+  public DoubleProperty relevanceLevelProperty() {
+    return this.relevanceLevel;
+  }
 
   @Override
   public Pane getRoot() {
@@ -86,7 +96,7 @@ public class TeamMatchmakingMapTileController extends NodeController<Pane> {
                                                   .flatMap(imageViewHelper::createPlaceholderImageOnErrorObservable));
     thumbnailImageView.effectProperty().bind(entity.map(mapVersion -> {
       ColorAdjust grayscaleEffect = new ColorAdjust();
-      grayscaleEffect.setSaturation(-1 + this.relevanceLevel);
+      grayscaleEffect.setSaturation(-1 + getRelevanceLevel());
       return grayscaleEffect;
     }));
     ObservableValue<Map> mapObservable = entity.map(MapVersion::map);
