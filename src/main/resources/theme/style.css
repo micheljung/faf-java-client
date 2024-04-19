@@ -1106,7 +1106,7 @@
 }
 
 .tmm-maplist {
- -fx-padding: 20 20 20 20;
+ -fx-padding: 20 20 20 20; //related to PADDING constant, do not change without adjusting it
 }
 
 

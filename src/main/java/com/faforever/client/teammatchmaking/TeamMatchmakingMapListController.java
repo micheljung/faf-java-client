@@ -5,7 +5,6 @@ import com.faforever.client.domain.api.MatchmakerQueueMapPool;
 import com.faforever.client.domain.server.PlayerInfo;
 import com.faforever.client.fx.FxApplicationThreadExecutor;
 import com.faforever.client.fx.JavaFxUtil;
-import com.faforever.client.i18n.I18n;
 import com.faforever.client.player.LeaderboardRating;
 import com.faforever.client.player.PlayerService;
 import com.faforever.client.theme.UiService;
@@ -19,11 +18,11 @@ import com.faforever.client.map.MapService;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +43,7 @@ import java.util.stream.Collectors;
 public class TeamMatchmakingMapListController extends NodeController<Pane> {
 
   private static final int TILE_SIZE = 125;
+  private static final int PADDING = 20;
 
   private final MapService mapService;
   private final UiService uiService;
@@ -57,7 +57,10 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets;
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBracketsWithDuplicates;
   private Integer playerBracketIndex = null;
-
+  @Setter
+  private double maxWidth = 0;
+  @Setter
+  private double maxHeight = 0;
 
 
   @Override
@@ -69,7 +72,6 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   public Pane getRoot() {
     return root;
   }
-
 
 
   public void setQueue(MatchmakerQueueInfo queue) {
@@ -84,14 +86,14 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
 
       PlayerInfo player = playerService.getCurrentPlayer();
       LeaderboardRating ratingBean = player.getLeaderboardRatings().get(queue.getLeaderboard().technicalName());
-      double rating = (ratingBean != null)? (ratingBean.mean() - 3 * ratingBean.deviation()) : 0;
+      double rating = (ratingBean != null) ? (ratingBean.mean() - 3 * ratingBean.deviation()) : 0;
       this.playerBracketIndex = this.getPlayerBracketIndex(this.sortedBrackets, rating);
 
       List<MapVersion> values = this.sortedBrackets.values().stream().flatMap(List::stream).toList();
       this.resizeToContent(values.size(), TILE_SIZE);
 
 
-      fxApplicationThreadExecutor.execute(()->values.forEach(this::addMapTile));
+      fxApplicationThreadExecutor.execute(() -> values.forEach(this::addMapTile));
     });
 
   }
@@ -128,7 +130,7 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     }).collect(Collectors.toList()));
   }
 
-  private Integer getPlayerBracketIndex(SortedMap <MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets, double rating) {
+  private Integer getPlayerBracketIndex(SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets, double rating) {
     int i = 0;
     for (Map.Entry<MatchmakerQueueMapPool, List<MapVersion>> entry : sortedBrackets.entrySet()) {
       MatchmakerQueueMapPool pool = entry.getKey();
@@ -169,19 +171,20 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   }
 
   private void resizeToContent(int tilecount, int tileSize) {
-    double viewportWidth = Screen.getPrimary().getVisualBounds().getWidth();
-    double viewportHeight = Screen.getPrimary().getVisualBounds().getHeight();
+    double maxWidth = (this.maxWidth != 0) ? this.maxWidth :  Screen.getPrimary().getVisualBounds().getWidth();
+    double maxHeight = (this.maxHeight != 0) ? this.maxHeight : Screen.getPrimary().getVisualBounds().getHeight();
+
     double hgap = tilesContainer.getHgap();
     double vgap = tilesContainer.getVgap();
 
-    int maxTilesInLine = (int) Math.min(10, Math.floor((viewportWidth * 0.9 + hgap) / (tileSize + hgap)));
+    int maxTilesInLine = (int) Math.min(10, Math.floor((maxWidth * 0.95 - PADDING * 2 + hgap) / (tileSize + hgap)));
 
-    int maxLinesWithoutScroll = (int) Math.floor((viewportHeight * 0.9 + vgap) / (tileSize + vgap));
+    int maxLinesWithoutScroll = (int) Math.floor((maxHeight * 0.95 - PADDING * 2 + vgap) / (tileSize + vgap));
     int scrollWidth = 18;
     double maxScrollPaneHeight = maxLinesWithoutScroll * (tileSize + vgap) - vgap;
     this.scrollContainer.setMaxHeight(maxScrollPaneHeight);
 
-    int tilesInOneLine = Math.min(maxTilesInLine, Math.max(Math.max(4, Math.ceilDiv(tilecount, maxLinesWithoutScroll)), (int) Math.ceil(Math.sqrt(tilecount))));
+    int tilesInOneLine = Math.min(maxTilesInLine, Math.max(Math.max(4, Math.ceilDiv(tilecount, Math.max(1, maxLinesWithoutScroll))), (int) Math.ceil(Math.sqrt(tilecount))));
     int numberOfLines = Math.ceilDiv(tilecount, tilesInOneLine);
 
     double preferredWidth = (tileSize + hgap) * tilesInOneLine - hgap;
