@@ -56,15 +56,18 @@ public class TeamMatchmakingMapTileController extends NodeController<Pane> {
   private final I18n i18n;
   private final ImageViewHelper imageViewHelper;
   private final MapGeneratorService mapGeneratorService;
-  @Setter
-  private double relevanceLevel = 1;
-  protected final ObjectProperty<MapVersion> entity = new SimpleObjectProperty<>();
+
   public Pane root;
   public ImageView thumbnailImageView;
   public Label nameLabel;
   public Label authorLabel;
   public Label sizeLabel;
   public VBox authorBox;
+
+  protected final ObjectProperty<MapVersion> entity = new SimpleObjectProperty<>();
+  @Setter
+  private double relevanceLevel = 1;
+
 
   @Override
   public Pane getRoot() {
