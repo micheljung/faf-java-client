@@ -70,9 +70,9 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBracketsWithDuplicates;
   private Integer playerBracketIndex = null;
 
-  private DoubleProperty maxWidthProperty = new SimpleDoubleProperty(0);
+  private DoubleProperty maxWidth = new SimpleDoubleProperty(0);
 
-  private DoubleProperty maxHeightProperty = new SimpleDoubleProperty(0);
+  private DoubleProperty maxHeight = new SimpleDoubleProperty(0);
 
 
   @Override
@@ -86,23 +86,23 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   }
 
   public double getMaxWidth(){
-    return this.maxWidthProperty.get();
+    return this.maxWidth.get();
   }
   public void setMaxWidth(double value) {
-    this.maxWidthProperty.set(value);
+    this.maxWidth.set(value);
   }
   public DoubleProperty maxWidthProperty() {
-    return this.maxWidthProperty;
+    return this.maxWidth;
   }
 
   public double getMaxHeight(){
-    return this.maxHeightProperty.get();
+    return this.maxHeight.get();
   }
   public void setMaxHeight(double value) {
-    this.maxHeightProperty.set(value);
+    this.maxHeight.set(value);
   }
   public DoubleProperty maxHeightProperty() {
-    return this.maxHeightProperty;
+    return this.maxHeight;
   }
 
 
