@@ -1,5 +1,7 @@
 package com.faforever.client.fa.relay.ice;
 
+import com.faforever.client.api.TokenRetriever;
+import com.faforever.client.config.ClientProperties;
 import com.faforever.client.domain.server.PlayerInfo;
 import com.faforever.client.fa.GameFullNotifier;
 import com.faforever.client.mapstruct.IceServerMapper;
@@ -63,9 +65,11 @@ public class IceAdapterImpl implements IceAdapter, InitializingBean, DisposableB
   private final IceServerMapper iceServerMapper;
   private final Preferences preferences;
   private final ForgedAlliancePrefs forgedAlliancePrefs;
+  private final TokenRetriever tokenRetriever;
   private final ObjectFactory<IceAdapterCallbacks> iceAdapterCallbacksFactory;
   @Lazy
   private final GameFullNotifier gameFullNotifier;
+  private final ClientProperties clientProperties;
 
   private final IceAdapterApi iceAdapterProxy = newIceAdapterProxy();
   private GameType gameType;
@@ -223,8 +227,9 @@ public class IceAdapterImpl implements IceAdapter, InitializingBean, DisposableB
         "--id", String.valueOf(currentPlayer.getId()),
         "--game-id", String.valueOf(gameId),
         "--login", currentPlayer.getUsername(),
-        "--rpc-port", String.valueOf(adapterPort),
-        "--gpgnet-port", String.valueOf(gpgPort));
+        "--rpc-port", String.valueOf(adapterPort), "--gpgnet-port", String.valueOf(gpgPort), "--access-token",
+        tokenRetriever.getRefreshedTokenValue().block(), "--icebreaker-base-url",
+        clientProperties.getApi().getBaseUrl() + "/ice");
 
     cmd.addAll(standardIceOptions);
 
@@ -243,7 +248,7 @@ public class IceAdapterImpl implements IceAdapter, InitializingBean, DisposableB
   }
 
   private String getBinaryName(Path workDirectory) {
-    return workDirectory.resolve("faf-ice-adapter.jar").toString();
+    return workDirectory.resolve("kia-cli-1.0-SNAPSHOT-all.jar").toString();
   }
 
   @Override
