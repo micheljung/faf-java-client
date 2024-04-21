@@ -9,9 +9,9 @@ import com.faforever.client.player.PlayerService;
 import com.faforever.client.theme.UiService;
 import com.faforever.client.util.RatingUtil;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -59,23 +59,47 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   private final UiService uiService;
   private final PlayerService playerService;
   private final FxApplicationThreadExecutor fxApplicationThreadExecutor;
+  private final DoubleProperty maxWidth = new SimpleDoubleProperty(0);
+  private final DoubleProperty maxHeight = new SimpleDoubleProperty(0);
+  private final ObjectProperty<SortedMap<MatchmakerQueueMapPool, List<MapVersion>>> sortedBracketsWithDuplicates = new SimpleObjectProperty<>();
+  private final ObjectProperty<SortedMap<MatchmakerQueueMapPool, List<MapVersion>>> sortedBrackets = new SimpleObjectProperty<>();
+  private final ObjectProperty<Integer> playerBracketIndex = new SimpleObjectProperty<>(null);
+  private final ObjectProperty<MatchmakerQueueInfo> queue = new SimpleObjectProperty<>();
 
   public Pane root;
   public FlowPane tilesContainer;
   public ScrollPane scrollContainer;
   public VBox loadingPane;
-  private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets;
-  private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBracketsWithDuplicates;
-  private IntegerProperty playerBracketIndex = new SimpleIntegerProperty(0);
-
-  private DoubleProperty maxWidth = new SimpleDoubleProperty(0);
-
-  private DoubleProperty maxHeight = new SimpleDoubleProperty(0);
-
 
   @Override
   protected void onInitialize() {
+    this.bindProperties();
+  }
+
+  private void bindProperties() {
     JavaFxUtil.bindManagedToVisible(loadingPane);
+
+    this.queue.addListener((obs, oldVal, newVal) -> {
+      loadingPane.setVisible(true);
+
+      mapService.getMatchmakerBrackets(newVal).subscribe(rawBrackets -> {
+        loadingPane.setVisible(false);
+        this.sortedBracketsWithDuplicates.set(getSortedBrackets(rawBrackets));
+        this.sortedBrackets.set(removeDuplicates(this.sortedBracketsWithDuplicates.get()));
+      });
+    });
+
+    this.sortedBrackets.addListener((obs, oldVal, newVal) -> {
+      PlayerInfo player = playerService.getCurrentPlayer();
+      Integer rating = RatingUtil.getLeaderboardRating(player, getQueue().getLeaderboard());
+      this.updatePlayerBracketIndex(newVal, rating);
+    });
+
+    this.playerBracketIndex.addListener((obs, oldVal, newVal) -> {
+      List<MapVersion> values = this.sortedBrackets.get().values().stream().flatMap(List::stream).toList();
+      this.resizeToContent(values.size(), TILE_SIZE);
+      fxApplicationThreadExecutor.execute(() -> values.forEach((mapVersion) -> this.addMapTile(mapVersion, newVal)));
+    });
   }
 
   @Override
@@ -103,30 +127,15 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     return this.maxHeight;
   }
 
-
-  public void setQueue(MatchmakerQueueInfo queue) {
-    loadingPane.setVisible(true);
-    mapService.getMatchmakerBrackets(queue).subscribe(rawBrackets -> {
-      loadingPane.setVisible(false);
-
-      this.sortedBracketsWithDuplicates = this.getSortedBrackets(rawBrackets);
-
-      this.sortedBrackets = this.removeDuplicates(this.sortedBracketsWithDuplicates);
-
-      PlayerInfo player = playerService.getCurrentPlayer();
-      Integer rating = RatingUtil.getLeaderboardRating(player, queue.getLeaderboard());
-
-      this.playerBracketIndex.set(this.getPlayerBracketIndex(this.sortedBrackets, rating));
-
-      List<MapVersion> values = this.sortedBrackets.values().stream().flatMap(List::stream).toList();
-      this.resizeToContent(values.size(), TILE_SIZE);
-
-
-      fxApplicationThreadExecutor.execute(() -> values.forEach(this::addMapTile));
-    });
-
+  public MatchmakerQueueInfo getQueue(){
+    return this.queue.get();
   }
-
+  public void setQueue(MatchmakerQueueInfo queue) {
+    this.queue.set(queue);
+  }
+  public ObjectProperty<MatchmakerQueueInfo> queueProperty() {
+    return this.queue;
+  }
 
   private SortedMap<MatchmakerQueueMapPool, List<MapVersion>> getSortedBrackets(Map<MatchmakerQueueMapPool, List<MapVersion>> brackets) {
     SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedMap = new TreeMap<>(mapPoolComparator);
@@ -155,7 +164,11 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
                          ));
   }
 
-  private Integer getPlayerBracketIndex(SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets, double rating) {
+  private void updatePlayerBracketIndex(SortedMap<MatchmakerQueueMapPool, List<MapVersion>> sortedBrackets, double rating) {
+    if (sortedBrackets == null) {
+      this.playerBracketIndex.set(null);
+      return;
+    }
     int i = 0;
     for (Map.Entry<MatchmakerQueueMapPool, List<MapVersion>> entry : sortedBrackets.entrySet()) {
       MatchmakerQueueMapPool pool = entry.getKey();
@@ -165,28 +178,32 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
       if (max == null) {max = Double.POSITIVE_INFINITY;}
 
       if (rating < max && rating > min) {
-        return i;
+        this.playerBracketIndex.set(i);
+        return;
       }
       i++;
     }
-    return null;
+    this.playerBracketIndex.set(null);
   }
 
-  private void addMapTile(MapVersion mapVersion) {
+  private void addMapTile(MapVersion mapVersion, Integer playerBracketIndex) {
     int i = 0;
-    List<Integer> indexes = new ArrayList<>();
-    for (List<MapVersion> maps : this.sortedBracketsWithDuplicates.values()) {
-      if (maps.contains(mapVersion)) {
-        indexes.add(i);
+    double relevanceLevel = 1;
+    if (playerBracketIndex != null) {
+      List<Integer> indexes = new ArrayList<>();
+      for (List<MapVersion> maps : this.sortedBracketsWithDuplicates.get().values()) {
+        if (maps.contains(mapVersion)) {
+          indexes.add(i);
+        }
+        i++;
       }
-      i++;
+      int diff = Collections.min(indexes.stream().map(idx -> Math.abs(idx - playerBracketIndex)).toList());
+      relevanceLevel = switch (diff) {
+        case 0 -> 1;
+        case 1 -> 0.2;
+        default -> 0;
+      };
     }
-    int diff = Collections.min(indexes.stream().map(idx -> Math.abs(idx - this.playerBracketIndex.get())).toList());
-    double relevanceLevel = switch (diff) {
-      case 0 -> 1;
-      case 1 -> 0.2;
-      default -> 0;
-    };
 
     TeamMatchmakingMapTileController controller = uiService.loadFxml(
         "theme/play/teammatchmaking/matchmaking_map_tile.fxml");
