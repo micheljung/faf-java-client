@@ -36,9 +36,6 @@ import com.faforever.commons.api.dto.MapPoolAssignment;
 import com.faforever.commons.api.elide.ElideNavigator;
 import com.faforever.commons.api.elide.ElideNavigatorOnCollection;
 import com.faforever.commons.api.elide.ElideNavigatorOnId;
-import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
-import com.github.rutledgepaulv.qbuilders.conditions.Condition;
-import com.github.rutledgepaulv.qbuilders.visitors.RSQLVisitor;
 import com.google.common.annotations.VisibleForTesting;
 import javafx.beans.InvalidationListener;
 import javafx.beans.WeakInvalidationListener;
@@ -66,7 +63,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.retry.Retry;
@@ -82,7 +78,6 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -630,7 +625,6 @@ public class MapService implements InitializingBean, DisposableBean {
   }
 
   @Cacheable(value = CacheNames.MATCHMAKER_POOLS, sync = true)
-  @SuppressWarnings({"rawtypes", "unchecked"})
   public Mono <java.util.Map<MatchmakerQueueMapPool, List<MapVersion>>> getMatchmakerBrackets(MatchmakerQueueInfo matchmakerQueue) {
     ElideNavigatorOnCollection<MapPoolAssignment> navigator = ElideNavigator
         .of(MapPoolAssignment.class).collection()
@@ -639,7 +633,9 @@ public class MapService implements InitializingBean, DisposableBean {
     return fafApiAccessor.getMany(navigator)
                          .map(matchmakerMapper::map)
                          .collect(Collectors.groupingBy(assignment -> assignment.mapPool().mapPool(),
-                         Collectors.mapping(assignment -> assignment.mapVersion(), Collectors.toList())));
+                                                        Collectors.mapping(
+                                                            com.faforever.client.domain.api.MapPoolAssignment::mapVersion,
+                                                            Collectors.toList())));
 
   }
 

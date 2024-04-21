@@ -4,7 +4,6 @@ import com.faforever.client.api.FafApiAccessor;
 import com.faforever.client.builders.MatchmakerQueueInfoBuilder;
 import com.faforever.client.builders.PlayerInfoBuilder;
 import com.faforever.client.config.ClientProperties;
-import com.faforever.client.domain.api.Map;
 import com.faforever.client.domain.api.MapPoolAssignment;
 import com.faforever.client.domain.api.MapVersion;
 import com.faforever.client.domain.server.MatchmakerQueueInfo;
@@ -73,7 +72,6 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.instancio.Select.field;
-import static org.instancio.Select.scope;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -442,7 +440,7 @@ public class MapServiceTest extends PlatformTest {
 
     Flux<ElideEntity> resultFlux = Flux.fromIterable(
         matchmakerMapper.mapAssignmentBeans(List.of(mapPoolAssignment1, mapPoolAssignment2)));
-    when(fafApiAccessor.getMany(any(), anyString())).thenReturn(resultFlux);
+    when(fafApiAccessor.getMany(any())).thenReturn(resultFlux);
 
     MatchmakerQueueInfo matchmakerQueue = MatchmakerQueueInfoBuilder.create().defaultValues().get();
     StepVerifier.create(instance.getMatchmakerBrackets(matchmakerQueue)).assertNext(results -> {
@@ -450,7 +448,7 @@ public class MapServiceTest extends PlatformTest {
     }).verifyComplete();
 
     verify(fafApiAccessor).getMany(
-        argThat(ElideMatchers.hasDtoClass(com.faforever.commons.api.dto.MapPoolAssignment.class)), anyString());
+        argThat(ElideMatchers.hasDtoClass(com.faforever.commons.api.dto.MapPoolAssignment.class)));
   }
 
 
