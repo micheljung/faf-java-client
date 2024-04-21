@@ -2,50 +2,27 @@ package com.faforever.client.teammatchmaking;
 
 import com.faforever.client.domain.api.Map;
 import com.faforever.client.domain.api.MapVersion;
-import com.faforever.client.domain.api.MatchmakerQueueMapPool;
-import com.faforever.client.domain.server.PlayerInfo;
 import com.faforever.client.fx.ImageViewHelper;
+import com.faforever.client.fx.NodeController;
 import com.faforever.client.i18n.I18n;
+import com.faforever.client.map.MapService;
 import com.faforever.client.map.MapService.PreviewSize;
 import com.faforever.client.map.generator.MapGeneratorService;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.scene.layout.StackPane;
-import javafx.application.Platform;
-import javafx.geometry.Pos;
-
-import com.faforever.client.domain.server.MatchmakerQueueInfo;
-import com.faforever.client.fx.NodeController;
-import com.faforever.client.map.MapService;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.text.TextAlignment;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -94,9 +71,9 @@ public class TeamMatchmakingMapTileController extends NodeController<Pane> {
   protected void onInitialize(){
     thumbnailImageView.imageProperty().bind(entity.map(mapVersionBean -> mapService.loadPreview(mapVersionBean, PreviewSize.SMALL))
                                                   .flatMap(imageViewHelper::createPlaceholderImageOnErrorObservable));
-    thumbnailImageView.effectProperty().bind(entity.map(mapVersion -> {
+    thumbnailImageView.effectProperty().bind(relevanceLevel.map(relevanceLevel -> {
       ColorAdjust grayscaleEffect = new ColorAdjust();
-      grayscaleEffect.setSaturation(-1 + getRelevanceLevel());
+      grayscaleEffect.setSaturation(-1 + relevanceLevel.intValue());
       return grayscaleEffect;
     }));
     ObservableValue<Map> mapObservable = entity.map(MapVersion::map);
