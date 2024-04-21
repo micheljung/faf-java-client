@@ -12,6 +12,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -62,7 +63,8 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   private final DoubleProperty maxWidth = new SimpleDoubleProperty(0);
   private final DoubleProperty maxHeight = new SimpleDoubleProperty(0);
   private final ObjectProperty<SortedMap<MatchmakerQueueMapPool, List<MapVersion>>> sortedBracketsWithDuplicates = new SimpleObjectProperty<>();
-  private final ObjectProperty<SortedMap<MatchmakerQueueMapPool, List<MapVersion>>> sortedBrackets = new SimpleObjectProperty<>();
+  private final ObservableValue<SortedMap<MatchmakerQueueMapPool, List<MapVersion>>> sortedBrackets = sortedBracketsWithDuplicates.map(this::removeDuplicates);
+  private final ObservableValue<List<MapVersion>> maps = sortedBrackets.map(Map::values).map(values -> values.stream().flatMap(List::stream).toList());
   private final ObjectProperty<Integer> playerBracketIndex = new SimpleObjectProperty<>(null);
   private final ObjectProperty<MatchmakerQueueInfo> queue = new SimpleObjectProperty<>();
 
@@ -79,27 +81,31 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
   private void bindProperties() {
     JavaFxUtil.bindManagedToVisible(loadingPane);
 
-    this.queue.addListener((obs, oldVal, newVal) -> {
+    this.queue.subscribe(value -> {
+      if (value == null) {
+        return;
+      }
       loadingPane.setVisible(true);
-
-      mapService.getMatchmakerBrackets(newVal).subscribe(rawBrackets -> {
+      mapService.getMatchmakerBrackets(value).subscribe(rawBrackets -> {
         loadingPane.setVisible(false);
         this.sortedBracketsWithDuplicates.set(getSortedBrackets(rawBrackets));
-        this.sortedBrackets.set(removeDuplicates(this.sortedBracketsWithDuplicates.get()));
       });
     });
 
-    this.sortedBrackets.addListener((obs, oldVal, newVal) -> {
+    this.sortedBrackets.subscribe(value -> {
+      if (value == null) {
+        return;
+      }
       PlayerInfo player = playerService.getCurrentPlayer();
       Integer rating = RatingUtil.getLeaderboardRating(player, getQueue().getLeaderboard());
-      this.updatePlayerBracketIndex(newVal, rating);
+      this.updatePlayerBracketIndex(value, rating);
     });
 
-    this.playerBracketIndex.addListener((obs, oldVal, newVal) -> {
-      List<MapVersion> values = this.sortedBrackets.get().values().stream().flatMap(List::stream).toList();
-      this.resizeToContent(values.size(), TILE_SIZE);
-      fxApplicationThreadExecutor.execute(() -> values.forEach((mapVersion) -> this.addMapTile(mapVersion, newVal)));
-    });
+    this.maxWidth.subscribe(this::resizeToContent);
+    this.maxHeight.subscribe(this::resizeToContent);
+
+    this.maps.subscribe(this::updateContent);
+    this.playerBracketIndex.subscribe(this::updateContent);
   }
 
   @Override
@@ -212,22 +218,27 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     this.tilesContainer.getChildren().add(controller.getRoot());
   }
 
-  private void resizeToContent(int tilecount, int tileSize) {
+  private void resizeToContent() {
+    if (this.maps.getValue() == null) {
+      return;
+    }
+
+    int tilecount = this.maps.getValue().size();
     double hgap = tilesContainer.getHgap();
     double vgap = tilesContainer.getVgap();
 
-    int maxTilesInLine = (int) Math.min(10, Math.floor((getMaxWidth() * 0.95 - PADDING * 2 + hgap) / (tileSize + hgap)));
+    int maxTilesInLine = (int) Math.min(10, Math.floor((getMaxWidth() * 0.95 - PADDING * 2 + hgap) / (TILE_SIZE + hgap)));
 
-    int maxLinesWithoutScroll = (int) Math.floor((getMaxHeight() * 0.95 - PADDING * 2 + vgap) / (tileSize + vgap));
+    int maxLinesWithoutScroll = (int) Math.floor((getMaxHeight() * 0.95 - PADDING * 2 + vgap) / (TILE_SIZE + vgap));
     int scrollWidth = 18;
-    double maxScrollPaneHeight = maxLinesWithoutScroll * (tileSize + vgap) - vgap;
+    double maxScrollPaneHeight = maxLinesWithoutScroll * (TILE_SIZE + vgap) - vgap;
     this.scrollContainer.setMaxHeight(maxScrollPaneHeight);
 
     int tilesInOneLine = Math.min(maxTilesInLine, Math.max(Math.max(4, Math.ceilDiv(tilecount, Math.max(1, maxLinesWithoutScroll))), (int) Math.ceil(Math.sqrt(tilecount))));
     int numberOfLines = Math.ceilDiv(tilecount, tilesInOneLine);
 
-    double preferredWidth = (tileSize + hgap) * tilesInOneLine - hgap;
-    double gridHeight = (tileSize + vgap) * numberOfLines - vgap;
+    double preferredWidth = (TILE_SIZE + hgap) * tilesInOneLine - hgap;
+    double gridHeight = (TILE_SIZE + vgap) * numberOfLines - vgap;
 
     if (gridHeight > maxScrollPaneHeight) {
       scrollContainer.setPrefWidth(preferredWidth + scrollWidth);
@@ -239,6 +250,17 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     }
 
     tilesContainer.setPrefWidth(preferredWidth);
+  }
+
+  private void updateContent() {
+    List<MapVersion> values = maps.getValue();
+    Integer bracketIndex = this.playerBracketIndex.get();
+
+    fxApplicationThreadExecutor.execute(() -> {
+      this.tilesContainer.getChildren().clear();
+      this.resizeToContent();
+      values.forEach(mapVersion -> this.addMapTile(mapVersion, bracketIndex));
+    });
   }
 
 }
