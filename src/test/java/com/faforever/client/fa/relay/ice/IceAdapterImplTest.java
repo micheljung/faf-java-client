@@ -1,5 +1,6 @@
 package com.faforever.client.fa.relay.ice;
 
+import com.faforever.client.api.TokenRetriever;
 import com.faforever.client.builders.GameLaunchMessageBuilder;
 import com.faforever.client.builders.PlayerInfoBuilder;
 import com.faforever.client.config.ClientProperties;
@@ -21,12 +22,14 @@ import com.faforever.commons.lobby.MessageTarget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.test.util.ReflectionTestUtils;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -47,7 +50,7 @@ public class IceAdapterImplTest extends ServiceTest {
   private IceAdapterImpl instance;
   @Spy
   private OperatingSystem operatingSystem = new OsPosix();
-  @Mock
+  @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   private ClientProperties clientProperties;
   @Mock
   private PlayerService playerService;
@@ -57,6 +60,8 @@ public class IceAdapterImplTest extends ServiceTest {
   private GameFullNotifier gameFullNotifier;
   @Mock
   private GameService gameService;
+  @Mock
+  private TokenRetriever tokenRetriever;
   @Mock
   private ObjectFactory<IceAdapterCallbacks> iceAdapterCallbacksFactory;
 
@@ -111,6 +116,8 @@ public class IceAdapterImplTest extends ServiceTest {
     when(operatingSystem.getJavaExecutablePath()).thenReturn(javaExecutablePath);
     PlayerInfo currentPlayer = PlayerInfoBuilder.create().defaultValues().get();
     when(playerService.getCurrentPlayer()).thenReturn(currentPlayer);
+    when(clientProperties.getApi().getBaseUrl()).thenReturn("http://faf-api");
+    when(tokenRetriever.getRefreshedTokenValue()).thenReturn(Mono.just("someToken"));
     forgedAlliancePrefs.setShowIceAdapterDebugWindow(true);
 
     List<String> command = instance.buildCommand(Path.of("."), 0, 0, 4711);
@@ -131,8 +138,12 @@ public class IceAdapterImplTest extends ServiceTest {
     assertEquals(String.valueOf(0), command.get(12));
     assertEquals("--gpgnet-port", command.get(13));
     assertEquals(String.valueOf(0), command.get(14));
-    assertEquals("--debug-window", command.get(15));
-    assertEquals("--info-window", command.get(16));
+    assertEquals("--access-token", command.get(15));
+    assertEquals("someToken", command.get(16));
+    assertEquals("--icebreaker-base-url", command.get(17));
+    assertEquals("http://faf-api/ice", command.get(18));
+    assertEquals("--debug-window", command.get(19));
+    assertEquals("--info-window", command.get(20));
   }
 
   @Test
@@ -144,6 +155,8 @@ public class IceAdapterImplTest extends ServiceTest {
     forgedAlliancePrefs.setShowIceAdapterDebugWindow(true);
     PlayerInfo currentPlayer = PlayerInfoBuilder.create().defaultValues().get();
     when(playerService.getCurrentPlayer()).thenReturn(currentPlayer);
+    when(clientProperties.getApi().getBaseUrl()).thenReturn("http://faf-api");
+    when(tokenRetriever.getRefreshedTokenValue()).thenReturn(Mono.just("someToken"));
 
     List<String> command = instance.buildCommand(Path.of("."), 0, 0, 4711);
 
