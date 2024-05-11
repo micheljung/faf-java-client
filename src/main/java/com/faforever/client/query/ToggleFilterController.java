@@ -57,8 +57,8 @@ public class ToggleFilterController extends FilterNodeController {
     this.title.setText(title + ":");
   }
 
-  public void setPersistentProperty(BooleanProperty property) {
-    this.checkBox.selectedProperty().bindBidirectional(property);
+  public BooleanProperty selectedProperty() {
+    return this.checkBox.selectedProperty();
   }
 
   @Override

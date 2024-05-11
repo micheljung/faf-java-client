@@ -13,9 +13,13 @@ import com.faforever.client.main.event.ShowReplayEvent;
 import com.faforever.client.main.event.ShowUserReplaysEvent;
 import com.faforever.client.notification.NotificationService;
 import com.faforever.client.preferences.VaultPrefs;
+import com.faforever.client.preferences.ReplaySearchPrefs;
 import com.faforever.client.query.CategoryFilterController;
 import com.faforever.client.query.SearchablePropertyMappings;
 import com.faforever.client.query.TextFilterController;
+import com.faforever.client.query.RangeFilterController;
+import com.faforever.client.query.DateRangeFilterController;
+import com.faforever.client.query.ToggleFilterController;
 import com.faforever.client.reporting.ReportingService;
 import com.faforever.client.theme.UiService;
 import com.faforever.client.vault.VaultEntityController;
@@ -30,6 +34,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import javafx.beans.binding.Bindings;
 
 import java.util.List;
 import java.util.Map;
@@ -133,41 +138,65 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
     searchController.setVaultRoot(vaultRoot);
     searchController.setSavedQueries(vaultPrefs.getSavedReplayQueries());
 
-    searchController.addTextFilter("playerStats.player.login", i18n.get("game.player.username"), true, vaultPrefs.playerNameFieldProperty());
-    searchController.addTextFilter("mapVersion.map.displayName", i18n.get("game.map.displayName"), false, vaultPrefs.mapNameFieldProperty());
-    searchController.addTextFilter("mapVersion.map.author.login", i18n.get("game.map.author"), false, vaultPrefs.mapAuthorFieldProperty());
-    searchController.addTextFilter("name", i18n.get("game.title"), false, vaultPrefs.titleFieldProperty());
-    searchController.addTextFilter("id", i18n.get("game.id"), true, vaultPrefs.replayIDFieldProperty());
+    ReplaySearchPrefs replaySearchPrefs = vaultPrefs.getReplaySearch();
+    TextFilterController textFilterController = searchController.addTextFilter("playerStats.player.login", i18n.get("game.player.username"), true);
+    textFilterController.textFieldProperty().bindBidirectional(replaySearchPrefs.playerNameFieldProperty());
+    textFilterController = searchController.addTextFilter("mapVersion.map.displayName", i18n.get("game.map.displayName"), false);
+    textFilterController.textFieldProperty().bindBidirectional(replaySearchPrefs.mapNameFieldProperty());
+    textFilterController = searchController.addTextFilter("mapVersion.map.author.login", i18n.get("game.map.author"), false);
+    textFilterController.textFieldProperty().bindBidirectional(replaySearchPrefs.mapAuthorFieldProperty());
+    textFilterController = searchController.addTextFilter("name", i18n.get("game.title"), false);
+    textFilterController.textFieldProperty().bindBidirectional(replaySearchPrefs.titleFieldProperty());
+    textFilterController = searchController.addTextFilter("id", i18n.get("game.id"), true);
+    textFilterController.textFieldProperty().bindBidirectional(replaySearchPrefs.replayIDFieldProperty());
 
     CategoryFilterController featuredModFilterController = searchController.addCategoryFilter("featuredMod.displayName",
-        i18n.get("featuredMod.displayName"), List.of(), vaultPrefs.featuredModFilterProperty());
+        i18n.get("featuredMod.displayName"), List.of());
 
     featuredModService.getFeaturedMods().map(FeaturedMod::displayName)
                       .collectList()
                       .publishOn(fxApplicationThreadExecutor.asScheduler())
-                      .subscribe(featuredModFilterController::setItems);
+                      .subscribe((mods) -> {
+                        featuredModFilterController.setItems(mods);
+                        replaySearchPrefs.featuredModFilterProperty().get().stream().forEach((item) -> featuredModFilterController.checkItem(item));
+                        replaySearchPrefs.featuredModFilterProperty().bind(Bindings.createObjectBinding(() -> featuredModFilterController.getCheckedItems()));
+                      });
 
     CategoryFilterController leaderboardFilterController = searchController.addCategoryFilter(
         "playerStats.ratingChanges.leaderboard.id",
-        i18n.get("leaderboard.displayName"), Map.of(), vaultPrefs.leaderboardFilterProperty());
+        i18n.get("leaderboard.displayName"), Map.of());
 
     leaderboardService.getLeaderboards()
                       .collect(Collectors.toMap(
                           leaderboard -> i18n.getOrDefault(leaderboard.technicalName(), leaderboard.nameKey()),
                           leaderboard -> String.valueOf(leaderboard.id())))
                       .publishOn(fxApplicationThreadExecutor.asScheduler())
-                      .subscribe(leaderboardFilterController::setItems);
+                      .subscribe((leaderboards) -> {
+                        leaderboardFilterController.setItems(leaderboards);
+                        replaySearchPrefs.leaderboardFilterProperty().get().stream().forEach((item) -> leaderboardFilterController.checkItem(item));
+                        replaySearchPrefs.leaderboardFilterProperty().bind(Bindings.createObjectBinding(() -> leaderboardFilterController.getCheckedItems()));
+                      });
 
     //TODO: Use rating rather than estimated mean with an assumed deviation of 300 when that is available
-    searchController.addRangeFilter("playerStats.ratingChanges.meanBefore", i18n.get("game.rating"),
-        MIN_RATING, MAX_RATING, 10, 4, 0, value -> value + 300, vaultPrefs.ratingMinProperty(), vaultPrefs.ratingMaxProperty());
+    RangeFilterController rangeFilterController = searchController.addRangeFilter("playerStats.ratingChanges.meanBefore", i18n.get("game.rating"),
+        MIN_RATING, MAX_RATING, 10, 4, 0, value -> value + 300);
+    rangeFilterController.lowValueProperty().bindBidirectional(replaySearchPrefs.ratingMinProperty());
+    rangeFilterController.highValueProperty().bindBidirectional(replaySearchPrefs.ratingMaxProperty());
 
-    searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"),0, 5, 10, 4, 1, vaultPrefs.averageReviewScoresMinProperty(), vaultPrefs.averageReviewScoresMaxProperty());
+    rangeFilterController = searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"),0, 5, 10, 4, 1);
+    rangeFilterController.lowValueProperty().bindBidirectional(replaySearchPrefs.averageReviewScoresMinProperty());
+    rangeFilterController.highValueProperty().bindBidirectional(replaySearchPrefs.averageReviewScoresMaxProperty());
 
-    searchController.addDateRangeFilter("endTime", i18n.get("game.date"), 1, vaultPrefs.gameBeforeDateProperty(), vaultPrefs.gameAfterDateProperty());
-    searchController.addRangeFilter("replayTicks", i18n.get("game.duration"), 0, 60, 12, 4, 0, value -> (int) (value * 60 * 10), vaultPrefs.gameDurationMinProperty(), vaultPrefs.gameDurationMaxProperty());
-    searchController.addToggleFilter("validity", i18n.get("game.onlyRanked"), "VALID", vaultPrefs.onlyRankedProperty());
+    DateRangeFilterController dateRangerFilterController = searchController.addDateRangeFilter("endTime", i18n.get("game.date"), 1);
+    dateRangerFilterController.beforeDateProperty().bindBidirectional(replaySearchPrefs.gameBeforeDateProperty());
+    dateRangerFilterController.afterDateProperty().bindBidirectional(replaySearchPrefs.gameAfterDateProperty());
 
+    rangeFilterController = searchController.addRangeFilter("replayTicks", i18n.get("game.duration"), 0, 60, 12, 4, 0, value -> (int) (value * 60 * 10));
+    rangeFilterController.lowValueProperty().bindBidirectional(replaySearchPrefs.gameDurationMinProperty());
+    rangeFilterController.highValueProperty().bindBidirectional(replaySearchPrefs.gameDurationMaxProperty());
+
+    ToggleFilterController toggleFilterController = searchController.addToggleFilter("validity", i18n.get("game.onlyRanked"), "VALID");
+    toggleFilterController.selectedProperty().bindBidirectional(replaySearchPrefs.onlyRankedProperty());
   }
 
   @Override

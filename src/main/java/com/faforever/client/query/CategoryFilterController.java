@@ -41,24 +41,15 @@ public class CategoryFilterController extends FilterNodeController {
   public MenuButton menu;
   private String propertyName;
   private Map<String, String> itemMap;
-  private ObjectProperty<ObservableList<String>> persistenceProperty;
 
   public void setItems(List<String> items) {
     itemMap = null;
     checkListView.getItems().setAll(items);
-    if (persistenceProperty != null) {
-      persistenceProperty.get().stream().forEach((item) -> checkListView.getCheckModel().check(item));
-      persistenceProperty.bind(Bindings.createObjectBinding(() -> checkListView.getCheckModel().getCheckedItems()));
-    }
   }
 
   public void setItems(Map<String, String> items) {
     itemMap = items;
     checkListView.getItems().setAll(items.keySet());
-    if (persistenceProperty != null) {
-      persistenceProperty.get().stream().forEach((item) -> checkListView.getCheckModel().check(item));
-      persistenceProperty.bind(Bindings.createObjectBinding(() -> checkListView.getCheckModel().getCheckedItems()));
-    }
   }
 
 
@@ -102,7 +93,11 @@ public class CategoryFilterController extends FilterNodeController {
     return menu;
   }
 
-  public void setPersistenceProperty(ObjectProperty<ObservableList<String>> property) {
-    this.persistenceProperty = property;
+  public void checkItem(String item) {
+    checkListView.getCheckModel().check(item);
+  }
+
+  public ObservableList<String> getCheckedItems() {
+    return checkListView.getCheckModel().getCheckedItems();
   }
 }

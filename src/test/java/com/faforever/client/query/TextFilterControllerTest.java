@@ -87,7 +87,7 @@ public class TextFilterControllerTest extends PlatformTest {
   @Test
   public void testPersistentPropertyGetsText() {
     javafx.beans.property.StringProperty property = new SimpleStringProperty();
-    instance.setPersistenceProperty(property);
+    property.bindBidirectional(instance.textFieldProperty());
 
     instance.textField.setText("test");
     assertEquals(property.get(), "test");
@@ -99,7 +99,7 @@ public class TextFilterControllerTest extends PlatformTest {
   @Test
   public void testPersistentPropertySetsText() {
     javafx.beans.property.StringProperty property = new SimpleStringProperty();
-    instance.setPersistenceProperty(property);
+    property.bindBidirectional(instance.textFieldProperty());
     instance.textField.setText("test");
 
     property.setValue("test2");

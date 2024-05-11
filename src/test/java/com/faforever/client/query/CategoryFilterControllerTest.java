@@ -6,6 +6,7 @@ import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import com.github.rutledgepaulv.qbuilders.visitors.RSQLVisitor;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.InvalidationListener;
@@ -143,8 +144,9 @@ public class CategoryFilterControllerTest extends PlatformTest {
     ObservableList<String> checkedItems = FXCollections.observableArrayList();
     checkedItems.add("2");
     ObjectProperty<ObservableList<String>> property = new SimpleObjectProperty<ObservableList<String>>(checkedItems);
-    instance.setPersistenceProperty(property);
     instance.setItems(itemMap);
+    property.get().stream().forEach((item) -> instance.checkItem(item));
+    property.bind(Bindings.createObjectBinding(() -> instance.getCheckedItems()));
 
     assertFalse(instance.checkListView.getCheckModel().isChecked("1"));
     assertTrue(instance.checkListView.getCheckModel().isChecked("2"));
@@ -153,9 +155,10 @@ public class CategoryFilterControllerTest extends PlatformTest {
   @Test
   public void testPersistentPropertyBindsToCheckedItems() {
     ObjectProperty<ObservableList<String>> property = new SimpleObjectProperty<ObservableList<String>>(FXCollections.emptyObservableList());
-    instance.setPersistenceProperty(property);
     instance.setItems(itemMap);
-    
+    property.get().stream().forEach((item) -> instance.checkItem(item));
+    property.bind(Bindings.createObjectBinding(() -> instance.getCheckedItems()));
+
     instance.checkListView.getCheckModel().check("1");
 
     ObservableList<String> expected = FXCollections.observableArrayList();

@@ -107,9 +107,12 @@ public class DateRangeFilterController extends FilterNodeController {
     afterDate.setValue(LocalDate.now().minusYears(initialYearsBefore));
   }
 
-  public void setPersistentBindings(ObjectProperty<LocalDate> beforeDate, ObjectProperty<LocalDate> afterDate) {
-    this.beforeDate.valueProperty().bindBidirectional(beforeDate);
-    this.afterDate.valueProperty().bindBidirectional(afterDate);
+  public ObjectProperty<LocalDate> beforeDateProperty() {
+    return this.beforeDate.valueProperty();
+  }
+
+  public ObjectProperty<LocalDate> afterDateProperty() {
+    return this.afterDate.valueProperty();
   }
 
   @Override

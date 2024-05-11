@@ -82,9 +82,9 @@ public class MapVaultController extends VaultEntityController<MapVersion> {
     searchController.setVaultRoot(vaultRoot);
     searchController.setSavedQueries(vaultPrefs.getSavedMapQueries());
 
-    searchController.addTextFilter("displayName", i18n.get("map.name"), false, new SimpleStringProperty());
-    searchController.addTextFilter("author.login", i18n.get("map.author"), false, new SimpleStringProperty());
-    searchController.addDateRangeFilter("latestVersion.updateTime", i18n.get("map.uploadedDateTime"), 0, new SimpleObjectProperty<LocalDate>(), new SimpleObjectProperty<LocalDate>());
+    searchController.addTextFilter("displayName", i18n.get("map.name"), false);
+    searchController.addTextFilter("author.login", i18n.get("map.author"), false);
+    searchController.addDateRangeFilter("latestVersion.updateTime", i18n.get("map.uploadedDateTime"), 0);
 
     LinkedHashMap<String, String> mapSizeMap = new LinkedHashMap<>();
     mapSizeMap.put("1km", "64");
@@ -95,12 +95,11 @@ public class MapVaultController extends VaultEntityController<MapVersion> {
     mapSizeMap.put("40km", "2048");
     mapSizeMap.put("80km", "4096");
 
-    // TODO add persistence
-    searchController.addCategoryFilter("latestVersion.width", i18n.get("map.width"), mapSizeMap, new SimpleObjectProperty<ObservableList<String>>());
-    searchController.addCategoryFilter("latestVersion.height", i18n.get("map.height"), mapSizeMap, new SimpleObjectProperty<ObservableList<String>>());
-    searchController.addRangeFilter("latestVersion.maxPlayers", i18n.get("map.maxPlayers"), 0, 16, 16, 0, 0, Double::intValue, new SimpleDoubleProperty(), new SimpleDoubleProperty());
-    searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"), 0, 5, 10, 4, 1, new SimpleDoubleProperty(), new SimpleDoubleProperty());
-    searchController.addToggleFilter("latestVersion.ranked", i18n.get("map.onlyRanked"), "true", new SimpleBooleanProperty());
+    searchController.addCategoryFilter("latestVersion.width", i18n.get("map.width"), mapSizeMap);
+    searchController.addCategoryFilter("latestVersion.height", i18n.get("map.height"), mapSizeMap);
+    searchController.addRangeFilter("latestVersion.maxPlayers", i18n.get("map.maxPlayers"), 0, 16, 16, 0, 0, Double::intValue);
+    searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"), 0, 5, 10, 4, 1);
+    searchController.addToggleFilter("latestVersion.ranked", i18n.get("map.onlyRanked"), "true");
   }
 
   @Override

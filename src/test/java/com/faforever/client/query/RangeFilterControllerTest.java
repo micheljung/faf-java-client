@@ -39,22 +39,17 @@ public class RangeFilterControllerTest extends PlatformTest {
   private I18n i18n;
   @Mock
   private InvalidationListener queryListener;
-  private javafx.beans.property.DoubleProperty lowerValue;
-  private javafx.beans.property.DoubleProperty higherValue;
 
   @BeforeEach
   public void setUp() throws Exception {
     loadFxml("theme/vault/search/rangeFilter.fxml", clazz -> instance);
 
-    lowerValue = new SimpleDoubleProperty();
-    higherValue = new SimpleDoubleProperty();
     instance.setPropertyName(propertyName);
     instance.setRange(min, max, 10, 0);
     instance.setIncrement(increment);
     instance.setSnapToTicks(true);
     instance.setTickUnit(increment);
     instance.setValueTransform((value) -> value);
-    instance.setPersistentRangeBindings(lowerValue, higherValue);
     instance.bind();
   }
 
@@ -177,6 +172,10 @@ public class RangeFilterControllerTest extends PlatformTest {
 
   @Test
   public void testPersistentPropertiesGetsValuesFromRangeFilter() {
+    javafx.beans.property.DoubleProperty lowerValue = new SimpleDoubleProperty();
+    javafx.beans.property.DoubleProperty higherValue = new SimpleDoubleProperty();
+    lowerValue.bindBidirectional(instance.lowValueProperty());
+    higherValue.bindBidirectional(instance.highValueProperty());
     instance.lowValue.setText("20");
     instance.highValue.setText("80");
 
@@ -192,6 +191,10 @@ public class RangeFilterControllerTest extends PlatformTest {
 
   @Test
   public void testPersistentPropertiesSetsRangeFilter() {
+    javafx.beans.property.DoubleProperty lowerValue = new SimpleDoubleProperty();
+    javafx.beans.property.DoubleProperty higherValue = new SimpleDoubleProperty();
+    lowerValue.bindBidirectional(instance.lowValueProperty());
+    higherValue.bindBidirectional(instance.highValueProperty());
     instance.lowValue.setText("20");
     instance.highValue.setText("80");
     lowerValue.setValue(30);

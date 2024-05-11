@@ -156,7 +156,8 @@ public class DateRangeFilterControllerTest extends PlatformTest {
   public void testPersistentPropertiesGetsDates() {
     ObjectProperty<LocalDate> persistentBeforeDate = new SimpleObjectProperty<LocalDate>();
     ObjectProperty<LocalDate> persistentAfterDate = new SimpleObjectProperty<LocalDate>();
-    instance.setPersistentBindings(persistentBeforeDate, persistentAfterDate);
+    persistentBeforeDate.bindBidirectional(instance.beforeDateProperty());
+    persistentAfterDate.bindBidirectional(instance.afterDateProperty());
     instance.setAfterDate(after);
     instance.setBeforeDate(before);
 
@@ -168,7 +169,8 @@ public class DateRangeFilterControllerTest extends PlatformTest {
   public void testPersistentPropertiesSetsDates() {
     ObjectProperty<LocalDate> persistentBeforeDate = new SimpleObjectProperty<LocalDate>();
     ObjectProperty<LocalDate> persistentAfterDate = new SimpleObjectProperty<LocalDate>();
-    instance.setPersistentBindings(persistentBeforeDate, persistentAfterDate);
+    persistentBeforeDate.bindBidirectional(instance.beforeDateProperty());
+    persistentAfterDate.bindBidirectional(instance.afterDateProperty());
     instance.setAfterDate(after);
     instance.setBeforeDate(before);
     

@@ -8,6 +8,11 @@ import com.faforever.client.main.event.OpenOnlineReplayVaultEvent;
 import com.faforever.client.main.event.ShowReplayEvent;
 import com.faforever.client.notification.NotificationService;
 import com.faforever.client.preferences.VaultPrefs;
+import com.faforever.client.preferences.ReplaySearchPrefs;
+import com.faforever.client.query.TextFilterController;
+import com.faforever.client.query.RangeFilterController;
+import com.faforever.client.query.DateRangeFilterController;
+import com.faforever.client.query.ToggleFilterController;
 import com.faforever.client.query.CategoryFilterController;
 import com.faforever.client.query.LogicalNodeController;
 import com.faforever.client.query.SpecificationController;
@@ -20,6 +25,10 @@ import com.faforever.client.vault.search.SearchController;
 import com.faforever.client.vault.search.SearchController.SearchConfig;
 import com.faforever.client.vault.search.SearchController.SortConfig;
 import javafx.scene.layout.Pane;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,13 +45,17 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
 
 public class OnlineReplayVaultControllerTest extends PlatformTest {
 
@@ -77,9 +90,18 @@ public class OnlineReplayVaultControllerTest extends PlatformTest {
   @Mock
   private CategoryFilterController categoryFilterController;
   @Mock
+  private TextFilterController textFilterController;
+  @Mock
+  private RangeFilterController rangeFilterController;
+  @Mock
+  private DateRangeFilterController dateRangeFilterController;
+  @Mock
+  private ToggleFilterController toggleFilterController;
+  @Mock
   private VaultEntityShowRoomController vaultEntityShowRoomController;
   @Spy
   private VaultPrefs vaultPrefs;
+  private ReplaySearchPrefs replaySearchPrefs;
 
   @Captor
   private ArgumentCaptor<Consumer<SearchConfig>> searchListenerCaptor;
@@ -104,9 +126,22 @@ public class OnlineReplayVaultControllerTest extends PlatformTest {
     lenient().when(uiService.loadFxml("theme/vault/vault_entity_show_room.fxml"))
              .thenReturn(vaultEntityShowRoomController);
     lenient().when(i18n.get(anyString())).thenReturn("test");
-    lenient().when(searchController.addCategoryFilter(any(), any(), anyMap(), any())).thenReturn(categoryFilterController);
-    lenient().when(searchController.addCategoryFilter(any(), any(), anyList(), any())).thenReturn(categoryFilterController);
+    lenient().when(searchController.addCategoryFilter(any(), any(), anyMap())).thenReturn(categoryFilterController);
+    lenient().when(searchController.addCategoryFilter(any(), any(), anyList())).thenReturn(categoryFilterController);
+    lenient().when(searchController.addTextFilter(anyString(), anyString(), anyBoolean())).thenReturn(textFilterController);
+    lenient().when(textFilterController.textFieldProperty()).thenReturn(new SimpleStringProperty());
+    lenient().when(searchController.addRangeFilter(anyString(), anyString(), anyDouble(), anyDouble(), anyInt(), anyInt(), anyInt())).thenReturn(rangeFilterController);
+    lenient().when(searchController.addRangeFilter(anyString(), anyString(), anyDouble(), anyDouble(), anyInt(), anyInt(), anyInt(), any())).thenReturn(rangeFilterController);
+    lenient().when(rangeFilterController.lowValueProperty()).thenReturn(new SimpleDoubleProperty());
+    lenient().when(rangeFilterController.highValueProperty()).thenReturn(new SimpleDoubleProperty());
+    lenient().when(searchController.addDateRangeFilter(anyString(), anyString(), anyInt())).thenReturn(dateRangeFilterController);
+    lenient().when(dateRangeFilterController.beforeDateProperty()).thenReturn(new SimpleObjectProperty<LocalDate>());
+    lenient().when(dateRangeFilterController.afterDateProperty()).thenReturn(new SimpleObjectProperty<LocalDate>());
+    lenient().when(searchController.addToggleFilter(anyString(), anyString(), anyString())).thenReturn(toggleFilterController);
+    lenient().when(toggleFilterController.selectedProperty()).thenReturn(new SimpleBooleanProperty());
 
+    replaySearchPrefs = new ReplaySearchPrefs();
+    lenient().when(vaultPrefs.getReplaySearch()).thenReturn(replaySearchPrefs);
     sortOrder = new VaultPrefs().getOnlineReplaySortConfig();
     standardSearchConfig = new SearchConfig(sortOrder, "query");
 
