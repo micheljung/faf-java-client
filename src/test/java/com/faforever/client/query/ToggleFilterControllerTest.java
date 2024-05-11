@@ -5,6 +5,8 @@ import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import com.github.rutledgepaulv.qbuilders.visitors.RSQLVisitor;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.InvalidationListener;
 import javafx.scene.layout.GridPane;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,5 +83,27 @@ public class ToggleFilterControllerTest extends PlatformTest {
 
     assertTrue(result.isPresent());
     assertEquals(result.get().getFirst().query(new RSQLVisitor()), property.eq(value).query(new RSQLVisitor()));
+  }
+
+  @Test
+  public void testPersistentPropertiesGetsValue() {
+    BooleanProperty property = new SimpleBooleanProperty();
+    instance.setPersistentProperty(property);
+
+    instance.checkBox.setSelected(true);
+    assertTrue(property.get());
+
+    instance.checkBox.setSelected(false);
+    assertFalse(property.get());
+  }
+
+  @Test
+  public void testPersistentPropertySetValues() {
+    BooleanProperty property = new SimpleBooleanProperty();
+    instance.setPersistentProperty(property);
+    instance.checkBox.setSelected(false);
+
+    property.setValue(true);
+    assertTrue(instance.checkBox.isSelected());
   }
 }

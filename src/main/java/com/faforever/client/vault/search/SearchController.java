@@ -20,9 +20,13 @@ import com.faforever.client.ui.dialog.Dialog;
 import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.visitors.RSQLVisitor;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableMap;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -35,10 +39,12 @@ import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.controlsfx.control.IndexedCheckModel;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -274,42 +280,48 @@ public class SearchController extends NodeController<Pane> {
     queryInvalidationListener.invalidated(null);
   }
 
-  public TextFilterController addTextFilter(String propertyName, String title, boolean exact) {
+  public TextFilterController addTextFilter(String propertyName, String title, boolean exact, StringProperty persistentProperty) {
     TextFilterController textFilterController = uiService.loadFxml("theme/vault/search/textFilter.fxml");
     textFilterController.setExact(exact);
     textFilterController.setPropertyName(propertyName);
     textFilterController.setTitle(title);
     textFilterController.setOnAction(this::onSearchButtonClicked);
+    textFilterController.setPersistenceProperty(persistentProperty);
     addFilterNode(textFilterController);
     return textFilterController;
   }
 
-  public CategoryFilterController addCategoryFilter(String propertyName, String title, List<String> items) {
+  public CategoryFilterController addCategoryFilter(String propertyName, String title, List<String> items, ObjectProperty<ObservableList<String>> persistentProperty) {
     CategoryFilterController categoryFilterController = uiService.loadFxml("theme/vault/search/categoryFilter.fxml");
     categoryFilterController.setPropertyName(propertyName);
     categoryFilterController.setTitle(title);
     categoryFilterController.setItems(items);
+    categoryFilterController.setPersistenceProperty(persistentProperty);
     addFilterNode(categoryFilterController);
     return categoryFilterController;
   }
 
-  public CategoryFilterController addCategoryFilter(String propertyName, String title, Map<String, String> items) {
+  public CategoryFilterController addCategoryFilter(String propertyName, String title, Map<String, String> items, ObjectProperty<ObservableList<String>> persistentProperty) {
     CategoryFilterController categoryFilterController = uiService.loadFxml("theme/vault/search/categoryFilter.fxml");
     categoryFilterController.setPropertyName(propertyName);
     categoryFilterController.setTitle(title);
     categoryFilterController.setItems(items);
+    categoryFilterController.setPersistenceProperty(persistentProperty);
     addFilterNode(categoryFilterController);
     return categoryFilterController;
-  }
-
-  public void addRangeFilter(String propertyName, String title, double min, double max,
-                             int majorTickCount, int interMajorTickCount, int numberOfFractionDigits) {
-    addRangeFilter(propertyName, title, min, max, majorTickCount, interMajorTickCount, numberOfFractionDigits, Function.identity());
   }
 
   public void addRangeFilter(String propertyName, String title, double min, double max,
                              int majorTickCount, int interMajorTickCount, int numberOfFractionDigits,
-                             Function<Double, ? extends Number> valueTransform) {
+                             DoubleProperty minProperty, DoubleProperty maxProperty) {
+    addRangeFilter(propertyName, title, min, max, majorTickCount, interMajorTickCount, 
+                   numberOfFractionDigits, Function.identity(), minProperty, maxProperty);
+  }
+
+  public void addRangeFilter(String propertyName, String title, double min, double max,
+                             int majorTickCount, int interMajorTickCount, int numberOfFractionDigits,
+                             Function<Double, ? extends Number> valueTransform,
+                             DoubleProperty minProperty, DoubleProperty maxProperty) {
     RangeFilterController rangeFilterController = uiService.loadFxml("theme/vault/search/rangeFilter.fxml");
     rangeFilterController.setTitle(title);
     rangeFilterController.setPropertyName(propertyName);
@@ -317,26 +329,29 @@ public class SearchController extends NodeController<Pane> {
     rangeFilterController.setSnapToTicks(true);
     rangeFilterController.setNumberOfFractionDigits(numberOfFractionDigits);
     rangeFilterController.setValueTransform(valueTransform);
+    rangeFilterController.setPersistentRangeBindings(minProperty, maxProperty);
     rangeFilterController.bind();
     addFilterNode(rangeFilterController);
   }
 
-  public DateRangeFilterController addDateRangeFilter(String propertyName, String title, int initialYearsBefore) {
+  public DateRangeFilterController addDateRangeFilter(String propertyName, String title, int initialYearsBefore, ObjectProperty<LocalDate> beforeDate, ObjectProperty<LocalDate> afterDate) {
     DateRangeFilterController dateRangeFilterController = uiService.loadFxml("theme/vault/search/dateRangeFilter.fxml");
     dateRangeFilterController.setTitle(title);
     dateRangeFilterController.setPropertyName(propertyName);
     if (initialYearsBefore != 0) {
       dateRangeFilterController.setInitialYearsBefore(initialYearsBefore);
     }
+    dateRangeFilterController.setPersistentBindings(beforeDate, afterDate);
     addFilterNode(dateRangeFilterController);
     return dateRangeFilterController;
   }
 
-  public ToggleFilterController addToggleFilter(String propertyName, String title, String value) {
+  public ToggleFilterController addToggleFilter(String propertyName, String title, String value, BooleanProperty persistenceProperty) {
     ToggleFilterController toggleFilterController = uiService.loadFxml("theme/vault/search/toggleFilter.fxml");
     toggleFilterController.setTitle(title);
     toggleFilterController.setPropertyName(propertyName);
     toggleFilterController.setValue(value);
+    toggleFilterController.setPersistentProperty(persistenceProperty);
     addFilterNode(toggleFilterController);
     return toggleFilterController;
   }

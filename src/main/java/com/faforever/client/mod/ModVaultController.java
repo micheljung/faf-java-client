@@ -18,12 +18,17 @@ import com.faforever.client.ui.dialog.Dialog;
 import com.faforever.client.vault.VaultEntityCardController;
 import com.faforever.client.vault.VaultEntityController;
 import com.faforever.client.vault.search.SearchController.SearchConfig;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
@@ -147,15 +152,15 @@ public class ModVaultController extends VaultEntityController<ModVersion> {
     searchController.setVaultRoot(vaultRoot);
     searchController.setSavedQueries(vaultPrefs.getSavedModQueries());
 
-    searchController.addTextFilter("displayName", i18n.get("mod.displayName"), false);
-    searchController.addTextFilter("author", i18n.get("mod.author"), false);
-    searchController.addDateRangeFilter("latestVersion.updateTime", i18n.get("mod.uploadedDateTime"), 0);
-
-    searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"), 0, 5, 10, 4, 1);
+    searchController.addTextFilter("displayName", i18n.get("mod.displayName"), false, new SimpleStringProperty());
+    searchController.addTextFilter("author", i18n.get("mod.author"), false, new SimpleStringProperty());
+    searchController.addDateRangeFilter("latestVersion.updateTime", i18n.get("mod.uploadedDateTime"), 0, new SimpleObjectProperty<LocalDate>(), new SimpleObjectProperty<LocalDate>());
+    // TODO add persistence
+    searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"), 0, 5, 10, 4, 1, new SimpleDoubleProperty(), new SimpleDoubleProperty());
 
     searchController.addBinaryFilter("latestVersion.type", i18n.get("mod.type"),
         ModType.UI.toString(), ModType.SIM.toString(), i18n.get("modType.ui"), i18n.get("modType.sim"));
-    searchController.addToggleFilter("latestVersion.ranked", i18n.get("mod.onlyRanked"), "true");
+    searchController.addToggleFilter("latestVersion.ranked", i18n.get("mod.onlyRanked"), "true", new SimpleBooleanProperty());
   }
 
   @Override

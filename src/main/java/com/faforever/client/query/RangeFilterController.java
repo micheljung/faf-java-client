@@ -38,7 +38,9 @@ public class RangeFilterController extends FilterNodeController {
   public MenuButton menu;
   public TextField lowValue;
   public TextField highValue;
-
+  
+  private javafx.beans.property.DoubleProperty minProperty;
+  private javafx.beans.property.DoubleProperty maxProperty;
   private String propertyName;
   private Function<Double, ? extends Number> valueTransform;
   private int numberOfFractionDigits;
@@ -139,6 +141,13 @@ public class RangeFilterController extends FilterNodeController {
     numberFormat.setMinimumFractionDigits(0);
     numberFormat.setMaximumFractionDigits(numberOfFractionDigits);
     JavaFxUtil.bindTextFieldAndRangeSlider(lowValue, highValue, rangeSlider, numberFormat);
+    this.minProperty.bindBidirectional(rangeSlider.lowValueProperty());
+    this.maxProperty.bindBidirectional(rangeSlider.highValueProperty());
+  }
+
+  public void setPersistentRangeBindings(javafx.beans.property.DoubleProperty minProperty, javafx.beans.property.DoubleProperty maxProperty) {
+    this.minProperty = minProperty;
+    this.maxProperty = maxProperty;
   }
 
   @Override

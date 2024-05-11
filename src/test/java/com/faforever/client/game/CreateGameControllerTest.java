@@ -494,9 +494,9 @@ public class CreateGameControllerTest extends PlatformTest {
     ObjectProperty<Predicate<MapVersion>> predicate = mapFilterController.predicateProperty();
     mapList.add(Instancio.of(MapVersion.class).set(field(Map::displayName).within(scope(Map.class)), "Test1")
                          .create());
-
-    predicate.setValue((item) -> filter.apply("Not in Filtered Maps", item));
+                         
     runOnFxThreadAndWait(() -> {
+      predicate.setValue((item) -> filter.apply("Not in Filtered Maps", item));
       instance.mapSearchTextField.setText("Not in Filtered Maps");
     });
 

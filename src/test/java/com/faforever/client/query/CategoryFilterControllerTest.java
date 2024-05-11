@@ -6,7 +6,11 @@ import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import com.github.rutledgepaulv.qbuilders.visitors.RSQLVisitor;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.InvalidationListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.MenuButton;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -132,5 +136,30 @@ public class CategoryFilterControllerTest extends PlatformTest {
     assertEquals(result.get().getFirst().query(new RSQLVisitor()),
         property.in(instance.checkListView.getCheckModel().getCheckedItems().stream().map(itemMap::get).toArray()).query(new RSQLVisitor()));
     assertTrue(instance.menu.getStyleClass().contains("query-filter-selected"));
+  }
+
+  @Test
+  public void testPersistentPropertiesSetCheckedItems() {
+    ObservableList<String> checkedItems = FXCollections.observableArrayList();
+    checkedItems.add("2");
+    ObjectProperty<ObservableList<String>> property = new SimpleObjectProperty<ObservableList<String>>(checkedItems);
+    instance.setPersistenceProperty(property);
+    instance.setItems(itemMap);
+
+    assertFalse(instance.checkListView.getCheckModel().isChecked("1"));
+    assertTrue(instance.checkListView.getCheckModel().isChecked("2"));
+  }
+
+  @Test
+  public void testPersistentPropertyBindsToCheckedItems() {
+    ObjectProperty<ObservableList<String>> property = new SimpleObjectProperty<ObservableList<String>>(FXCollections.emptyObservableList());
+    instance.setPersistenceProperty(property);
+    instance.setItems(itemMap);
+    
+    instance.checkListView.getCheckModel().check("1");
+
+    ObservableList<String> expected = FXCollections.observableArrayList();
+    expected.add("1");
+    assertEquals(property.get(), expected);
   }
 }

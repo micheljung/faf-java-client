@@ -6,6 +6,7 @@ import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import com.github.rutledgepaulv.qbuilders.visitors.RSQLVisitor;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.layout.VBox;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,5 +82,30 @@ public class TextFilterControllerTest extends PlatformTest {
 
     assertTrue(result.isPresent());
     assertEquals(result.get().getFirst().query(new RSQLVisitor()), property.eq("*test*").query(new RSQLVisitor()));
+  }
+
+  @Test
+  public void testPersistentPropertyGetsText() {
+    javafx.beans.property.StringProperty property = new SimpleStringProperty();
+    instance.setPersistenceProperty(property);
+
+    instance.textField.setText("test");
+    assertEquals(property.get(), "test");
+
+    instance.clear();
+    assertTrue(property.get().isEmpty());
+  }
+
+  @Test
+  public void testPersistentPropertySetsText() {
+    javafx.beans.property.StringProperty property = new SimpleStringProperty();
+    instance.setPersistenceProperty(property);
+    instance.textField.setText("test");
+
+    property.setValue("test2");
+    assertEquals(instance.textField.getText(), "test2");
+
+    property.setValue("");
+    assertEquals(instance.textField.getText(), "");
   }
 }

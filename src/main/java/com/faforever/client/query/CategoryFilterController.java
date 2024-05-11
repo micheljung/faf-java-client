@@ -5,7 +5,9 @@ import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.binding.Bindings;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import lombok.Getter;
@@ -39,15 +41,24 @@ public class CategoryFilterController extends FilterNodeController {
   public MenuButton menu;
   private String propertyName;
   private Map<String, String> itemMap;
+  private ObjectProperty<ObservableList<String>> persistenceProperty;
 
   public void setItems(List<String> items) {
     itemMap = null;
     checkListView.getItems().setAll(items);
+    if (persistenceProperty != null) {
+      persistenceProperty.get().stream().forEach((item) -> checkListView.getCheckModel().check(item));
+      persistenceProperty.bind(Bindings.createObjectBinding(() -> checkListView.getCheckModel().getCheckedItems()));
+    }
   }
 
   public void setItems(Map<String, String> items) {
     itemMap = items;
     checkListView.getItems().setAll(items.keySet());
+    if (persistenceProperty != null) {
+      persistenceProperty.get().stream().forEach((item) -> checkListView.getCheckModel().check(item));
+      persistenceProperty.bind(Bindings.createObjectBinding(() -> checkListView.getCheckModel().getCheckedItems()));
+    }
   }
 
 
@@ -91,4 +102,7 @@ public class CategoryFilterController extends FilterNodeController {
     return menu;
   }
 
+  public void setPersistenceProperty(ObjectProperty<ObservableList<String>> property) {
+    this.persistenceProperty = property;
+  }
 }

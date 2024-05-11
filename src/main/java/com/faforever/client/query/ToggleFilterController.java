@@ -3,6 +3,7 @@ package com.faforever.client.query;
 import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.InvalidationListener;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -54,6 +55,10 @@ public class ToggleFilterController extends FilterNodeController {
   @Override
   public void setTitle(String title) {
     this.title.setText(title + ":");
+  }
+
+  public void setPersistentProperty(BooleanProperty property) {
+    this.checkBox.selectedProperty().bindBidirectional(property);
   }
 
   @Override

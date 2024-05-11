@@ -104,8 +104,8 @@ public class OnlineReplayVaultControllerTest extends PlatformTest {
     lenient().when(uiService.loadFxml("theme/vault/vault_entity_show_room.fxml"))
              .thenReturn(vaultEntityShowRoomController);
     lenient().when(i18n.get(anyString())).thenReturn("test");
-    lenient().when(searchController.addCategoryFilter(any(), any(), anyMap())).thenReturn(categoryFilterController);
-    lenient().when(searchController.addCategoryFilter(any(), any(), anyList())).thenReturn(categoryFilterController);
+    lenient().when(searchController.addCategoryFilter(any(), any(), anyMap(), any())).thenReturn(categoryFilterController);
+    lenient().when(searchController.addCategoryFilter(any(), any(), anyList(), any())).thenReturn(categoryFilterController);
 
     sortOrder = new VaultPrefs().getOnlineReplaySortConfig();
     standardSearchConfig = new SearchConfig(sortOrder, "query");

@@ -8,6 +8,7 @@ import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.InstantProperty;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.MenuButton;
@@ -104,6 +105,11 @@ public class DateRangeFilterController extends FilterNodeController {
   public void setInitialYearsBefore(int initialYearsBefore) {
     this.initialYearsBefore = initialYearsBefore;
     afterDate.setValue(LocalDate.now().minusYears(initialYearsBefore));
+  }
+
+  public void setPersistentBindings(ObjectProperty<LocalDate> beforeDate, ObjectProperty<LocalDate> afterDate) {
+    this.beforeDate.valueProperty().bindBidirectional(beforeDate);
+    this.afterDate.valueProperty().bindBidirectional(afterDate);
   }
 
   @Override

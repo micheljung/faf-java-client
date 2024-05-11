@@ -81,4 +81,7 @@ public class TextFilterController extends FilterNodeController {
     return textBox;
   }
 
+  public void setPersistenceProperty(javafx.beans.property.StringProperty property) {
+    this.textField.textProperty().bindBidirectional(property);
+  }
 }

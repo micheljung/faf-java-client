@@ -8,6 +8,8 @@ import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.InstantProperty;
 import com.github.rutledgepaulv.qbuilders.visitors.RSQLVisitor;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.MenuButton;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -148,5 +150,31 @@ public class DateRangeFilterControllerTest extends PlatformTest {
         new QBuilder<>().instant(propertyName).after(after.atStartOfDay().toInstant(ZoneOffset.UTC), false)
             .query(new RSQLVisitor()));
     assertTrue(instance.menu.getStyleClass().contains("query-filter-selected"));
+  }
+
+  @Test
+  public void testPersistentPropertiesGetsDates() {
+    ObjectProperty<LocalDate> persistentBeforeDate = new SimpleObjectProperty<LocalDate>();
+    ObjectProperty<LocalDate> persistentAfterDate = new SimpleObjectProperty<LocalDate>();
+    instance.setPersistentBindings(persistentBeforeDate, persistentAfterDate);
+    instance.setAfterDate(after);
+    instance.setBeforeDate(before);
+
+    assertEquals(persistentBeforeDate.get(), before);
+    assertEquals(persistentAfterDate.get(), after);
+  }
+
+  @Test
+  public void testPersistentPropertiesSetsDates() {
+    ObjectProperty<LocalDate> persistentBeforeDate = new SimpleObjectProperty<LocalDate>();
+    ObjectProperty<LocalDate> persistentAfterDate = new SimpleObjectProperty<LocalDate>();
+    instance.setPersistentBindings(persistentBeforeDate, persistentAfterDate);
+    instance.setAfterDate(after);
+    instance.setBeforeDate(before);
+    
+    persistentBeforeDate.setValue(LocalDate.now());
+    persistentAfterDate.setValue(LocalDate.now());
+    assertEquals(instance.beforeDate.getValue(), persistentBeforeDate.get());
+    assertEquals(instance.afterDate.getValue(), persistentAfterDate.get());
   }
 }

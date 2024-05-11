@@ -6,6 +6,7 @@ import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.DoubleProperty;
 import com.github.rutledgepaulv.qbuilders.visitors.RSQLVisitor;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.InvalidationListener;
 import javafx.scene.control.MenuButton;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,17 +39,22 @@ public class RangeFilterControllerTest extends PlatformTest {
   private I18n i18n;
   @Mock
   private InvalidationListener queryListener;
+  private javafx.beans.property.DoubleProperty lowerValue;
+  private javafx.beans.property.DoubleProperty higherValue;
 
   @BeforeEach
   public void setUp() throws Exception {
     loadFxml("theme/vault/search/rangeFilter.fxml", clazz -> instance);
 
+    lowerValue = new SimpleDoubleProperty();
+    higherValue = new SimpleDoubleProperty();
     instance.setPropertyName(propertyName);
     instance.setRange(min, max, 10, 0);
     instance.setIncrement(increment);
     instance.setSnapToTicks(true);
     instance.setTickUnit(increment);
     instance.setValueTransform((value) -> value);
+    instance.setPersistentRangeBindings(lowerValue, higherValue);
     instance.bind();
   }
 
@@ -161,11 +167,37 @@ public class RangeFilterControllerTest extends PlatformTest {
   }
 
   @Test
-  void testTicks() {
+  public void testTicks() {
     instance.setRange(-10.0, 90.0, 5, 1);
 
     assertEquals(20.0, instance.rangeSlider.getMajorTickUnit());
     assertEquals(1, instance.rangeSlider.getMinorTickCount());
     assertEquals(10.0, instance.rangeSlider.getBlockIncrement());
+  }
+
+  @Test
+  public void testPersistentPropertiesGetsValuesFromRangeFilter() {
+    instance.lowValue.setText("20");
+    instance.highValue.setText("80");
+
+    assertEquals(lowerValue.get(), 20, 0);
+    assertEquals(higherValue.get(), 80, 0);
+
+    instance.lowValue.setText("a");
+    instance.highValue.setText("a");
+
+    assertEquals(min, lowerValue.get(), 0);
+    assertEquals(max, higherValue.get(), 0);
+  }
+
+  @Test
+  public void testPersistentPropertiesSetsRangeFilter() {
+    instance.lowValue.setText("20");
+    instance.highValue.setText("80");
+    lowerValue.setValue(30);
+    higherValue.setValue(70);
+
+    assertEquals(instance.lowValue.getText(), "30");
+    assertEquals(instance.highValue.getText(), "70");
   }
 }

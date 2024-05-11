@@ -15,11 +15,13 @@ import com.faforever.client.notification.NotificationService;
 import com.faforever.client.preferences.VaultPrefs;
 import com.faforever.client.query.CategoryFilterController;
 import com.faforever.client.query.SearchablePropertyMappings;
+import com.faforever.client.query.TextFilterController;
 import com.faforever.client.reporting.ReportingService;
 import com.faforever.client.theme.UiService;
 import com.faforever.client.vault.VaultEntityController;
 import com.faforever.client.vault.search.SearchController.SearchConfig;
 import com.faforever.commons.api.dto.Game;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -131,14 +133,14 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
     searchController.setVaultRoot(vaultRoot);
     searchController.setSavedQueries(vaultPrefs.getSavedReplayQueries());
 
-    searchController.addTextFilter("playerStats.player.login", i18n.get("game.player.username"), true);
-    searchController.addTextFilter("mapVersion.map.displayName", i18n.get("game.map.displayName"), false);
-    searchController.addTextFilter("mapVersion.map.author.login", i18n.get("game.map.author"), false);
-    searchController.addTextFilter("name", i18n.get("game.title"), false);
-    searchController.addTextFilter("id", i18n.get("game.id"), true);
+    searchController.addTextFilter("playerStats.player.login", i18n.get("game.player.username"), true, vaultPrefs.playerNameFieldProperty());
+    searchController.addTextFilter("mapVersion.map.displayName", i18n.get("game.map.displayName"), false, vaultPrefs.mapNameFieldProperty());
+    searchController.addTextFilter("mapVersion.map.author.login", i18n.get("game.map.author"), false, vaultPrefs.mapAuthorFieldProperty());
+    searchController.addTextFilter("name", i18n.get("game.title"), false, vaultPrefs.titleFieldProperty());
+    searchController.addTextFilter("id", i18n.get("game.id"), true, vaultPrefs.replayIDFieldProperty());
 
     CategoryFilterController featuredModFilterController = searchController.addCategoryFilter("featuredMod.displayName",
-        i18n.get("featuredMod.displayName"), List.of());
+        i18n.get("featuredMod.displayName"), List.of(), vaultPrefs.featuredModFilterProperty());
 
     featuredModService.getFeaturedMods().map(FeaturedMod::displayName)
                       .collectList()
@@ -147,7 +149,7 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
 
     CategoryFilterController leaderboardFilterController = searchController.addCategoryFilter(
         "playerStats.ratingChanges.leaderboard.id",
-        i18n.get("leaderboard.displayName"), Map.of());
+        i18n.get("leaderboard.displayName"), Map.of(), vaultPrefs.leaderboardFilterProperty());
 
     leaderboardService.getLeaderboards()
                       .collect(Collectors.toMap(
@@ -158,13 +160,13 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
 
     //TODO: Use rating rather than estimated mean with an assumed deviation of 300 when that is available
     searchController.addRangeFilter("playerStats.ratingChanges.meanBefore", i18n.get("game.rating"),
-        MIN_RATING, MAX_RATING, 10, 4, 0, value -> value + 300);
+        MIN_RATING, MAX_RATING, 10, 4, 0, value -> value + 300, vaultPrefs.ratingMinProperty(), vaultPrefs.ratingMaxProperty());
 
-    searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"),0, 5, 10, 4, 1);
+    searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"),0, 5, 10, 4, 1, vaultPrefs.averageReviewScoresMinProperty(), vaultPrefs.averageReviewScoresMaxProperty());
 
-    searchController.addDateRangeFilter("endTime", i18n.get("game.date"), 1);
-    searchController.addRangeFilter("replayTicks", i18n.get("game.duration"), 0, 60, 12, 4, 0, value -> (int) (value * 60 * 10));
-    searchController.addToggleFilter("validity", i18n.get("game.onlyRanked"), "VALID");
+    searchController.addDateRangeFilter("endTime", i18n.get("game.date"), 1, vaultPrefs.gameBeforeDateProperty(), vaultPrefs.gameAfterDateProperty());
+    searchController.addRangeFilter("replayTicks", i18n.get("game.duration"), 0, 60, 12, 4, 0, value -> (int) (value * 60 * 10), vaultPrefs.gameDurationMinProperty(), vaultPrefs.gameDurationMaxProperty());
+    searchController.addToggleFilter("validity", i18n.get("game.onlyRanked"), "VALID", vaultPrefs.onlyRankedProperty());
 
   }
 
