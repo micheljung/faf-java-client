@@ -21,16 +21,15 @@ public class ReplaySearchPrefs {
   private final StringProperty mapAuthorField = new SimpleStringProperty("");
   private final StringProperty titleField = new SimpleStringProperty("");
   private final StringProperty replayIDField = new SimpleStringProperty("");
-  private final ObjectProperty<ObservableList<String>> featuredModFilter = new SimpleObjectProperty<ObservableList<String>>(
-    FXCollections.emptyObservableList());
-  private final ObjectProperty<ObservableList<String>> leaderboardFilter = new SimpleObjectProperty<ObservableList<String>>(
-    FXCollections.emptyObservableList());
+  private final ListProperty<String> featuredModFilter = new SimpleListProperty<>(
+    FXCollections.observableArrayList()
+  );
+  private final ListProperty<String> leaderboardFilter = new SimpleListProperty<>(
+    FXCollections.observableArrayList());
   private final DoubleProperty ratingMin = new SimpleDoubleProperty();
   private final DoubleProperty ratingMax = new SimpleDoubleProperty();
   private final DoubleProperty averageReviewScoresMin = new SimpleDoubleProperty();
   private final DoubleProperty averageReviewScoresMax = new SimpleDoubleProperty();
-  private final ObjectProperty<LocalDate> gameBeforeDate = new SimpleObjectProperty<LocalDate>();
-  private final ObjectProperty<LocalDate> gameAfterDate = new SimpleObjectProperty<LocalDate>();
   private final DoubleProperty gameDurationMin = new SimpleDoubleProperty();
   private final DoubleProperty gameDurationMax = new SimpleDoubleProperty();
   private final BooleanProperty onlyRanked = new SimpleBooleanProperty();
@@ -103,7 +102,7 @@ public class ReplaySearchPrefs {
     this.featuredModFilter.set(featuredModFilter);
   }
 
-  public ObjectProperty<ObservableList<String>> featuredModFilterProperty() {
+  public ListProperty<String> featuredModFilterProperty() {
     return featuredModFilter;
   }
 
@@ -115,7 +114,7 @@ public class ReplaySearchPrefs {
     this.leaderboardFilter.set(leaderboardFilter);
   }
 
-  public ObjectProperty<ObservableList<String>> leaderboardFilterProperty() {
+  public ListProperty<String> leaderboardFilterProperty() {
     return leaderboardFilter;
   }
 
@@ -165,30 +164,6 @@ public class ReplaySearchPrefs {
 
   public DoubleProperty averageReviewScoresMaxProperty() {
     return averageReviewScoresMax;
-  }
-
-  public LocalDate getGameBeforeDate() {
-    return gameBeforeDate.get();
-  }
-
-  public void setGameBeforeDate(LocalDate gameBeforeDate) {
-    this.gameBeforeDate.set(gameBeforeDate);
-  }
-
-  public ObjectProperty<LocalDate> gameBeforeDateProperty() {
-    return gameBeforeDate;
-  }
-
-  public LocalDate getGameAfterDate() {
-    return gameAfterDate.get();
-  }
-
-  public void setGameAfterDate(LocalDate gameAfterDate) {
-    this.gameAfterDate.set(gameAfterDate);
-  }
-
-  public ObjectProperty<LocalDate> gameAfterDateProperty() {
-    return gameAfterDate;
   }
 
   public Double getGameDurationMin() {

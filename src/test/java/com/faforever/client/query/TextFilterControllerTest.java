@@ -87,25 +87,12 @@ public class TextFilterControllerTest extends PlatformTest {
   @Test
   public void testPersistentPropertyGetsText() {
     javafx.beans.property.StringProperty property = new SimpleStringProperty();
-    property.bindBidirectional(instance.textFieldProperty());
+    property.bind(instance.textFieldProperty());
 
     instance.textField.setText("test");
     assertEquals(property.get(), "test");
 
     instance.clear();
     assertTrue(property.get().isEmpty());
-  }
-
-  @Test
-  public void testPersistentPropertySetsText() {
-    javafx.beans.property.StringProperty property = new SimpleStringProperty();
-    property.bindBidirectional(instance.textFieldProperty());
-    instance.textField.setText("test");
-
-    property.setValue("test2");
-    assertEquals(instance.textField.getText(), "test2");
-
-    property.setValue("");
-    assertEquals(instance.textField.getText(), "");
   }
 }

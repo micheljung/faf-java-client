@@ -94,7 +94,7 @@ public class CategoryFilterController extends FilterNodeController {
   }
 
   public void checkItem(String item) {
-    checkListView.getCheckModel().check(item);
+    checkListView.getItemBooleanProperty(item).setValue(true);
   }
 
   public ObservableList<String> getCheckedItems() {

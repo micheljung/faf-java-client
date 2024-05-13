@@ -107,14 +107,6 @@ public class DateRangeFilterController extends FilterNodeController {
     afterDate.setValue(LocalDate.now().minusYears(initialYearsBefore));
   }
 
-  public ObjectProperty<LocalDate> beforeDateProperty() {
-    return this.beforeDate.valueProperty();
-  }
-
-  public ObjectProperty<LocalDate> afterDateProperty() {
-    return this.afterDate.valueProperty();
-  }
-
   @Override
   public Node getRoot() {
     return menu;

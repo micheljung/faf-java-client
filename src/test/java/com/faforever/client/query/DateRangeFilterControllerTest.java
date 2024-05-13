@@ -151,32 +151,4 @@ public class DateRangeFilterControllerTest extends PlatformTest {
             .query(new RSQLVisitor()));
     assertTrue(instance.menu.getStyleClass().contains("query-filter-selected"));
   }
-
-  @Test
-  public void testPersistentPropertiesGetsDates() {
-    ObjectProperty<LocalDate> persistentBeforeDate = new SimpleObjectProperty<LocalDate>();
-    ObjectProperty<LocalDate> persistentAfterDate = new SimpleObjectProperty<LocalDate>();
-    persistentBeforeDate.bindBidirectional(instance.beforeDateProperty());
-    persistentAfterDate.bindBidirectional(instance.afterDateProperty());
-    instance.setAfterDate(after);
-    instance.setBeforeDate(before);
-
-    assertEquals(persistentBeforeDate.get(), before);
-    assertEquals(persistentAfterDate.get(), after);
-  }
-
-  @Test
-  public void testPersistentPropertiesSetsDates() {
-    ObjectProperty<LocalDate> persistentBeforeDate = new SimpleObjectProperty<LocalDate>();
-    ObjectProperty<LocalDate> persistentAfterDate = new SimpleObjectProperty<LocalDate>();
-    persistentBeforeDate.bindBidirectional(instance.beforeDateProperty());
-    persistentAfterDate.bindBidirectional(instance.afterDateProperty());
-    instance.setAfterDate(after);
-    instance.setBeforeDate(before);
-    
-    persistentBeforeDate.setValue(LocalDate.now());
-    persistentAfterDate.setValue(LocalDate.now());
-    assertEquals(instance.beforeDate.getValue(), persistentBeforeDate.get());
-    assertEquals(instance.afterDate.getValue(), persistentAfterDate.get());
-  }
 }

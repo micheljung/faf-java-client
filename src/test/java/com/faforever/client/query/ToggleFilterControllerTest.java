@@ -88,22 +88,12 @@ public class ToggleFilterControllerTest extends PlatformTest {
   @Test
   public void testPersistentPropertiesGetsValue() {
     BooleanProperty property = new SimpleBooleanProperty();
-    property.bindBidirectional(instance.selectedProperty());
+    property.bind(instance.selectedProperty());
 
     instance.checkBox.setSelected(true);
     assertTrue(property.get());
 
     instance.checkBox.setSelected(false);
     assertFalse(property.get());
-  }
-
-  @Test
-  public void testPersistentPropertySetValues() {
-    BooleanProperty property = new SimpleBooleanProperty();
-    property.bindBidirectional(instance.selectedProperty());
-    instance.checkBox.setSelected(false);
-
-    property.setValue(true);
-    assertTrue(instance.checkBox.isSelected());
   }
 }

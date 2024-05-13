@@ -78,6 +78,15 @@ public class CategoryFilterControllerTest extends PlatformTest {
     verify(queryListener).invalidated(any());
   }
 
+  @Test 
+  public void testListenerInvalidatesOnClear() throws Exception {
+    instance.checkListView.getItemBooleanProperty(0).setValue(true);
+    instance.addQueryListener(queryListener);
+    instance.clear();
+
+    verify(queryListener).invalidated(any());
+  }
+
   @Test
   public void testClear() throws Exception {
     instance.checkListView.getItems().forEach(item ->

@@ -24,8 +24,6 @@ public abstract class Controller<ROOT> {
   public final void initialize() {
     attached = createAttachedExpression();
     showing = createVisibleExpression().and(attached);
-    onInitialize();
-
     attached.subscribe(isAttached -> {
       if (isAttached) {
         onAttached();
@@ -44,6 +42,8 @@ public abstract class Controller<ROOT> {
         onHide();
       }
     });
+
+    onInitialize();
   }
 
   protected void addShownSubscription(Subscription subscription) {

@@ -11,7 +11,6 @@ import com.faforever.client.preferences.VaultPrefs;
 import com.faforever.client.preferences.ReplaySearchPrefs;
 import com.faforever.client.query.TextFilterController;
 import com.faforever.client.query.RangeFilterController;
-import com.faforever.client.query.DateRangeFilterController;
 import com.faforever.client.query.ToggleFilterController;
 import com.faforever.client.query.CategoryFilterController;
 import com.faforever.client.query.LogicalNodeController;
@@ -94,8 +93,6 @@ public class OnlineReplayVaultControllerTest extends PlatformTest {
   @Mock
   private RangeFilterController rangeFilterController;
   @Mock
-  private DateRangeFilterController dateRangeFilterController;
-  @Mock
   private ToggleFilterController toggleFilterController;
   @Mock
   private VaultEntityShowRoomController vaultEntityShowRoomController;
@@ -134,9 +131,6 @@ public class OnlineReplayVaultControllerTest extends PlatformTest {
     lenient().when(searchController.addRangeFilter(anyString(), anyString(), anyDouble(), anyDouble(), anyInt(), anyInt(), anyInt(), any())).thenReturn(rangeFilterController);
     lenient().when(rangeFilterController.lowValueProperty()).thenReturn(new SimpleDoubleProperty());
     lenient().when(rangeFilterController.highValueProperty()).thenReturn(new SimpleDoubleProperty());
-    lenient().when(searchController.addDateRangeFilter(anyString(), anyString(), anyInt())).thenReturn(dateRangeFilterController);
-    lenient().when(dateRangeFilterController.beforeDateProperty()).thenReturn(new SimpleObjectProperty<LocalDate>());
-    lenient().when(dateRangeFilterController.afterDateProperty()).thenReturn(new SimpleObjectProperty<LocalDate>());
     lenient().when(searchController.addToggleFilter(anyString(), anyString(), anyString())).thenReturn(toggleFilterController);
     lenient().when(toggleFilterController.selectedProperty()).thenReturn(new SimpleBooleanProperty());
 

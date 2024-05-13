@@ -174,8 +174,8 @@ public class RangeFilterControllerTest extends PlatformTest {
   public void testPersistentPropertiesGetsValuesFromRangeFilter() {
     javafx.beans.property.DoubleProperty lowerValue = new SimpleDoubleProperty();
     javafx.beans.property.DoubleProperty higherValue = new SimpleDoubleProperty();
-    lowerValue.bindBidirectional(instance.lowValueProperty());
-    higherValue.bindBidirectional(instance.highValueProperty());
+    lowerValue.bind(instance.lowValueProperty());
+    higherValue.bind(instance.highValueProperty());
     instance.lowValue.setText("20");
     instance.highValue.setText("80");
 
@@ -187,20 +187,5 @@ public class RangeFilterControllerTest extends PlatformTest {
 
     assertEquals(min, lowerValue.get(), 0);
     assertEquals(max, higherValue.get(), 0);
-  }
-
-  @Test
-  public void testPersistentPropertiesSetsRangeFilter() {
-    javafx.beans.property.DoubleProperty lowerValue = new SimpleDoubleProperty();
-    javafx.beans.property.DoubleProperty higherValue = new SimpleDoubleProperty();
-    lowerValue.bindBidirectional(instance.lowValueProperty());
-    higherValue.bindBidirectional(instance.highValueProperty());
-    instance.lowValue.setText("20");
-    instance.highValue.setText("80");
-    lowerValue.setValue(30);
-    higherValue.setValue(70);
-
-    assertEquals(instance.lowValue.getText(), "30");
-    assertEquals(instance.highValue.getText(), "70");
   }
 }

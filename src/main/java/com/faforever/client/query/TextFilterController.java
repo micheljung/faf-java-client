@@ -84,4 +84,8 @@ public class TextFilterController extends FilterNodeController {
   public javafx.beans.property.StringProperty textFieldProperty() {
     return textField.textProperty();
   }
+
+  public void setText(String text) {
+    textField.setText(text);
+  }
 }

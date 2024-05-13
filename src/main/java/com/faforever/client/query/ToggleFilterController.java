@@ -61,6 +61,10 @@ public class ToggleFilterController extends FilterNodeController {
     return this.checkBox.selectedProperty();
   }
 
+  public void setSelected(boolean isSelected) {
+    checkBox.setSelected(isSelected);
+  }
+
   @Override
   public Node getRoot() {
     return toggleFilter;

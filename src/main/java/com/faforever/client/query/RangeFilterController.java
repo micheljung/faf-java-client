@@ -149,6 +149,14 @@ public class RangeFilterController extends FilterNodeController {
     return rangeSlider.highValueProperty();
   }
 
+  public void setLowValue(double lowValue) {
+    rangeSlider.setLowValue(lowValue);
+  }
+
+  public void setHighValue(double highValue) {
+    rangeSlider.setHighValue(highValue);
+  }
+
   @Override
   public Node getRoot() {
     return menu;
