@@ -35,6 +35,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.List;
 import java.util.Map;
@@ -50,6 +52,8 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
 
   private static final int TOP_ELEMENT_COUNT = 6;
 
+  private ObservableList<String> initialFeaturedModFilterCheckedItems;
+  private ObservableList<String> initialLeaderboardFilterCheckedItems;
   private final FeaturedModService featuredModService;
   private final LeaderboardService leaderboardService;
   private final ReplayService replayService;
@@ -74,6 +78,9 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
   protected void onInitialize() {
     super.onInitialize();
     uploadButton.setVisible(false);
+    ReplaySearchPrefs replaySearchPrefs = vaultPrefs.getReplaySearch();
+    initialFeaturedModFilterCheckedItems = FXCollections.observableArrayList(replaySearchPrefs.getFeaturedModFilter());
+    initialLeaderboardFilterCheckedItems = FXCollections.observableArrayList(replaySearchPrefs.getLeaderboardFilter());
   }
 
   @Override
@@ -165,8 +172,12 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
                       .publishOn(fxApplicationThreadExecutor.asScheduler())
                       .subscribe((mods) -> {
                         featuredModFilterController.setItems(mods);
-                        replaySearchPrefs.featuredModFilterProperty().forEach((item) -> featuredModFilterController.checkItem(item));
-                        Bindings.bindContent(replaySearchPrefs.featuredModFilterProperty(), featuredModFilterController.getCheckedItems());
+                        if (initialFeaturedModFilterCheckedItems != null) {
+                          initialFeaturedModFilterCheckedItems.forEach((item) -> featuredModFilterController.checkItem(item));
+                          initialFeaturedModFilterCheckedItems = null;
+                        } else {
+                          replaySearchPrefs.featuredModFilterProperty().forEach((item) -> featuredModFilterController.checkItem(item));
+                        }
                       });
 
     leaderboardFilterController = searchController.addCategoryFilter(
@@ -180,8 +191,12 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
                       .publishOn(fxApplicationThreadExecutor.asScheduler())
                       .subscribe((leaderboards) -> {
                         leaderboardFilterController.setItems(leaderboards);
-                        replaySearchPrefs.leaderboardFilterProperty().forEach((item) -> leaderboardFilterController.checkItem(item));
-                        Bindings.bindContent(replaySearchPrefs.leaderboardFilterProperty(), leaderboardFilterController.getCheckedItems());
+                        if (initialLeaderboardFilterCheckedItems != null) {
+                          initialLeaderboardFilterCheckedItems.forEach((item) -> leaderboardFilterController.checkItem(item));
+                          initialLeaderboardFilterCheckedItems = null;
+                        } else {
+                          replaySearchPrefs.leaderboardFilterProperty().forEach((item) -> leaderboardFilterController.checkItem(item));
+                        }
                       });
 
     //TODO: Use rating rather than estimated mean with an assumed deviation of 300 when that is available
@@ -268,7 +283,9 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
   public void onShow() {
     super.onShow();
     ReplaySearchPrefs replaySearchPrefs = vaultPrefs.getReplaySearch();
+    Bindings.bindContent(replaySearchPrefs.featuredModFilterProperty(), featuredModFilterController.getCheckedItems());
     addShownSubscription(() -> Bindings.unbindContent(replaySearchPrefs.featuredModFilterProperty(), featuredModFilterController.getCheckedItems()));
+    Bindings.bindContent(replaySearchPrefs.leaderboardFilterProperty(), leaderboardFilterController.getCheckedItems());
     addShownSubscription(() -> Bindings.unbindContent(replaySearchPrefs.leaderboardFilterProperty(), leaderboardFilterController.getCheckedItems()));
   }
 }
