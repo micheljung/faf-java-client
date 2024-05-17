@@ -112,10 +112,11 @@ public class IceAdapterImplTest extends ServiceTest {
   public void testBuildCommand() throws Exception {
     Path javaExecutablePath = Path.of("some", "path", "java");
 
+    clientProperties.getApi().setBaseUrl("http://faf-api");
+
     when(operatingSystem.getJavaExecutablePath()).thenReturn(javaExecutablePath);
     PlayerInfo currentPlayer = PlayerInfoBuilder.create().defaultValues().get();
     when(playerService.getCurrentPlayer()).thenReturn(currentPlayer);
-    when(clientProperties.getApi().getBaseUrl()).thenReturn("http://faf-api");
     when(tokenRetriever.getRefreshedTokenValue()).thenReturn(Mono.just("someToken"));
     forgedAlliancePrefs.setShowIceAdapterDebugWindow(true);
 
@@ -149,12 +150,13 @@ public class IceAdapterImplTest extends ServiceTest {
   public void testAllowIpv6() throws Exception {
     Path javaExecutablePath = Path.of("some", "path", "java");
 
+    clientProperties.getApi().setBaseUrl("http://faf-api");
+
     when(operatingSystem.getJavaExecutablePath()).thenReturn(javaExecutablePath);
     forgedAlliancePrefs.setAllowIpv6(true);
     forgedAlliancePrefs.setShowIceAdapterDebugWindow(true);
     PlayerInfo currentPlayer = PlayerInfoBuilder.create().defaultValues().get();
     when(playerService.getCurrentPlayer()).thenReturn(currentPlayer);
-    when(clientProperties.getApi().getBaseUrl()).thenReturn("http://faf-api");
     when(tokenRetriever.getRefreshedTokenValue()).thenReturn(Mono.just("someToken"));
 
     List<String> command = instance.buildCommand(Path.of("."), 0, 0, 4711);
