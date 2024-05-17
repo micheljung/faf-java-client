@@ -22,7 +22,6 @@ import com.faforever.commons.lobby.MessageTarget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -50,7 +49,7 @@ public class IceAdapterImplTest extends ServiceTest {
   private IceAdapterImpl instance;
   @Spy
   private OperatingSystem operatingSystem = new OsPosix();
-  @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+  @Spy
   private ClientProperties clientProperties;
   @Mock
   private PlayerService playerService;
