@@ -283,9 +283,13 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
   public void onShow() {
     super.onShow();
     ReplaySearchPrefs replaySearchPrefs = vaultPrefs.getReplaySearch();
-    Bindings.bindContent(replaySearchPrefs.featuredModFilterProperty(), featuredModFilterController.getCheckedItems());
-    addShownSubscription(() -> Bindings.unbindContent(replaySearchPrefs.featuredModFilterProperty(), featuredModFilterController.getCheckedItems()));
-    Bindings.bindContent(replaySearchPrefs.leaderboardFilterProperty(), leaderboardFilterController.getCheckedItems());
-    addShownSubscription(() -> Bindings.unbindContent(replaySearchPrefs.leaderboardFilterProperty(), leaderboardFilterController.getCheckedItems()));
+    if (featuredModFilterController != null) {
+      Bindings.bindContent(replaySearchPrefs.featuredModFilterProperty(), featuredModFilterController.getCheckedItems());
+      addShownSubscription(() -> Bindings.unbindContent(replaySearchPrefs.featuredModFilterProperty(), featuredModFilterController.getCheckedItems()));
+    }
+    if (leaderboardFilterController != null) {
+      Bindings.bindContent(replaySearchPrefs.leaderboardFilterProperty(), leaderboardFilterController.getCheckedItems());
+      addShownSubscription(() -> Bindings.unbindContent(replaySearchPrefs.leaderboardFilterProperty(), leaderboardFilterController.getCheckedItems()));
+    }
   }
 }
