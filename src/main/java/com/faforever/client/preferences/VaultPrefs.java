@@ -2,13 +2,13 @@ package com.faforever.client.preferences;
 
 import com.faforever.client.vault.search.SearchController.SortConfig;
 import com.faforever.client.vault.search.SearchController.SortOrder;
+import com.fasterxml.jackson.annotation.JsonMerge;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-import com.fasterxml.jackson.annotation.JsonMerge;
 import lombok.Getter;
 
 public class VaultPrefs {

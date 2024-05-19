@@ -7,14 +7,14 @@ import com.faforever.client.leaderboard.LeaderboardService;
 import com.faforever.client.main.event.OpenOnlineReplayVaultEvent;
 import com.faforever.client.main.event.ShowReplayEvent;
 import com.faforever.client.notification.NotificationService;
-import com.faforever.client.preferences.VaultPrefs;
 import com.faforever.client.preferences.ReplaySearchPrefs;
-import com.faforever.client.query.TextFilterController;
-import com.faforever.client.query.RangeFilterController;
-import com.faforever.client.query.ToggleFilterController;
+import com.faforever.client.preferences.VaultPrefs;
 import com.faforever.client.query.CategoryFilterController;
 import com.faforever.client.query.LogicalNodeController;
+import com.faforever.client.query.RangeFilterController;
 import com.faforever.client.query.SpecificationController;
+import com.faforever.client.query.TextFilterController;
+import com.faforever.client.query.ToggleFilterController;
 import com.faforever.client.reporting.ReportingService;
 import com.faforever.client.test.PlatformTest;
 import com.faforever.client.theme.UiService;
@@ -23,11 +23,11 @@ import com.faforever.client.vault.VaultEntityShowRoomController;
 import com.faforever.client.vault.search.SearchController;
 import com.faforever.client.vault.search.SearchController.SearchConfig;
 import com.faforever.client.vault.search.SearchController.SortConfig;
-import javafx.scene.layout.Pane;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.layout.Pane;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,16 +45,14 @@ import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
 
 public class OnlineReplayVaultControllerTest extends PlatformTest {
 
@@ -125,6 +123,7 @@ public class OnlineReplayVaultControllerTest extends PlatformTest {
     lenient().when(i18n.get(anyString())).thenReturn("test");
     lenient().when(searchController.addCategoryFilter(any(), any(), anyMap())).thenReturn(categoryFilterController);
     lenient().when(searchController.addCategoryFilter(any(), any(), anyList())).thenReturn(categoryFilterController);
+    lenient().when(categoryFilterController.getCheckedItems()).thenReturn(new SimpleListProperty<String>());
     lenient().when(searchController.addTextFilter(anyString(), anyString(), anyBoolean())).thenReturn(textFilterController);
     lenient().when(textFilterController.textFieldProperty()).thenReturn(new SimpleStringProperty());
     lenient().when(searchController.addRangeFilter(anyString(), anyString(), anyDouble(), anyDouble(), anyInt(), anyInt(), anyInt())).thenReturn(rangeFilterController);
