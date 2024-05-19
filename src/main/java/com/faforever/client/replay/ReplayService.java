@@ -287,7 +287,7 @@ public class ReplayService {
     List<ChatMessage> chatMessages = replayDataParser.getChatMessages().stream().map(replayMapper::map).toList();
     List<GameOption> gameOptions = Stream.concat(
         Stream.of(new GameOption("FAF Version", String.valueOf(parseSupComVersion(replayDataParser)))),
-        replayDataParser.getGameOptions().stream().map(replayMapper::map)).toList();
+        replayDataParser.getGameOptions().stream().map(replayMapper::map).sorted(Comparator.comparing(GameOption::key, String.CASE_INSENSITIVE_ORDER))).toList();
 
     String mapFolderName = parseMapFolderName(replayDataParser);
     Map map = new Map(null, mapFolderName, 0, null, false, null, null);
