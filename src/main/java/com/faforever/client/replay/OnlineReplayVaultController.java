@@ -12,29 +12,31 @@ import com.faforever.client.main.event.OpenOnlineReplayVaultEvent;
 import com.faforever.client.main.event.ShowReplayEvent;
 import com.faforever.client.main.event.ShowUserReplaysEvent;
 import com.faforever.client.notification.NotificationService;
-import com.faforever.client.preferences.ReplaySearchPrefs;
 import com.faforever.client.preferences.VaultPrefs;
+import com.faforever.client.preferences.ReplaySearchPrefs;
 import com.faforever.client.query.CategoryFilterController;
-import com.faforever.client.query.RangeFilterController;
 import com.faforever.client.query.SearchablePropertyMappings;
 import com.faforever.client.query.TextFilterController;
+import com.faforever.client.query.RangeFilterController;
+import com.faforever.client.query.DateRangeFilterController;
 import com.faforever.client.query.ToggleFilterController;
 import com.faforever.client.reporting.ReportingService;
 import com.faforever.client.theme.UiService;
 import com.faforever.client.vault.VaultEntityController;
 import com.faforever.client.vault.search.SearchController.SearchConfig;
 import com.faforever.commons.api.dto.Game;
-import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.List;
 import java.util.Map;
@@ -202,22 +204,22 @@ public class OnlineReplayVaultController extends VaultEntityController<Replay> {
         MIN_RATING, MAX_RATING, 10, 4, 0, value -> value + 300);
     rangeFilterController.setLowValue(replaySearchPrefs.getRatingMin());
     rangeFilterController.setHighValue(replaySearchPrefs.getRatingMax());
-    replaySearchPrefs.ratingMinProperty().bind(rangeFilterController.lowValueProperty().when(showing));
-    replaySearchPrefs.ratingMaxProperty().bind(rangeFilterController.highValueProperty().when(showing));
+    replaySearchPrefs.ratingMinProperty().bind(rangeFilterController.lowValueProperty().asObject().when(showing));
+    replaySearchPrefs.ratingMaxProperty().bind(rangeFilterController.highValueProperty().asObject().when(showing));
 
     rangeFilterController = searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"),0, 5, 10, 4, 1);
     rangeFilterController.setLowValue(replaySearchPrefs.getAverageReviewScoresMin());
     rangeFilterController.setHighValue(replaySearchPrefs.getAverageReviewScoresMax());
-    replaySearchPrefs.averageReviewScoresMinProperty().bind(rangeFilterController.lowValueProperty().when(showing));
-    replaySearchPrefs.averageReviewScoresMaxProperty().bind(rangeFilterController.highValueProperty().when(showing));
+    replaySearchPrefs.averageReviewScoresMinProperty().bind(rangeFilterController.lowValueProperty().asObject().when(showing));
+    replaySearchPrefs.averageReviewScoresMaxProperty().bind(rangeFilterController.highValueProperty().asObject().when(showing));
 
     searchController.addDateRangeFilter("endTime", i18n.get("game.date"), 1);
 
     rangeFilterController = searchController.addRangeFilter("replayTicks", i18n.get("game.duration"), 0, 60, 12, 4, 0, value -> (int) (value * 60 * 10));
     rangeFilterController.setLowValue(replaySearchPrefs.getGameDurationMin());
     rangeFilterController.setHighValue(replaySearchPrefs.getGameDurationMax());
-    replaySearchPrefs.gameDurationMinProperty().bind(rangeFilterController.lowValueProperty().when(showing));
-    replaySearchPrefs.gameDurationMaxProperty().bind(rangeFilterController.highValueProperty().when(showing));
+    replaySearchPrefs.gameDurationMinProperty().bind(rangeFilterController.lowValueProperty().asObject().when(showing));
+    replaySearchPrefs.gameDurationMaxProperty().bind(rangeFilterController.highValueProperty().asObject().when(showing));
 
     ToggleFilterController toggleFilterController = searchController.addToggleFilter("validity", i18n.get("game.onlyRanked"), "VALID");
     toggleFilterController.setSelected(replaySearchPrefs.getOnlyRanked());

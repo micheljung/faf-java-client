@@ -149,12 +149,16 @@ public class RangeFilterController extends FilterNodeController {
     return rangeSlider.highValueProperty();
   }
 
-  public void setLowValue(double lowValue) {
-    rangeSlider.setLowValue(lowValue);
+  public void setLowValue(Double lowValue) {
+    if (lowValue != null) {
+      rangeSlider.setLowValue(lowValue);
+    }
   }
 
-  public void setHighValue(double highValue) {
-    rangeSlider.setHighValue(highValue);
+  public void setHighValue(Double highValue) {
+    if (highValue != null) {
+      rangeSlider.setHighValue(highValue);
+    }
   }
 
   @Override

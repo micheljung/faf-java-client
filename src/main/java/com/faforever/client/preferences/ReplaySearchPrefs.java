@@ -1,11 +1,11 @@
 package com.faforever.client.preferences;
 
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -22,12 +22,12 @@ public class ReplaySearchPrefs {
   );
   private final ListProperty<String> leaderboardFilter = new SimpleListProperty<>(
     FXCollections.observableArrayList());
-  private final DoubleProperty ratingMin = new SimpleDoubleProperty();
-  private final DoubleProperty ratingMax = new SimpleDoubleProperty();
-  private final DoubleProperty averageReviewScoresMin = new SimpleDoubleProperty();
-  private final DoubleProperty averageReviewScoresMax = new SimpleDoubleProperty();
-  private final DoubleProperty gameDurationMin = new SimpleDoubleProperty();
-  private final DoubleProperty gameDurationMax = new SimpleDoubleProperty();
+  private final ObjectProperty<Double> ratingMin = new SimpleObjectProperty<Double>();
+  private final ObjectProperty<Double> ratingMax = new SimpleObjectProperty<Double>();
+  private final ObjectProperty<Double> averageReviewScoresMin = new SimpleObjectProperty<Double>();
+  private final ObjectProperty<Double> averageReviewScoresMax = new SimpleObjectProperty<Double>();
+  private final ObjectProperty<Double> gameDurationMin = new SimpleObjectProperty<Double>();
+  private final ObjectProperty<Double> gameDurationMax = new SimpleObjectProperty<Double>();
   private final BooleanProperty onlyRanked = new SimpleBooleanProperty();
 
   public String getPlayerNameField() {
@@ -122,7 +122,7 @@ public class ReplaySearchPrefs {
     this.ratingMin.set(ratingMin);
   }
 
-  public DoubleProperty ratingMinProperty() {
+  public ObjectProperty<Double> ratingMinProperty() {
     return ratingMin;
   }
 
@@ -134,7 +134,7 @@ public class ReplaySearchPrefs {
     this.ratingMax.set(ratingMax);
   }
 
-  public DoubleProperty ratingMaxProperty() {
+  public ObjectProperty<Double> ratingMaxProperty() {
     return ratingMax;
   }
 
@@ -146,7 +146,7 @@ public class ReplaySearchPrefs {
     this.averageReviewScoresMin.set(averageReviewScoresMin);
   }
 
-  public DoubleProperty averageReviewScoresMinProperty() {
+  public ObjectProperty<Double> averageReviewScoresMinProperty() {
     return averageReviewScoresMin;
   }
 
@@ -158,7 +158,7 @@ public class ReplaySearchPrefs {
     this.averageReviewScoresMax.set(averageReviewScoresMax);
   }
 
-  public DoubleProperty averageReviewScoresMaxProperty() {
+  public ObjectProperty<Double> averageReviewScoresMaxProperty() {
     return averageReviewScoresMax;
   }
 
@@ -170,7 +170,7 @@ public class ReplaySearchPrefs {
     this.gameDurationMin.set(gameDurationMin);
   }
 
-  public DoubleProperty gameDurationMinProperty() {
+  public ObjectProperty<Double> gameDurationMinProperty() {
     return gameDurationMin;
   }
 
@@ -182,7 +182,7 @@ public class ReplaySearchPrefs {
     this.gameDurationMax.set(gameDurationMax);
   }
 
-  public DoubleProperty gameDurationMaxProperty() {
+  public ObjectProperty<Double> gameDurationMaxProperty() {
     return gameDurationMax;
   }
 
