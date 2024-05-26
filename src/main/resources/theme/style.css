@@ -824,10 +824,11 @@
   -fx-font-family: 'Source Sans Pro';
 }
 
-.season {
-  -fx-text-fill: #e0e0e0;
-  -fx-font-family: 'Source Sans Pro Semibold';
+.season-selector {
+  -fx-border-width: 0;
   -fx-font-size: 30px;
+  -fx-background-color: #1e1e1ebb;
+  -fx-font-family: 'Source Sans Pro Semibold';
 }
 
 .seasonDate {

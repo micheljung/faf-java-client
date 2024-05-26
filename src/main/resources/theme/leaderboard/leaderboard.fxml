@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.layout.HBox?>
@@ -14,7 +15,7 @@
                 <children>
                     <VBox prefWidth="600">
                         <children>
-                            <Label fx:id="seasonLabel" styleClass="season"/>
+                            <ComboBox fx:id="seasonPicker" styleClass="season-selector" minWidth="225.0"/>
                             <Label fx:id="seasonDateLabel" styleClass="seasonDate">
                                 <padding>
                                     <Insets bottom="20.0"/>

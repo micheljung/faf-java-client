@@ -95,9 +95,10 @@ public class LeaderboardsController extends NodeController<Node> {
 
   private void setLeague(League league) {
     navigationHandler.setLastLeagueTab(league);
-    leaderboardService.getLatestSeason(league)
+    leaderboardService.getSeasons(league)
+                      .collectList()
                       .publishOn(fxApplicationThreadExecutor.asScheduler())
-                      .subscribe(leaderboardController::setLeagueSeason, throwable -> {
+                      .subscribe(leaderboardController::setLeagueSeasons, throwable -> {
                         log.error("Error while loading seasons", throwable);
                         notificationService.addImmediateErrorNotification(throwable,
                                                                           "leaderboard.failedToLoadLeaderboards");

@@ -102,26 +102,19 @@ public class LeaderboardService {
   }
 
   @Cacheable(value = CacheNames.LEAGUE, sync = true)
-  public Mono<LeagueSeason> getLatestSeason(League league) {
+  public Flux<LeagueSeason> getSeasons(League league) {
     ElideNavigatorOnCollection<com.faforever.commons.api.dto.LeagueSeason> navigator = ElideNavigator.of(
                                                                                                          com.faforever.commons.api.dto.LeagueSeason.class)
                                                                                                      .collection()
                                                                                                      .setFilter(
                                                                                                          qBuilder().intNum(
                                                                                                                        "league.id")
-                                                                                                                   .eq(league.id())
-                                                                                                                   .and()
-                                                                                                                   .instant(
-                                                                                                                       "startDate")
-                                                                                                                   .before(
-                                                                                                                       OffsetDateTime.now()
-                                                                                                                                     .toInstant(),
-                                                                                                                       false))
+                                                                                                                   .eq(league.id()))
                                                                                                      .addSortingRule(
                                                                                                          "startDate",
                                                                                                          false);
-    return fafApiAccessor.getMany(navigator)
-                         .next().map(leaderboardMapper::map);
+    return fafApiAccessor.getMany(navigator).map(leaderboardMapper::map)
+                         .cache();
   }
 
   @Cacheable(value = CacheNames.LEAGUE_ENTRIES, sync = true)

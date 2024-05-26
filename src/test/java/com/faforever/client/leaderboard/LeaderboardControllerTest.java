@@ -127,7 +127,7 @@ public class LeaderboardControllerTest extends PlatformTest {
 
   @Test
   public void testSetSeason() {
-    runOnFxThreadAndWait(() -> instance.setLeagueSeason(season));
+    runOnFxThreadAndWait(() -> instance.setLeagueSeasons(List.of(season)));
 
     assertEquals("SEASONNAME 1", instance.seasonLabel.getText());
     verifyNoInteractions(notificationService);
@@ -146,7 +146,7 @@ public class LeaderboardControllerTest extends PlatformTest {
     when(leaderboardService.getActiveEntries(season)).thenReturn(Flux.error(new FakeTestException()));
     when(leaderboardService.getLeagueEntryForPlayer(player, season)).thenReturn(Mono.error(new FakeTestException()));
 
-    runOnFxThreadAndWait(() -> instance.setLeagueSeason(season));
+    runOnFxThreadAndWait(() -> instance.setLeagueSeasons(List.of(season)));
 
     verify(notificationService).addImmediateErrorNotification(any(), eq("leaderboard.failedToLoadEntry"));
     verify(notificationService).addImmediateErrorNotification(any(), eq("leaderboard.failedToLoadEntries"));

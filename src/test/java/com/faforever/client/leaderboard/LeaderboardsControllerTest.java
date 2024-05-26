@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -54,7 +53,7 @@ public class LeaderboardsControllerTest extends PlatformTest {
   @BeforeEach
   public void setUp() throws Exception {
     when(leaderboardService.getLeagues()).thenReturn(Flux.just(Instancio.create(League.class)));
-    when(leaderboardService.getLatestSeason(any())).thenReturn(Mono.just(Instancio.create(LeagueSeason.class)));
+    when(leaderboardService.getSeasons(any())).thenReturn(Flux.just(Instancio.create(LeagueSeason.class)));
     when(i18n.getOrDefault(anyString(), anyString())).thenReturn("league");
 
     loadFxml("theme/leaderboard/leaderboards.fxml", clazz -> {
@@ -101,7 +100,7 @@ public class LeaderboardsControllerTest extends PlatformTest {
 
   @Test
   public void testInitializeWithSeasonError() {
-    when(leaderboardService.getLatestSeason(any())).thenReturn(Mono.error(new FakeTestException()));
+    when(leaderboardService.getSeasons(any())).thenReturn(Flux.error(new FakeTestException()));
 
     reinitialize(instance);
 
