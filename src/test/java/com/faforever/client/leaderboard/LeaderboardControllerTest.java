@@ -129,7 +129,7 @@ public class LeaderboardControllerTest extends PlatformTest {
   public void testSetSeason() {
     runOnFxThreadAndWait(() -> instance.setLeagueSeasons(List.of(season)));
 
-    assertEquals("SEASONNAME 1", instance.seasonLabel.getText());
+    assertEquals(season, instance.seasonPicker.getSelectionModel().getSelectedItem());
     verifyNoInteractions(notificationService);
 
     assertEquals(season, leagueSeasonProperty.get());
