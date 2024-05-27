@@ -15,7 +15,7 @@
                 <children>
                     <VBox prefWidth="600">
                         <children>
-                            <ComboBox fx:id="seasonPicker" styleClass="season-selector" minWidth="225.0"/>
+                            <ComboBox fx:id="seasonPicker" styleClass="season-selector"/>
                             <Label fx:id="seasonDateLabel" styleClass="seasonDate">
                                 <padding>
                                     <Insets bottom="20.0"/>

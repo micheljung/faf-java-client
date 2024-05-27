@@ -13,7 +13,6 @@ import com.faforever.client.player.PlayerService;
 import com.faforever.client.util.TimeService;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -52,8 +51,8 @@ public class LeaderboardController extends NodeController<StackPane> {
   public LeaderboardPlayerDetailsController leaderboardPlayerDetailsController;
   public LeaderboardDistributionController leaderboardDistributionController;
 
-  private ObservableValue<LeagueSeason> leagueSeason = new SimpleObjectProperty<>();
-  private final ObjectProperty<List<LeagueSeason>> leagueSeasons = new SimpleObjectProperty<>();
+  private final ObjectProperty<LeagueSeason> leagueSeason = new SimpleObjectProperty<>();
+  private final ObjectProperty<List<LeagueSeason>> leagueSeasons = new SimpleObjectProperty<>(List.of());
 
   @Override
   protected void onInitialize() {
@@ -61,13 +60,13 @@ public class LeaderboardController extends NodeController<StackPane> {
     connectionProgressPane.visibleProperty().bind(contentPane.visibleProperty().not());
 
     seasonPicker.setConverter(new ToStringOnlyConverter<>(
-        seasonBean -> i18n.get("leaderboard.season.%s".formatted(seasonBean.nameKey()),
-                                        seasonBean.seasonNumber())));
+        seasonBean -> i18n.get("leaderboard.season", seasonBean.seasonNumber())));
+
+    leagueSeason.bind(seasonPicker.getSelectionModel().selectedItemProperty());
 
     leagueSeasons.map(FXCollections::observableList).when(showing).subscribe(seasons -> {
       seasonPicker.setItems(seasons);
       seasonPicker.getSelectionModel().selectFirst();
-      leagueSeason = seasonPicker.getSelectionModel().selectedItemProperty();
     });
 
     seasonDateLabel.textProperty().bind(leagueSeason.map(seasonBean -> {
