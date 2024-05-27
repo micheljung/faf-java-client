@@ -47,13 +47,24 @@ public class TimeService {
     if (temporalAccessor == null) {
       return i18n.get("noDateAvailable");
     }
-    return DateTimeFormatter.ofLocalizedDate(formatStyle)
-        .withLocale(getCurrentDateLocale())
+
+    DateInfo dateInfo = localizationPrefs.getDateFormat();
+    DateTimeFormatter formatter;
+
+    if (dateInfo.equals(DateInfo.DAY_MONTH_YEAR)) {
+      formatter = DateTimeFormatter.ofPattern(getDatePatternForDayMonthYear(formatStyle));
+    } else if (dateInfo.equals(DateInfo.MONTH_DAY_YEAR)) {
+      formatter = DateTimeFormatter.ofPattern(getDatePatternForMonthDayYear(formatStyle));
+    } else {
+      formatter = DateTimeFormatter.ofLocalizedDate(formatStyle);
+    }
+
+    return formatter.withLocale(i18n.getUserSpecificLocale())
         .withZone(TimeZone.getDefault().toZoneId())
         .format(temporalAccessor);
   }
 
-  
+
   public String asShortTime(Temporal temporal) {
     if (temporal == null) {
       return "";
@@ -79,6 +90,38 @@ public class TimeService {
     return dateInfo.getUsedLocale();
 
   }
+
+  private String getDatePatternForDayMonthYear(FormatStyle style) {
+    switch (style) {
+      case SHORT -> {
+        return "dd/MM/yyyy";
+      }
+      case MEDIUM -> {
+        return "dd MMM, yyyy";
+      }
+      default -> {
+        // for other styles extend this
+        return "dd MMMM, yyyy";
+      }
+    }
+  }
+
+
+  private String getDatePatternForMonthDayYear(FormatStyle style) {
+    switch (style) {
+      case SHORT -> {
+        return "MM/dd/yyyy";
+      }
+      case MEDIUM -> {
+        return "MMM dd, yyyy";
+      }
+      default -> {
+        // for other styles extend this
+        return "MMMM dd, yyyy";
+      }
+    }
+  }
+
 
   /**
    * Returns the localized minutes and seconds (e.g. '20min 31s'), or hours and minutes (e.g. '1h 5min') of the
