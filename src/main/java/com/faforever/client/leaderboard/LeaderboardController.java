@@ -65,7 +65,7 @@ public class LeaderboardController extends NodeController<StackPane> {
     leagueSeason.bind(seasonPicker.getSelectionModel().selectedItemProperty());
 
     leagueSeasons.map(FXCollections::observableList).when(showing).subscribe(seasons -> {
-      seasonPicker.setItems(seasons);
+      seasonPicker.getItems().setAll(seasons);
       seasonPicker.getSelectionModel().selectFirst();
     });
 
