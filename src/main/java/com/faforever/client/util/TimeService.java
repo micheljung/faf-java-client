@@ -94,14 +94,14 @@ public class TimeService {
   private String getDatePatternForDayMonthYear(FormatStyle style) {
     switch (style) {
       case SHORT -> {
-        return "dd/MM/yyyy";
+        return "d/MM/yy";
       }
       case MEDIUM -> {
-        return "dd MMM, yyyy";
+        return "d MMM, yyyy";
       }
       default -> {
         // for other styles extend this
-        return "dd MMMM, yyyy";
+        return "d MMMM, yyyy";
       }
     }
   }
@@ -110,14 +110,14 @@ public class TimeService {
   private String getDatePatternForMonthDayYear(FormatStyle style) {
     switch (style) {
       case SHORT -> {
-        return "MM/dd/yyyy";
+        return "MM/d/yy";
       }
       case MEDIUM -> {
-        return "MMM dd, yyyy";
+        return "MMM d, yyyy";
       }
       default -> {
         // for other styles extend this
-        return "MMMM dd, yyyy";
+        return "MMMM d, yyyy";
       }
     }
   }
