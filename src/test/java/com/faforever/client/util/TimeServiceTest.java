@@ -16,11 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.FormatStyle;
-import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @Execution(ExecutionMode.CONCURRENT)
