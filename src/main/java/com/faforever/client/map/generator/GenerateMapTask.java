@@ -58,7 +58,6 @@ public class GenerateMapTask extends CompletableTask<String> {
 
     GeneratorCommand.GeneratorCommandBuilder generatorCommandBuilder = GeneratorCommand.builder()
         .version(version)
-        .seed(seed)
         .generatorExecutableFile(generatorExecutableFile)
         .javaExecutable(operatingSystem.getJavaExecutablePath())
         .mapName(mapName);
@@ -67,15 +66,14 @@ public class GenerateMapTask extends CompletableTask<String> {
       generatorCommandBuilder.spawnCount(generatorOptions.spawnCount())
                              .numTeams(generatorOptions.numTeams())
                              .mapSize(generatorOptions.mapSize())
+                             .seed(generatorOptions.seed())
                              .generationType(generatorOptions.generationType())
-                             .landDensity(generatorOptions.landDensity())
-                             .plateauDensity(generatorOptions.plateauDensity())
-                             .mountainDensity(generatorOptions.mountainDensity())
-                             .rampDensity(generatorOptions.rampDensity())
-                             .mexDensity(generatorOptions.mexDensity())
-                             .reclaimDensity(generatorOptions.reclaimDensity())
+                             .symmetry(generatorOptions.symmetry())
                              .style(generatorOptions.style())
-                             .biome(generatorOptions.biome())
+                             .terrainGenerator(generatorOptions.terrainGenerator())
+                             .textureGenerator(generatorOptions.textureGenerator())
+                             .resourceGenerator(generatorOptions.resourceGenerator())
+                             .propGenerator(generatorOptions.propGenerator())
                              .commandLineArgs(generatorOptions.commandLineArgs());
     }
 

@@ -11,8 +11,6 @@ import com.faforever.client.map.generator.UnsupportedVersionException;
 import com.faforever.client.notification.NotificationService;
 import com.faforever.client.preferences.GeneratorPrefs;
 import com.google.common.annotations.VisibleForTesting;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -20,14 +18,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.ListSpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.StringConverter;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +38,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -73,30 +69,21 @@ public class GenerateMapController extends NodeController<Pane> {
   public ComboBox<String> biomeComboBox;
   public Spinner<Integer> spawnCountSpinner;
   public Spinner<Double> mapSizeSpinner;
-  public Slider waterSlider;
-  public CheckBox waterRandom;
-  public HBox waterSliderBox;
-  public HBox waterRandomBox;
-  public Slider mountainSlider;
-  public CheckBox mountainRandom;
-  public HBox mountainSliderBox;
-  public HBox mountainRandomBox;
-  public Slider plateauSlider;
-  public CheckBox plateauRandom;
-  public HBox plateauSliderBox;
-  public HBox plateauRandomBox;
-  public Slider rampSlider;
-  public CheckBox rampRandom;
-  public HBox rampSliderBox;
-  public HBox rampRandomBox;
-  public Slider mexSlider;
-  public CheckBox mexRandom;
-  public HBox mexSliderBox;
-  public HBox mexRandomBox;
-  public Slider reclaimSlider;
-  public CheckBox reclaimRandom;
-  public HBox reclaimSliderBox;
-  public HBox reclaimRandomBox;
+  public Label symmetryLabel;
+  public ComboBox<String> symmetryComboBox;
+  public Label customStyleLabel;
+  public CheckBox customStyleCheckBox;
+  public Label fixedSeedLabel;
+  public CheckBox fixedSeedCheckBox;
+  public TextField seedTextField;
+  public Button seedRerollButton;
+  public Label terrainLabel;
+  public ComboBox<String> terrainComboBox;
+  public Label resourceLabel;
+  public ComboBox<String> resourcesComboBox;
+  public Label propLabel;
+  public ComboBox<String> propsComboBox;
+
   private Runnable onCloseButtonClickedListener;
   private final ObservableList<Integer> validTeamSizes = FXCollections.observableList(IntStream.range(0, 17)
       .filter(value -> value != 1)
@@ -114,17 +101,17 @@ public class GenerateMapController extends NodeController<Pane> {
     JavaFxUtil.bindManagedToVisible(commandLineLabel, commandLineArgsText, mapStyleComboBox, mapStyleLabel, biomeComboBox, biomeLabel);
     initCommandlineArgs();
     initGenerationTypeComboBox();
+    initSymmetryComboBox();
     initMapStyleComboBox();
-    initBiomeComboBox();
+    initCheckBoxes();
     initNumTeamsSpinner();
     initSpawnCountSpinner();
     initMapSizeSpinner();
-    initOptionSlider(generatorPrefs.waterDensityProperty(), generatorPrefs.waterRandomProperty(), waterSlider, waterSliderBox, waterRandom, waterRandomBox);
-    initOptionSlider(generatorPrefs.plateauDensityProperty(), generatorPrefs.plateauRandomProperty(), plateauSlider, plateauSliderBox, plateauRandom, plateauRandomBox);
-    initOptionSlider(generatorPrefs.mountainDensityProperty(), generatorPrefs.mountainRandomProperty(), mountainSlider, mountainSliderBox, mountainRandom, mountainRandomBox);
-    initOptionSlider(generatorPrefs.rampDensityProperty(), generatorPrefs.rampRandomProperty(), rampSlider, rampSliderBox, rampRandom, rampRandomBox);
-    initOptionSlider(generatorPrefs.mexDensityProperty(), generatorPrefs.mexRandomProperty(), mexSlider, mexSliderBox, mexRandom, mexRandomBox);
-    initOptionSlider(generatorPrefs.reclaimDensityProperty(), generatorPrefs.reclaimRandomProperty(), reclaimSlider, reclaimSliderBox, reclaimRandom, reclaimRandomBox);
+    initSeedField();
+    initGeneratorComboBox(terrainComboBox);
+    initGeneratorComboBox(biomeComboBox);
+    initGeneratorComboBox(resourcesComboBox);
+    initGeneratorComboBox(propsComboBox);
   }
 
   private StringConverter<GenerationType> getGenerationTypeConverter() {
@@ -236,50 +223,49 @@ public class GenerateMapController extends NodeController<Pane> {
             .or(commandLineArgsText.textProperty().isNotEmpty()));
   }
 
+  private void initSymmetryComboBox() {
+    symmetryComboBox.disableProperty()
+        .bind(previousMapName.textProperty().isNotEmpty()
+            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
+            .or(commandLineArgsText.textProperty().isNotEmpty()));
+  }
+
   private void initMapStyleComboBox() {
     mapStyleComboBox.disableProperty()
         .bind(previousMapName.textProperty().isNotEmpty()
             .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
             .or(commandLineArgsText.textProperty().isNotEmpty())
-            .or(biomeComboBox.valueProperty().isNotNull()
-                .and(biomeComboBox.valueProperty().isNotEqualTo(MapGeneratorService.GENERATOR_RANDOM_BIOME))));
+            .or(customStyleCheckBox.selectedProperty()));
   }
 
-  private void initBiomeComboBox() {
-    biomeComboBox.disableProperty()
+  private void initCheckBoxes() {
+    customStyleCheckBox.disableProperty()
+        .bind(previousMapName.textProperty().isNotEmpty()
+            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
+            .or(commandLineArgsText.textProperty().isNotEmpty()));
+    fixedSeedCheckBox.disableProperty()
+        .bind(previousMapName.textProperty().isNotEmpty()
+            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
+            .or(commandLineArgsText.textProperty().isNotEmpty()));
+  }
+
+  private void initSeedField() {
+    seedTextField.disableProperty()
+        .bind(previousMapName.textProperty().isNotEmpty()
+            .or(commandLineArgsText.textProperty().isNotEmpty())
+            .or(fixedSeedCheckBox.selectedProperty().not()));
+    seedRerollButton.disableProperty()
+        .bind(previousMapName.textProperty().isNotEmpty()
+            .or(commandLineArgsText.textProperty().isNotEmpty())
+            .or(fixedSeedCheckBox.selectedProperty().not()));
+  }
+
+  private void initGeneratorComboBox(ComboBox<String> comboBox) {
+    comboBox.disableProperty()
         .bind(previousMapName.textProperty().isNotEmpty()
             .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
             .or(commandLineArgsText.textProperty().isNotEmpty())
-            .or(mapStyleComboBox.valueProperty().isNotNull()
-               .and(mapStyleComboBox.valueProperty().isNotEqualTo(MapGeneratorService.GENERATOR_RANDOM_STYLE))));
-  }
-
-  private void initOptionSlider(IntegerProperty valueProperty, BooleanProperty randomProperty, Slider slider,
-                                HBox sliderContainer, CheckBox randomBox, HBox randomContainer) {
-    sliderContainer.visibleProperty().bind(randomBox.selectedProperty().not());
-    slider.setValue(valueProperty.getValue());
-    randomBox.setSelected(randomProperty.getValue());
-    slider.valueProperty().bindBidirectional(valueProperty);
-    randomBox.selectedProperty().bindBidirectional(randomProperty);
-    sliderContainer.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
-            .or(commandLineArgsText.textProperty().isNotEmpty())
-            .or(mapStyleComboBox.valueProperty().isNotNull())
-                .and(mapStyleComboBox.valueProperty().isNotEqualTo(MapGeneratorService.GENERATOR_RANDOM_STYLE)));
-    randomContainer.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
-            .or(commandLineArgsText.textProperty().isNotEmpty())
-            .or(mapStyleComboBox.valueProperty().isNotNull())
-                .and(mapStyleComboBox.valueProperty().isNotEqualTo(MapGeneratorService.GENERATOR_RANDOM_STYLE)));
-  }
-
-  private Optional<Float> getSliderValue(Slider slider, CheckBox checkBox) {
-    if (checkBox.isSelected() || generationTypeComboBox.getValue() != GenerationType.CASUAL) {
-      return Optional.empty();
-    }
-    return Optional.of(((byte) slider.getValue()) / 127f);
+            .or(customStyleCheckBox.selectedProperty().not()));
   }
 
   private GeneratorOptions getGeneratorOptions() {
@@ -292,14 +278,17 @@ public class GenerateMapController extends NodeController<Pane> {
     optionsBuilder.mapSize((int) (mapSizeSpinner.getValue() * KM_TO_PIXEL_FACTOR));
     optionsBuilder.numTeams(numTeamsSpinner.getValue());
     optionsBuilder.generationType(generationTypeComboBox.getValue());
+    optionsBuilder.symmetry(symmetryComboBox.getValue());
     optionsBuilder.style(mapStyleComboBox.getValue());
-    optionsBuilder.biome(biomeComboBox.getValue());
-    getSliderValue(waterSlider, waterRandom).ifPresent(value -> optionsBuilder.landDensity(1 - value));
-    getSliderValue(plateauSlider, plateauRandom).ifPresent(optionsBuilder::plateauDensity);
-    getSliderValue(mountainSlider, mountainRandom).ifPresent(optionsBuilder::mountainDensity);
-    getSliderValue(rampSlider, rampRandom).ifPresent(optionsBuilder::rampDensity);
-    getSliderValue(mexSlider, mexRandom).ifPresent(optionsBuilder::mexDensity);
-    getSliderValue(reclaimSlider, reclaimRandom).ifPresent(optionsBuilder::reclaimDensity);
+    if (fixedSeedCheckBox.isSelected() && generationTypeComboBox.getValue() == GenerationType.CASUAL) {
+      optionsBuilder.seed(seedTextField.getText());
+    }
+    if (customStyleCheckBox.isSelected() && generationTypeComboBox.getValue() == GenerationType.CASUAL) {
+      optionsBuilder.terrainGenerator(terrainComboBox.getValue());
+      optionsBuilder.textureGenerator(biomeComboBox.getValue());
+      optionsBuilder.resourceGenerator(resourcesComboBox.getValue());
+      optionsBuilder.propGenerator(propsComboBox.getValue());
+    }
     return optionsBuilder.build();
   }
 
@@ -361,34 +350,82 @@ public class GenerateMapController extends NodeController<Pane> {
     createGameController = controller;
   }
 
+  protected void setSymmetries(List<String> symmetries) {
+    ArrayList<String> symmetryList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
+    symmetryList.addAll(symmetries);
+    symmetryComboBox.setItems(FXCollections.observableList(symmetryList));
+    String symmetry = generatorPrefs.getSymmetry();
+    if (symmetryComboBox.getItems().contains(symmetry)) {
+      symmetryComboBox.getSelectionModel().select(symmetry);
+    } else {
+      symmetryComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_OPTION);
+    }
+    generatorPrefs.symmetryProperty().bind(symmetryComboBox.valueProperty());
+  }
+
   protected void setStyles(List<String> styles) {
-    ArrayList<String> styleList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_STYLE));
+    ArrayList<String> styleList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
     styleList.addAll(styles);
     mapStyleComboBox.setItems(FXCollections.observableList(styleList));
     String mapStyle = generatorPrefs.getMapStyle();
     if (mapStyleComboBox.getItems().contains(mapStyle)) {
       mapStyleComboBox.getSelectionModel().select(mapStyle);
     } else {
-      mapStyleComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_STYLE);
+      mapStyleComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_OPTION);
     }
     generatorPrefs.mapStyleProperty().bind(mapStyleComboBox.valueProperty());
-    mapStyleComboBox.setVisible(true);
-    mapStyleLabel.setVisible(true);
   }
 
-  protected void setBiomes(List<String> biomes) {
-    ArrayList<String> biomeList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_BIOME));
-    biomeList.addAll(biomes);
-    biomeComboBox.setItems(FXCollections.observableList(biomeList));
-    String biome = generatorPrefs.getBiome();
-    if (biomeComboBox.getItems().contains(biome)) {
-      biomeComboBox.getSelectionModel().select(biome);
+  protected void setTerrainGenerators(List<String> terrainGenerators) {
+    ArrayList<String> terrainGeneratorList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
+    terrainGeneratorList.addAll(terrainGenerators);
+    terrainComboBox.setItems(FXCollections.observableList(terrainGeneratorList));
+    String terrainGenerator = generatorPrefs.getTerrainGenerator();
+    if (terrainComboBox.getItems().contains(terrainGenerator)) {
+      terrainComboBox.getSelectionModel().select(terrainGenerator);
     } else {
-      biomeComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_BIOME);
+      terrainComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_OPTION);
     }
-    generatorPrefs.biomeProperty().bind(biomeComboBox.valueProperty());
-    biomeComboBox.setVisible(true);
-    biomeLabel.setVisible(true);
+    generatorPrefs.terrainGeneratorProperty().bind(terrainComboBox.valueProperty());
+  }
+
+  protected void setTextureGenerators(List<String> textureGenerators) {
+    ArrayList<String> textureGeneratorList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
+    textureGeneratorList.addAll(textureGenerators);
+    biomeComboBox.setItems(FXCollections.observableList(textureGeneratorList));
+    String textureGenerator = generatorPrefs.getTextureGenerator();
+    if (biomeComboBox.getItems().contains(textureGenerator)) {
+      biomeComboBox.getSelectionModel().select(textureGenerator);
+    } else {
+      biomeComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_OPTION);
+    }
+    generatorPrefs.textureGeneratorProperty().bind(biomeComboBox.valueProperty());
+  }
+
+  protected void setResourceGenerators(List<String> resourceGenerators) {
+    ArrayList<String> resourceGeneratorList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
+    resourceGeneratorList.addAll(resourceGenerators);
+    resourcesComboBox.setItems(FXCollections.observableList(resourceGeneratorList));
+    String resourceGenerator = generatorPrefs.getResourceGenerator();
+    if (resourcesComboBox.getItems().contains(resourceGenerator)) {
+      resourcesComboBox.getSelectionModel().select(resourceGenerator);
+    } else {
+      resourcesComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_OPTION);
+    }
+    generatorPrefs.resourceGeneratorProperty().bind(resourcesComboBox.valueProperty());
+  }
+
+  protected void setPropGenerators(List<String> propGenerators) {
+    ArrayList<String> propGeneratorList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
+    propGeneratorList.addAll(propGenerators);
+    propsComboBox.setItems(FXCollections.observableList(propGeneratorList));
+    String propGenerator = generatorPrefs.getPropGenerator();
+    if (propsComboBox.getItems().contains(propGenerator)) {
+      propsComboBox.getSelectionModel().select(propGenerator);
+    } else {
+      propsComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_OPTION);
+    }
+    generatorPrefs.propGeneratorProperty().bind(propsComboBox.valueProperty());
   }
 
   public void onNewLabelClicked(MouseEvent mouseEvent) {
@@ -404,5 +441,9 @@ public class GenerateMapController extends NodeController<Pane> {
 
   void setOnCloseButtonClickedListener(Runnable onCloseButtonClickedListener) {
     this.onCloseButtonClickedListener = onCloseButtonClickedListener;
+  }
+
+  public void onSeedRerollButtonClicked() {
+    seedTextField.setText(String.valueOf(new Random().nextLong()));
   }
 }

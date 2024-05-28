@@ -19,15 +19,13 @@ public record GeneratorCommand(
     Integer numTeams,
     Integer mapSize,
     String seed,
-    Float landDensity,
-    Float plateauDensity,
-    Float mountainDensity,
-    Float rampDensity,
-    Float mexDensity,
-    Float reclaimDensity,
     GenerationType generationType,
+    String symmetry,
     String style,
-    String biome,
+    String terrainGenerator,
+    String textureGenerator,
+    String resourceGenerator,
+    String propGenerator,
     String commandLineArgs
 ) {
 
@@ -66,37 +64,33 @@ public record GeneratorCommand(
         return command;
       }
 
-      if (style != null && !style.equals(MapGeneratorService.GENERATOR_RANDOM_STYLE)) {
+      if (seed != null) {
+        command.addAll(Arrays.asList("--seed", seed));
+      }
+
+      if (symmetry != null && !symmetry.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
+        command.addAll(Arrays.asList("--terrain-symmetry", symmetry));
+      }
+
+      if (style != null && !style.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
         command.addAll(Arrays.asList("--style", style));
         return command;
       }
 
-      if (landDensity != null) {
-        command.addAll(Arrays.asList("--land-density", landDensity.toString()));
+      if (terrainGenerator != null && !terrainGenerator.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
+        command.addAll(Arrays.asList("--terrain-style", terrainGenerator));
       }
 
-      if (mountainDensity != null) {
-        command.addAll(Arrays.asList("--mountain-density", mountainDensity.toString()));
+      if (textureGenerator != null && !textureGenerator.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
+        command.addAll(Arrays.asList("--texture-style", textureGenerator));
       }
 
-      if (plateauDensity != null) {
-        command.addAll(Arrays.asList("--plateau-density", plateauDensity.toString()));
+      if (resourceGenerator != null && !resourceGenerator.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
+        command.addAll(Arrays.asList("--resource-style", resourceGenerator));
       }
 
-      if (rampDensity != null) {
-        command.addAll(Arrays.asList("--ramp-density", rampDensity.toString()));
-      }
-
-      if (mexDensity != null) {
-        command.addAll(Arrays.asList("--mex-density", mexDensity.toString()));
-      }
-
-      if (reclaimDensity != null) {
-        command.addAll(Arrays.asList("--reclaim-density", reclaimDensity.toString()));
-      }
-
-      if (biome != null && !biome.equals(MapGeneratorService.GENERATOR_RANDOM_BIOME)) {
-        command.addAll(Arrays.asList("--biome", biome));
+      if (propGenerator != null && !propGenerator.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
+        command.addAll(Arrays.asList("--prop-style", propGenerator));
       }
 
       return command;

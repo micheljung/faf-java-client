@@ -20,7 +20,11 @@ public class GeneratorPrefs {
   private final IntegerProperty numTeams = new SimpleIntegerProperty(2);
   private final DoubleProperty mapSizeInKm = new SimpleDoubleProperty(10);
   private final StringProperty mapStyle = new SimpleStringProperty("");
-  private final StringProperty biome = new SimpleStringProperty("");
+  private final StringProperty symmetry = new SimpleStringProperty("");
+  private final StringProperty terrainGenerator = new SimpleStringProperty("");
+  private final StringProperty textureGenerator = new SimpleStringProperty("");
+  private final StringProperty resourceGenerator = new SimpleStringProperty("");
+  private final StringProperty propGenerator = new SimpleStringProperty("");
   private final IntegerProperty waterDensity = new SimpleIntegerProperty(0);
   private final BooleanProperty waterRandom = new SimpleBooleanProperty(true);
   private final IntegerProperty plateauDensity = new SimpleIntegerProperty(0);
@@ -33,6 +37,18 @@ public class GeneratorPrefs {
   private final BooleanProperty mexRandom = new SimpleBooleanProperty(true);
   private final IntegerProperty reclaimDensity = new SimpleIntegerProperty(0);
   private final BooleanProperty reclaimRandom = new SimpleBooleanProperty(true);
+
+  public GenerationType getGenerationType() {
+    return generationType.get();
+  }
+
+  public void setGenerationType(GenerationType generationType) {
+    this.generationType.set(generationType);
+  }
+
+  public ObjectProperty<GenerationType> generationTypeProperty() {
+    return generationType;
+  }
 
   public String getCommandLineArgs() {
     return commandLineArgs.get();
@@ -94,28 +110,64 @@ public class GeneratorPrefs {
     return mapStyle;
   }
 
-  public String getBiome() {
-    return biome.get();
+  public String getSymmetry() {
+    return symmetry.get();
   }
 
-  public void setBiome(String biome) {
-    this.biome.set(biome);
+  public void setSymmetry(String symmetry) {
+    this.symmetry.set(symmetry);
   }
 
-  public StringProperty biomeProperty() {
-    return biome;
+  public StringProperty symmetryProperty() {
+    return symmetry;
   }
 
-  public GenerationType getGenerationType() {
-    return generationType.get();
+  public String getTerrainGenerator() {
+    return terrainGenerator.get();
   }
 
-  public void setGenerationType(GenerationType generationType) {
-    this.generationType.set(generationType);
+  public void setTerrainGenerator(String terrainGenerator) {
+    this.terrainGenerator.set(terrainGenerator);
   }
 
-  public ObjectProperty<GenerationType> generationTypeProperty() {
-    return generationType;
+  public StringProperty terrainGeneratorProperty() {
+    return terrainGenerator;
+  }
+
+  public String getTextureGenerator() {
+    return textureGenerator.get();
+  }
+
+  public void setTextureGenerator(String textureGenerator) {
+    this.textureGenerator.set(textureGenerator);
+  }
+
+  public StringProperty textureGeneratorProperty() {
+    return textureGenerator;
+  }
+
+  public String getResourceGenerator() {
+    return resourceGenerator.get();
+  }
+
+  public void setResourceGenerator(String resourceGenerator) {
+    this.resourceGenerator.set(resourceGenerator);
+  }
+
+  public StringProperty resourceGeneratorProperty() {
+    return resourceGenerator;
+  }
+
+  public String getPropGenerator() {
+    return propGenerator.get();
+  }
+
+  public void setPropGenerator(String propGenerator) {
+    this.propGenerator.set(propGenerator);
+  }
+
+  public StringProperty propGeneratorProperty() {
+    return propGenerator;
   }
 
   public int getWaterDensity() {
