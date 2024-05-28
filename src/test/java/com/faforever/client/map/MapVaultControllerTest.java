@@ -6,8 +6,13 @@ import com.faforever.client.i18n.I18n;
 import com.faforever.client.notification.NotificationService;
 import com.faforever.client.preferences.Preferences;
 import com.faforever.client.preferences.VaultPrefs;
+import com.faforever.client.query.CategoryFilterController;
+import com.faforever.client.query.DateRangeFilterController;
 import com.faforever.client.query.LogicalNodeController;
+import com.faforever.client.query.RangeFilterController;
 import com.faforever.client.query.SpecificationController;
+import com.faforever.client.query.TextFilterController;
+import com.faforever.client.query.ToggleFilterController;
 import com.faforever.client.reporting.ReportingService;
 import com.faforever.client.test.PlatformTest;
 import com.faforever.client.theme.UiService;
@@ -17,6 +22,11 @@ import com.faforever.client.vault.VaultEntityController.ShowRoomCategory;
 import com.faforever.client.vault.search.SearchController;
 import com.faforever.client.vault.search.SearchController.SearchConfig;
 import com.faforever.client.vault.search.SearchController.SortConfig;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.layout.Pane;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,10 +37,15 @@ import org.mockito.Spy;
 import reactor.core.publisher.Mono;
 
 import java.net.MalformedURLException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -58,6 +73,16 @@ public class MapVaultControllerTest extends PlatformTest {
   private ReportingService reportingService;
   @Mock
   private PlatformService platformService;
+  @Mock
+  private CategoryFilterController categoryFilterController;
+  @Mock
+  private DateRangeFilterController dateRangeFilterController;
+  @Mock
+  private TextFilterController textFilterController;
+  @Mock
+  private RangeFilterController rangeFilterController;
+  @Mock
+  private ToggleFilterController toggleFilterController;
   @Spy
   private VaultPrefs vaultPrefs;
 
@@ -77,7 +102,19 @@ public class MapVaultControllerTest extends PlatformTest {
     }).when(uiService).loadFxml("theme/vault/map/map_detail.fxml");
 
     when(mapService.getRecommendedMapPageCount(VaultEntityController.TOP_ELEMENT_COUNT)).thenReturn(Mono.just(0));
-
+    when(searchController.addCategoryFilter(any(), any(), anyMap())).thenReturn(categoryFilterController);
+    when(categoryFilterController.getCheckedItems()).thenReturn(new SimpleListProperty<String>());
+    when(searchController.addTextFilter(anyString(), anyString(), anyBoolean())).thenReturn(textFilterController);
+    when(textFilterController.textFieldProperty()).thenReturn(new SimpleStringProperty());
+    when(searchController.addRangeFilter(anyString(), anyString(), anyDouble(), anyDouble(), anyInt(), anyInt(), anyInt())).thenReturn(rangeFilterController);
+    when(searchController.addRangeFilter(anyString(), anyString(), anyDouble(), anyDouble(), anyInt(), anyInt(), anyInt(), any())).thenReturn(rangeFilterController);
+    when(rangeFilterController.lowValueProperty()).thenReturn(new SimpleDoubleProperty());
+    when(rangeFilterController.highValueProperty()).thenReturn(new SimpleDoubleProperty());
+    when(searchController.addToggleFilter(anyString(), anyString(), anyString())).thenReturn(toggleFilterController);
+    when(toggleFilterController.selectedProperty()).thenReturn(new SimpleBooleanProperty());
+    when(searchController.addDateRangeFilter(anyString(), anyString(), anyInt())).thenReturn(dateRangeFilterController);
+    when(dateRangeFilterController.beforeDateProperty()).thenReturn(new SimpleObjectProperty<LocalDate>());
+    when(dateRangeFilterController.afterDateProperty()).thenReturn(new SimpleObjectProperty<LocalDate>());
     SortConfig sortOrder = new Preferences().getVault().getMapSortConfig();
     standardSearchConfig = new SearchConfig(sortOrder, "query");
 
