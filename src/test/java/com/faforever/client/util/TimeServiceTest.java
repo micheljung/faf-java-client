@@ -32,9 +32,6 @@ class TimeServiceTest {
   @Mock
   LocalizationPrefs localizationPrefs;
 
-  @Mock
-  DateFormatterUtil dateFormatterUtil;
-
   @InjectMocks
   TimeService service;
 
@@ -53,7 +50,6 @@ class TimeServiceTest {
     var dateInfo = DateInfo.AUTO;
 
     when(localizationPrefs.getDateFormat()).thenReturn(dateInfo);
-    when(dateFormatterUtil.getAutoFormatter(formatStyleMedium)).thenReturn(DateFormatterUtil.FORMATTER_AUTO_MEDIUM);
     when(i18n.getUserSpecificLocale()).thenReturn(localeUS);
 
     var result = service.asDate(date, formatStyleMedium);
@@ -67,7 +63,6 @@ class TimeServiceTest {
     var dateInfo = DateInfo.MONTH_DAY_YEAR;
 
     when(localizationPrefs.getDateFormat()).thenReturn(dateInfo);
-    when(dateFormatterUtil.getMDYFormatter(formatStyleMedium)).thenReturn(DateFormatterUtil.FORMATTER_MDY_MEDIUM);
     when(i18n.getUserSpecificLocale()).thenReturn(localeUS);
 
     var result = service.asDate(date, formatStyleMedium);
@@ -81,7 +76,6 @@ class TimeServiceTest {
     var dateInfo = DateInfo.DAY_MONTH_YEAR;
 
     when(localizationPrefs.getDateFormat()).thenReturn(dateInfo);
-    when(dateFormatterUtil.getDMYFormatter(formatStyleMedium)).thenReturn(DateFormatterUtil.FORMATTER_DMY_MEDIUM);
     when(i18n.getUserSpecificLocale()).thenReturn(localeUS);
 
     var result = service.asDate(date, formatStyleMedium);
@@ -95,7 +89,6 @@ class TimeServiceTest {
     var dateInfo = DateInfo.AUTO;
 
     when(localizationPrefs.getDateFormat()).thenReturn(dateInfo);
-    when(dateFormatterUtil.getAutoFormatter(formatStyleMedium)).thenReturn(DateFormatterUtil.FORMATTER_AUTO_MEDIUM);
     when(i18n.getUserSpecificLocale()).thenReturn(localeFR);
 
     var result = service.asDate(date, formatStyleMedium);
@@ -109,7 +102,6 @@ class TimeServiceTest {
     var dateInfo = DateInfo.MONTH_DAY_YEAR;
 
     when(localizationPrefs.getDateFormat()).thenReturn(dateInfo);
-    when(dateFormatterUtil.getMDYFormatter(formatStyleMedium)).thenReturn(DateFormatterUtil.FORMATTER_MDY_MEDIUM);
     when(i18n.getUserSpecificLocale()).thenReturn(localeFR);
 
     var result = service.asDate(date, formatStyleMedium);
@@ -123,7 +115,6 @@ class TimeServiceTest {
     var dateInfo = DateInfo.DAY_MONTH_YEAR;
 
     when(localizationPrefs.getDateFormat()).thenReturn(dateInfo);
-    when(dateFormatterUtil.getDMYFormatter(formatStyleMedium)).thenReturn(DateFormatterUtil.FORMATTER_DMY_MEDIUM);
     when(i18n.getUserSpecificLocale()).thenReturn(localeFR);
 
     var result = service.asDate(date, formatStyleMedium);
@@ -137,7 +128,6 @@ class TimeServiceTest {
     var dateInfo = DateInfo.AUTO;
 
     when(localizationPrefs.getDateFormat()).thenReturn(dateInfo);
-    when(dateFormatterUtil.getAutoFormatter(FormatStyle.FULL)).thenReturn(DateFormatterUtil.FORMATTER_AUTO_FULL);
     when(i18n.getUserSpecificLocale()).thenReturn(localeUS);
 
     var result = service.asDate(date, FormatStyle.FULL);
@@ -151,7 +141,6 @@ class TimeServiceTest {
     var dateInfo = DateInfo.DAY_MONTH_YEAR;
 
     when(localizationPrefs.getDateFormat()).thenReturn(dateInfo);
-    when(dateFormatterUtil.getDMYFormatter(FormatStyle.FULL)).thenReturn(DateFormatterUtil.FORMATTER_DMY_FULL);
     when(i18n.getUserSpecificLocale()).thenReturn(localeUS);
 
     var result = service.asDate(date, FormatStyle.FULL);
@@ -165,7 +154,6 @@ class TimeServiceTest {
     var dateInfo = DateInfo.DAY_MONTH_YEAR;
 
     when(localizationPrefs.getDateFormat()).thenReturn(dateInfo);
-    when(dateFormatterUtil.getDMYFormatter(FormatStyle.FULL)).thenReturn(DateFormatterUtil.FORMATTER_DMY_FULL);
     when(i18n.getUserSpecificLocale()).thenReturn(localeFR);
 
     var result = service.asDate(date, FormatStyle.FULL);

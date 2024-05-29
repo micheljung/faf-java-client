@@ -28,7 +28,16 @@ public class TimeService {
   private final I18n i18n;
   private final ChatPrefs chatPrefs;
   private final LocalizationPrefs localizationPrefs;
-  private final DateFormatterUtil dateFormatterUtil;
+
+  private static final DateTimeFormatter FORMATTER_DMY_SHORT = DateTimeFormatter.ofPattern("d/M/yy");
+  private static final DateTimeFormatter FORMATTER_DMY_MEDIUM = DateTimeFormatter.ofPattern("d MMM, yyyy");
+  private static final DateTimeFormatter FORMATTER_DMY_LONG = DateTimeFormatter.ofPattern("d MMMM, yyyy");
+  private static final DateTimeFormatter FORMATTER_DMY_FULL = DateTimeFormatter.ofPattern("EEEE, d MMMM, yyyy");
+
+  private static final DateTimeFormatter FORMATTER_MDY_SHORT = DateTimeFormatter.ofPattern("M/d/yy");
+  private static final DateTimeFormatter FORMATTER_MDY_MEDIUM = DateTimeFormatter.ofPattern("MMM d, yyyy");
+  private static final DateTimeFormatter FORMATTER_MDY_LONG = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+  private static final DateTimeFormatter FORMATTER_MDY_FULL = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
 
   public String asDateTime(TemporalAccessor temporalAccessor) {
     if (temporalAccessor == null) {
@@ -51,9 +60,9 @@ public class TimeService {
 
     DateInfo dateInfo = localizationPrefs.getDateFormat();
     DateTimeFormatter formatter = switch (dateInfo) {
-      case AUTO -> dateFormatterUtil.getAutoFormatter(formatStyle);
-      case DAY_MONTH_YEAR -> dateFormatterUtil.getDMYFormatter(formatStyle);
-      case MONTH_DAY_YEAR -> dateFormatterUtil.getMDYFormatter(formatStyle);
+      case AUTO -> DateTimeFormatter.ofLocalizedDate(formatStyle);
+      case DAY_MONTH_YEAR -> getDMYFormatter(formatStyle);
+      case MONTH_DAY_YEAR -> getMDYFormatter(formatStyle);
     };
 
     return formatter.withLocale(i18n.getUserSpecificLocale())
@@ -86,6 +95,24 @@ public class TimeService {
     }
     return dateInfo.getUsedLocale();
 
+  }
+
+  private DateTimeFormatter getDMYFormatter(FormatStyle style) {
+    return switch (style) {
+      case SHORT -> FORMATTER_DMY_SHORT;
+      case MEDIUM -> FORMATTER_DMY_MEDIUM;
+      case LONG -> FORMATTER_DMY_LONG;
+      case FULL -> FORMATTER_DMY_FULL;
+    };
+  }
+
+  private DateTimeFormatter getMDYFormatter(FormatStyle style) {
+    return switch (style) {
+      case SHORT -> FORMATTER_MDY_SHORT;
+      case MEDIUM -> FORMATTER_MDY_MEDIUM;
+      case LONG -> FORMATTER_MDY_LONG;
+      case FULL -> FORMATTER_MDY_FULL;
+    };
   }
 
   /**
