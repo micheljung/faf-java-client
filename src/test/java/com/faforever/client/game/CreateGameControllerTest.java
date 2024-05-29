@@ -423,16 +423,28 @@ public class CreateGameControllerTest extends PlatformTest {
   @Test
   public void testOnGenerateMapClicked() {
     when(mapGeneratorService.getNewestGenerator()).thenReturn(Mono.empty());
+    when(mapGeneratorService.getGeneratorSymmetries()).thenReturn(Mono.just(List.of()));
     when(mapGeneratorService.getGeneratorStyles()).thenReturn(Mono.just(List.of()));
-    when(mapGeneratorService.getGeneratorBiomes()).thenReturn(Mono.just(List.of()));
+    when(mapGeneratorService.getGeneratorTerrainStyles()).thenReturn(Mono.just(List.of()));
+    when(mapGeneratorService.getGeneratorTextureStyles()).thenReturn(Mono.just(List.of()));
+    when(mapGeneratorService.getGeneratorResourceStyles()).thenReturn(Mono.just(List.of()));
+    when(mapGeneratorService.getGeneratorPropStyles()).thenReturn(Mono.just(List.of()));
 
     runOnFxThreadAndWait(() -> instance.onGenerateMapButtonClicked());
 
     verify(mapGeneratorService).getNewestGenerator();
+    verify(mapGeneratorService).getGeneratorSymmetries();
     verify(mapGeneratorService).getGeneratorStyles();
-    verify(mapGeneratorService).getGeneratorBiomes();
+    verify(mapGeneratorService).getGeneratorTerrainStyles();
+    verify(mapGeneratorService).getGeneratorTextureStyles();
+    verify(mapGeneratorService).getGeneratorResourceStyles();
+    verify(mapGeneratorService).getGeneratorPropStyles();
+    verify(generateMapController).setSymmetries(any());
     verify(generateMapController).setStyles(any());
-    verify(generateMapController).setBiomes(any());
+    verify(generateMapController).setTerrainGenerators(any());
+    verify(generateMapController).setTextureGenerators(any());
+    verify(generateMapController).setResourceGenerators(any());
+    verify(generateMapController).setPropGenerators(any());
     verify(generateMapController).setOnCloseButtonClickedListener(any());
   }
 
