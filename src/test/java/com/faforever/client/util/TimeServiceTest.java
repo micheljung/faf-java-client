@@ -4,7 +4,6 @@ import com.faforever.client.i18n.I18n;
 import com.faforever.client.preferences.ChatPrefs;
 import com.faforever.client.preferences.DateInfo;
 import com.faforever.client.preferences.LocalizationPrefs;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
@@ -38,11 +37,6 @@ class TimeServiceTest {
   private final Locale localeUS = Locale.of("en", "US");
   private final Locale localeFR = Locale.of("fr", "FR");
   private final FormatStyle formatStyleMedium = FormatStyle.MEDIUM;
-
-  @BeforeEach
-  void setUp() {
-
-  }
 
   @Test
   void asDateAutoUS() {
