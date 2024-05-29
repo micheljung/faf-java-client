@@ -2,13 +2,14 @@ package com.faforever.client.preferences;
 
 import com.faforever.client.vault.search.SearchController.SortConfig;
 import com.faforever.client.vault.search.SearchController.SortOrder;
+import com.fasterxml.jackson.annotation.JsonMerge;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-
+import lombok.Getter;
 
 public class VaultPrefs {
   private final ObjectProperty<SortConfig> onlineReplaySortConfig = new SimpleObjectProperty<>(
@@ -23,6 +24,9 @@ public class VaultPrefs {
       FXCollections.observableHashMap());
   private final MapProperty<String, String> savedModQueries = new SimpleMapProperty<>(
       FXCollections.observableHashMap());
+  @JsonMerge
+  @Getter
+  private final ReplaySearchPrefs replaySearch = new ReplaySearchPrefs();
 
   public SortConfig getOnlineReplaySortConfig() {
     return onlineReplaySortConfig.get();

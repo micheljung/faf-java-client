@@ -6,6 +6,7 @@ import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import lombok.Getter;
@@ -91,4 +92,11 @@ public class CategoryFilterController extends FilterNodeController {
     return menu;
   }
 
+  public void checkItem(String item) {
+    checkListView.getItemBooleanProperty(item).setValue(true);
+  }
+
+  public ObservableList<String> getCheckedItems() {
+    return checkListView.getCheckModel().getCheckedItems();
+  }
 }

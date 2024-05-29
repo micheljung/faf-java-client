@@ -7,6 +7,7 @@ import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.DoubleProperty;
 import com.github.rutledgepaulv.qbuilders.visitors.RSQLVisitor;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.MenuButton;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -161,11 +162,30 @@ public class RangeFilterControllerTest extends PlatformTest {
   }
 
   @Test
-  void testTicks() {
+  public void testTicks() {
     instance.setRange(-10.0, 90.0, 5, 1);
 
     assertEquals(20.0, instance.rangeSlider.getMajorTickUnit());
     assertEquals(1, instance.rangeSlider.getMinorTickCount());
     assertEquals(10.0, instance.rangeSlider.getBlockIncrement());
+  }
+
+  @Test
+  public void testPersistentPropertiesGetsValuesFromRangeFilter() {
+    javafx.beans.property.DoubleProperty lowerValue = new SimpleDoubleProperty();
+    javafx.beans.property.DoubleProperty higherValue = new SimpleDoubleProperty();
+    lowerValue.bind(instance.lowValueProperty());
+    higherValue.bind(instance.highValueProperty());
+    instance.lowValue.setText("20");
+    instance.highValue.setText("80");
+
+    assertEquals(lowerValue.get(), 20, 0);
+    assertEquals(higherValue.get(), 80, 0);
+
+    instance.lowValue.setText("a");
+    instance.highValue.setText("a");
+
+    assertEquals(min, lowerValue.get(), 0);
+    assertEquals(max, higherValue.get(), 0);
   }
 }

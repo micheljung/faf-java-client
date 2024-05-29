@@ -8,7 +8,6 @@ import com.faforever.client.fx.PlatformService;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.main.event.NavigateEvent;
 import com.faforever.client.main.event.OpenMapVaultEvent;
-import com.faforever.client.main.event.ShowMapPoolEvent;
 import com.faforever.client.map.management.MapsManagementController;
 import com.faforever.client.notification.NotificationService;
 import com.faforever.client.preferences.ForgedAlliancePrefs;

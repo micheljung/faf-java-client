@@ -4,6 +4,7 @@ import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -54,6 +55,14 @@ public class ToggleFilterController extends FilterNodeController {
   @Override
   public void setTitle(String title) {
     this.title.setText(title + ":");
+  }
+
+  public BooleanProperty selectedProperty() {
+    return this.checkBox.selectedProperty();
+  }
+
+  public void setSelected(boolean isSelected) {
+    checkBox.setSelected(isSelected);
   }
 
   @Override

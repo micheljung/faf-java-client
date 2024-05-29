@@ -302,12 +302,13 @@ public class SearchController extends NodeController<Pane> {
     return categoryFilterController;
   }
 
-  public void addRangeFilter(String propertyName, String title, double min, double max,
+  public RangeFilterController addRangeFilter(String propertyName, String title, double min, double max,
                              int majorTickCount, int interMajorTickCount, int numberOfFractionDigits) {
-    addRangeFilter(propertyName, title, min, max, majorTickCount, interMajorTickCount, numberOfFractionDigits, Function.identity());
+    return addRangeFilter(propertyName, title, min, max, majorTickCount, interMajorTickCount, 
+                   numberOfFractionDigits, Function.identity());
   }
 
-  public void addRangeFilter(String propertyName, String title, double min, double max,
+  public RangeFilterController addRangeFilter(String propertyName, String title, double min, double max,
                              int majorTickCount, int interMajorTickCount, int numberOfFractionDigits,
                              Function<Double, ? extends Number> valueTransform) {
     RangeFilterController rangeFilterController = uiService.loadFxml("theme/vault/search/rangeFilter.fxml");
@@ -319,6 +320,7 @@ public class SearchController extends NodeController<Pane> {
     rangeFilterController.setValueTransform(valueTransform);
     rangeFilterController.bind();
     addFilterNode(rangeFilterController);
+    return rangeFilterController;
   }
 
   public DateRangeFilterController addDateRangeFilter(String propertyName, String title, int initialYearsBefore) {
