@@ -21,22 +21,13 @@ public class GeneratorPrefs {
   private final DoubleProperty mapSizeInKm = new SimpleDoubleProperty(10);
   private final StringProperty mapStyle = new SimpleStringProperty("");
   private final StringProperty symmetry = new SimpleStringProperty("");
+  private final IntegerProperty seed = new SimpleIntegerProperty(0);
+  private final BooleanProperty fixedSeed = new SimpleBooleanProperty(true);
+  private final BooleanProperty customStyle = new SimpleBooleanProperty(true);
   private final StringProperty terrainGenerator = new SimpleStringProperty("");
   private final StringProperty textureGenerator = new SimpleStringProperty("");
   private final StringProperty resourceGenerator = new SimpleStringProperty("");
   private final StringProperty propGenerator = new SimpleStringProperty("");
-  private final IntegerProperty waterDensity = new SimpleIntegerProperty(0);
-  private final BooleanProperty waterRandom = new SimpleBooleanProperty(true);
-  private final IntegerProperty plateauDensity = new SimpleIntegerProperty(0);
-  private final BooleanProperty plateauRandom = new SimpleBooleanProperty(true);
-  private final IntegerProperty mountainDensity = new SimpleIntegerProperty(0);
-  private final BooleanProperty mountainRandom = new SimpleBooleanProperty(true);
-  private final IntegerProperty rampDensity = new SimpleIntegerProperty(0);
-  private final BooleanProperty rampRandom = new SimpleBooleanProperty(true);
-  private final IntegerProperty mexDensity = new SimpleIntegerProperty(0);
-  private final BooleanProperty mexRandom = new SimpleBooleanProperty(true);
-  private final IntegerProperty reclaimDensity = new SimpleIntegerProperty(0);
-  private final BooleanProperty reclaimRandom = new SimpleBooleanProperty(true);
 
   public GenerationType getGenerationType() {
     return generationType.get();
@@ -122,6 +113,42 @@ public class GeneratorPrefs {
     return symmetry;
   }
 
+  public int getSeed() {
+    return seed.get();
+  }
+
+  public void setSeed(int seed) {
+    this.seed.set(seed);
+  }
+
+  public IntegerProperty seedProperty() {
+    return seed;
+  }
+
+  public boolean getFixedSeed() {
+    return fixedSeed.get();
+  }
+
+  public void setFixedSeed(boolean fixedSeed) {
+    this.fixedSeed.set(fixedSeed);
+  }
+
+  public BooleanProperty fixedSeedProperty() {
+    return fixedSeed;
+  }
+
+  public boolean getCustomStyle() {
+    return customStyle.get();
+  }
+
+  public void setCustomStyle(boolean customStyle) {
+    this.customStyle.set(customStyle);
+  }
+
+  public BooleanProperty customStyleProperty() {
+    return customStyle;
+  }
+
   public String getTerrainGenerator() {
     return terrainGenerator.get();
   }
@@ -168,149 +195,5 @@ public class GeneratorPrefs {
 
   public StringProperty propGeneratorProperty() {
     return propGenerator;
-  }
-
-  public int getWaterDensity() {
-    return waterDensity.get();
-  }
-
-  public void setWaterDensity(int waterDensity) {
-    this.waterDensity.set(waterDensity);
-  }
-
-  public IntegerProperty waterDensityProperty() {
-    return waterDensity;
-  }
-
-  public int getPlateauDensity() {
-    return plateauDensity.get();
-  }
-
-  public void setPlateauDensity(int plateauDensity) {
-    this.plateauDensity.set(plateauDensity);
-  }
-
-  public IntegerProperty plateauDensityProperty() {
-    return plateauDensity;
-  }
-
-  public int getMountainDensity() {
-    return mountainDensity.get();
-  }
-
-  public void setMountainDensity(int mountainDensity) {
-    this.mountainDensity.set(mountainDensity);
-  }
-
-  public IntegerProperty mountainDensityProperty() {
-    return mountainDensity;
-  }
-
-  public int getRampDensity() {
-    return rampDensity.get();
-  }
-
-  public void setRampDensity(int rampDensity) {
-    this.rampDensity.set(rampDensity);
-  }
-
-  public IntegerProperty rampDensityProperty() {
-    return rampDensity;
-  }
-
-  public int getMexDensity() {
-    return mexDensity.get();
-  }
-
-  public void setMexDensity(int mexDensity) {
-    this.mexDensity.set(mexDensity);
-  }
-
-  public IntegerProperty mexDensityProperty() {
-    return mexDensity;
-  }
-
-  public int getReclaimDensity() {
-    return reclaimDensity.get();
-  }
-
-  public void setReclaimDensity(int reclaimDensity) {
-    this.reclaimDensity.set(reclaimDensity);
-  }
-
-  public IntegerProperty reclaimDensityProperty() {
-    return reclaimDensity;
-  }
-
-  public boolean getWaterRandom() {
-    return waterRandom.get();
-  }
-
-  public void setWaterRandom(boolean waterRandom) {
-    this.waterRandom.set(waterRandom);
-  }
-
-  public BooleanProperty waterRandomProperty() {
-    return waterRandom;
-  }
-
-  public boolean getMountainRandom() {
-    return mountainRandom.get();
-  }
-
-  public void setMountainRandom(boolean mountainRandom) {
-    this.mountainRandom.set(mountainRandom);
-  }
-
-  public BooleanProperty mountainRandomProperty() {
-    return mountainRandom;
-  }
-
-  public boolean getPlateauRandom() {
-    return plateauRandom.get();
-  }
-
-  public void setPlateauRandom(boolean plateauRandom) {
-    this.plateauRandom.set(plateauRandom);
-  }
-
-  public BooleanProperty plateauRandomProperty() {
-    return plateauRandom;
-  }
-
-  public boolean getRampRandom() {
-    return rampRandom.get();
-  }
-
-  public void setRampRandom(boolean rampRandom) {
-    this.rampRandom.set(rampRandom);
-  }
-
-  public BooleanProperty rampRandomProperty() {
-    return rampRandom;
-  }
-
-  public boolean getMexRandom() {
-    return mexRandom.get();
-  }
-
-  public void setMexRandom(boolean mexRandom) {
-    this.mexRandom.set(mexRandom);
-  }
-
-  public BooleanProperty mexRandomProperty() {
-    return mexRandom;
-  }
-
-  public boolean getReclaimRandom() {
-    return reclaimRandom.get();
-  }
-
-  public void setReclaimRandom(boolean reclaimRandom) {
-    this.reclaimRandom.set(reclaimRandom);
-  }
-
-  public BooleanProperty reclaimRandomProperty() {
-    return reclaimRandom;
   }
 }

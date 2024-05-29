@@ -239,10 +239,12 @@ public class GenerateMapController extends NodeController<Pane> {
   }
 
   private void initCheckBoxes() {
+    customStyleCheckBox.setSelected(generatorPrefs.getCustomStyle());
     customStyleCheckBox.disableProperty()
         .bind(previousMapName.textProperty().isNotEmpty()
             .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
             .or(commandLineArgsText.textProperty().isNotEmpty()));
+    fixedSeedCheckBox.setSelected(generatorPrefs.getFixedSeed());
     fixedSeedCheckBox.disableProperty()
         .bind(previousMapName.textProperty().isNotEmpty()
             .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
@@ -250,12 +252,15 @@ public class GenerateMapController extends NodeController<Pane> {
   }
 
   private void initSeedField() {
+    seedTextField.setText(String.valueOf(generatorPrefs.getSeed()));
     seedTextField.disableProperty()
         .bind(previousMapName.textProperty().isNotEmpty()
+            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
             .or(commandLineArgsText.textProperty().isNotEmpty())
             .or(fixedSeedCheckBox.selectedProperty().not()));
     seedRerollButton.disableProperty()
         .bind(previousMapName.textProperty().isNotEmpty()
+            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
             .or(commandLineArgsText.textProperty().isNotEmpty())
             .or(fixedSeedCheckBox.selectedProperty().not()));
   }
