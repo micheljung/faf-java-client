@@ -77,17 +77,17 @@
         </children>
     </HBox>
     <Label fx:id="mapStyleLabel" text="%game.generateMap.style" GridPane.rowIndex="8" />
-    <ComboBox fx:id="mapStyleComboBox" maxHeight="Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+    <ComboBox fx:id="mapStyleComboBox" maxHeight="Infinity" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
     <Label fx:id="customStyleLabel" text="%game.generateMap.custom" GridPane.rowIndex="9" />
     <CheckBox fx:id="customStyleCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />
     <Label fx:id="terrainLabel" text="%game.generateMap.terrain" GridPane.rowIndex="10" />
-    <ComboBox fx:id="terrainComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+    <ComboBox fx:id="terrainComboBox" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
     <Label fx:id="biomeLabel" text="%game.generateMap.biome" GridPane.columnIndex="0" GridPane.rowIndex="11" />
-    <ComboBox fx:id="biomeComboBox" maxHeight="Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+    <ComboBox fx:id="biomeComboBox" maxHeight="Infinity" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
     <Label fx:id="resourceLabel" text="%game.generateMap.resources" GridPane.rowIndex="12" />
-    <ComboBox fx:id="resourcesComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+    <ComboBox fx:id="resourcesComboBox" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
     <Label fx:id="propLabel" text="%game.generateMap.props" GridPane.rowIndex="13" />
-    <ComboBox fx:id="propsComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+    <ComboBox fx:id="propsComboBox" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
 
     <Separator GridPane.columnSpan="2" GridPane.rowIndex="14" />
     <Label styleClass="h2" text="%game.generateMap.recreate" GridPane.columnSpan="2" GridPane.rowIndex="15" />

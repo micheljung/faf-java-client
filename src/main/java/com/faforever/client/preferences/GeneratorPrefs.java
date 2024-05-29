@@ -21,9 +21,9 @@ public class GeneratorPrefs {
   private final DoubleProperty mapSizeInKm = new SimpleDoubleProperty(10);
   private final StringProperty mapStyle = new SimpleStringProperty("");
   private final StringProperty symmetry = new SimpleStringProperty("");
-  private final IntegerProperty seed = new SimpleIntegerProperty(0);
-  private final BooleanProperty fixedSeed = new SimpleBooleanProperty(true);
-  private final BooleanProperty customStyle = new SimpleBooleanProperty(true);
+  private final StringProperty seed = new SimpleStringProperty("");
+  private final BooleanProperty fixedSeed = new SimpleBooleanProperty(false);
+  private final BooleanProperty customStyle = new SimpleBooleanProperty(false);
   private final StringProperty terrainGenerator = new SimpleStringProperty("");
   private final StringProperty textureGenerator = new SimpleStringProperty("");
   private final StringProperty resourceGenerator = new SimpleStringProperty("");
@@ -113,15 +113,15 @@ public class GeneratorPrefs {
     return symmetry;
   }
 
-  public int getSeed() {
+  public String getSeed() {
     return seed.get();
   }
 
-  public void setSeed(int seed) {
+  public void setSeed(String seed) {
     this.seed.set(seed);
   }
 
-  public IntegerProperty seedProperty() {
+  public StringProperty seedProperty() {
     return seed;
   }
 

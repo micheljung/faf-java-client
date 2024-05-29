@@ -134,7 +134,7 @@ public class GenerateMapControllerTest extends PlatformTest {
 
   @Test
   public void testSetLastSeed() {
-    generatorPrefs.setSeed(100);
+    generatorPrefs.setSeed("100");
 
     WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
     WaitForAsyncUtils.waitForFxEvents();
@@ -455,7 +455,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testGetGenerateMapNoNameCustomStyle() {
     generatorPrefs.setCustomStyle(true);
     generatorPrefs.setFixedSeed(true);
-    generatorPrefs.setSeed(100);
+    generatorPrefs.setSeed("100");
     generatorPrefs.setSpawnCount(2);
     generatorPrefs.setNumTeams(2);
     generatorPrefs.setMapSizeInKm(10.0);

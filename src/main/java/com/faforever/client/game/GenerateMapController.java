@@ -240,11 +240,13 @@ public class GenerateMapController extends NodeController<Pane> {
 
   private void initCheckBoxes() {
     customStyleCheckBox.setSelected(generatorPrefs.getCustomStyle());
+    generatorPrefs.customStyleProperty().bind(customStyleCheckBox.selectedProperty());
     customStyleCheckBox.disableProperty()
         .bind(previousMapName.textProperty().isNotEmpty()
             .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
             .or(commandLineArgsText.textProperty().isNotEmpty()));
     fixedSeedCheckBox.setSelected(generatorPrefs.getFixedSeed());
+    generatorPrefs.fixedSeedProperty().bind(fixedSeedCheckBox.selectedProperty());
     fixedSeedCheckBox.disableProperty()
         .bind(previousMapName.textProperty().isNotEmpty()
             .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
@@ -253,6 +255,7 @@ public class GenerateMapController extends NodeController<Pane> {
 
   private void initSeedField() {
     seedTextField.setText(String.valueOf(generatorPrefs.getSeed()));
+    generatorPrefs.seedProperty().bind(seedTextField.textProperty());
     seedTextField.disableProperty()
         .bind(previousMapName.textProperty().isNotEmpty()
             .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
