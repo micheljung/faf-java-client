@@ -41,125 +41,94 @@ public class MapSearchPrefs {
   public StringProperty mapNameFieldProperty() {
     return mapNameField;
   }
-
   public String getMapAuthorField() {
-		return mapAuthorField.get();
-	}
-
-	public void setMapAuthorField(String mapAuthorField) {
-		this.mapAuthorField.set(mapAuthorField);
-	}
-
-	public StringProperty mapAuthorFieldProperty() {
-		return mapAuthorField;
-	}
-
-  public LocalDate getUploadedBeforeDate() {
-		return uploadedBeforeDate.get();
-	}
-
-	public void setUploadedBeforeDate(LocalDate uploadedBeforeDate) {
-		this.uploadedBeforeDate.set(uploadedBeforeDate);
-	}
-
-	public ObjectProperty<LocalDate> uploadedBeforeDateProperty() {
-		return uploadedBeforeDate;
-	}
-
-  public LocalDate getUploadedAfterDate() {
-		return uploadedAfterDate.get();
-	}
-
-	public void setUploadedAfterDate(LocalDate uploadedAfterDate) {
-		this.uploadedAfterDate.set(uploadedAfterDate);
-	}
-
-	public ObjectProperty<LocalDate> uploadedAfterDateProperty() {
-		return uploadedAfterDate;
-	}
-  
-  public ObservableList<String> getMapWidthFilter() {
-		return mapWidthFilter.get();
-	}
-
-	public void setMapWidthFilter(ObservableList<String> mapWidthFilter) {
-		this.mapWidthFilter.set(mapWidthFilter);
-	}
-
-	public ListProperty<String> mapWidthFilterProperty() {
-		return mapWidthFilter;
-	}
-
-  public ObservableList<String> getMapHeightFilter() {
-		return mapHeightFilter.get();
-	}
-
-	public void setMapHeightFilter(ObservableList<String> mapHeightFilter) {
-		this.mapHeightFilter.set(mapHeightFilter);
-	}
-
-	public ListProperty<String> mapHeightFilterProperty() {
-		return mapHeightFilter;
-	}
-
-  public Double getMaxPlayersMin() {
-	  return maxPlayersMin.get();
+    return mapAuthorField.get();
   }
-
-	public void setMaxPlayersMin(Double maxPlayersMin) {
-		this.maxPlayersMin.set(maxPlayersMin);
-	}
-
-	public ObjectProperty<Double> maxPlayersMinProperty() {
-		return maxPlayersMin;
-	}
-
+  public void setMapAuthorField(String mapAuthorField) {
+    this.mapAuthorField.set(mapAuthorField);
+  }
+  public StringProperty mapAuthorFieldProperty() {
+    return mapAuthorField;
+  }
+  public LocalDate getUploadedBeforeDate() {
+    return uploadedBeforeDate.get();
+  }
+  public void setUploadedBeforeDate(LocalDate uploadedBeforeDate) {
+    this.uploadedBeforeDate.set(uploadedBeforeDate);
+  }
+  public ObjectProperty<LocalDate> uploadedBeforeDateProperty() {
+    return uploadedBeforeDate;
+  }
+  public LocalDate getUploadedAfterDate() {
+    return uploadedAfterDate.get();
+  }
+  public void setUploadedAfterDate(LocalDate uploadedAfterDate) {
+    this.uploadedAfterDate.set(uploadedAfterDate);
+  }
+  public ObjectProperty<LocalDate> uploadedAfterDateProperty() {
+    return uploadedAfterDate;
+  }
+  public ObservableList<String> getMapWidthFilter() {
+    return mapWidthFilter.get();
+  }
+  public void setMapWidthFilter(ObservableList<String> mapWidthFilter) {
+    this.mapWidthFilter.set(mapWidthFilter);
+  }
+  public ListProperty<String> mapWidthFilterProperty() {
+    return mapWidthFilter;
+  }
+  public ObservableList<String> getMapHeightFilter() {
+    return mapHeightFilter.get();
+  }
+  public void setMapHeightFilter(ObservableList<String> mapHeightFilter) {
+    this.mapHeightFilter.set(mapHeightFilter);
+  }
+  public ListProperty<String> mapHeightFilterProperty() {
+    return mapHeightFilter;
+  }
+  public Double getMaxPlayersMin() {
+    return maxPlayersMin.get();
+  }
+  public void setMaxPlayersMin(Double maxPlayersMin) {
+    this.maxPlayersMin.set(maxPlayersMin);
+  }
+  public ObjectProperty<Double> maxPlayersMinProperty() {
+    return maxPlayersMin;
+  }
   public Double getMaxPlayersMax() {
-		return maxPlayersMax.get();
-	}
-
-	public void setMaxPlayersMax(Double maxPlayersMax) {
-		this.maxPlayersMax.set(maxPlayersMax);
-	}
-
-	public ObjectProperty<Double> maxPlayersMaxProperty() {
-		return maxPlayersMax;
-	}
-
+    return maxPlayersMax.get();
+  }
+  public void setMaxPlayersMax(Double maxPlayersMax) {
+    this.maxPlayersMax.set(maxPlayersMax);
+  }
+  public ObjectProperty<Double> maxPlayersMaxProperty() {
+    return maxPlayersMax;
+  }
   public Double getAverageReviewScoresMin() {
-		return averageReviewScoresMin.get();
-	}
-
-	public void setAverageReviewScoresMin(Double averageReviewScoresMin) {
-		this.averageReviewScoresMin.set(averageReviewScoresMin);
-	}
-
-	public ObjectProperty<Double> averageReviewScoresMinProperty() {
-		return averageReviewScoresMin;
-	}
-
+    return averageReviewScoresMin.get();
+  }
+  public void setAverageReviewScoresMin(Double averageReviewScoresMin) {
+    this.averageReviewScoresMin.set(averageReviewScoresMin);
+  }
+  public ObjectProperty<Double> averageReviewScoresMinProperty() {
+    return averageReviewScoresMin;
+  }
   public Double getAverageReviewScoresMax() {
-		return averageReviewScoresMax.get();
-	}
-
-	public void setAverageReviewScoresMax(Double averageReviewScoresMax) {
-		this.averageReviewScoresMax.set(averageReviewScoresMax);
-	}
-
-	public ObjectProperty<Double> averageReviewScoresMaxProperty() {
-		return averageReviewScoresMax;
-	}
-
+    return averageReviewScoresMax.get();
+  }
+  public void setAverageReviewScoresMax(Double averageReviewScoresMax) {
+    this.averageReviewScoresMax.set(averageReviewScoresMax);
+  }
+  public ObjectProperty<Double> averageReviewScoresMaxProperty() {
+    return averageReviewScoresMax;
+  }
   public Boolean getOnlyRanked() {
-		return onlyRanked.get();
-	}
-
-	public void setOnlyRanked(Boolean onlyRanked) {
-		this.onlyRanked.set(onlyRanked);
-	}
-
-	public BooleanProperty onlyRankedProperty() {
-		return onlyRanked;
-	}
-
+    return onlyRanked.get();
+  }
+  public void setOnlyRanked(Boolean onlyRanked) {
+    this.onlyRanked.set(onlyRanked);
+  }
+  public BooleanProperty onlyRankedProperty() {
+    return onlyRanked;
+  }
 }
