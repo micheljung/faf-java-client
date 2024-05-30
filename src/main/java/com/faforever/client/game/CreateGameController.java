@@ -210,6 +210,10 @@ public class CreateGameController extends NodeController<Pane> {
     onCloseButtonClickedListener.run();
   }
 
+  @Override
+  public void onShow() {
+    addShownSubscription(() -> modManagerController.apply());
+  }
 
   private void setCreateGameButtonState() {
     String title = titleTextField.getText();
@@ -309,6 +313,7 @@ public class CreateGameController extends NodeController<Pane> {
       if (newItem == null && filteredMaps.contains(oldItem)) {
         mapListView.getSelectionModel().select(oldItem);
       } else {
+        lastGamePrefs.setLastMap(newItem != null ? newItem.folderName() : null);
         selectedMap.set(newItem);
       }
     });
