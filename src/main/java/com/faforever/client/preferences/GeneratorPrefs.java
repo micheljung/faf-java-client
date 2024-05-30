@@ -24,10 +24,10 @@ public class GeneratorPrefs {
   private final StringProperty seed = new SimpleStringProperty("");
   private final BooleanProperty fixedSeed = new SimpleBooleanProperty(false);
   private final BooleanProperty customStyle = new SimpleBooleanProperty(false);
-  private final StringProperty terrainGenerator = new SimpleStringProperty("");
-  private final StringProperty textureGenerator = new SimpleStringProperty("");
-  private final StringProperty resourceGenerator = new SimpleStringProperty("");
-  private final StringProperty propGenerator = new SimpleStringProperty("");
+  private final StringProperty terrainStyle = new SimpleStringProperty("");
+  private final StringProperty textureStyle = new SimpleStringProperty("");
+  private final StringProperty resourceStyle = new SimpleStringProperty("");
+  private final StringProperty propStyle = new SimpleStringProperty("");
 
   public GenerationType getGenerationType() {
     return generationType.get();
@@ -149,51 +149,51 @@ public class GeneratorPrefs {
     return customStyle;
   }
 
-  public String getTerrainGenerator() {
-    return terrainGenerator.get();
+  public String getTerrainStyle() {
+    return terrainStyle.get();
   }
 
-  public void setTerrainGenerator(String terrainGenerator) {
-    this.terrainGenerator.set(terrainGenerator);
+  public void setTerrainStyle(String terrainStyle) {
+    this.terrainStyle.set(terrainStyle);
   }
 
-  public StringProperty terrainGeneratorProperty() {
-    return terrainGenerator;
+  public StringProperty terrainStyleProperty() {
+    return terrainStyle;
   }
 
-  public String getTextureGenerator() {
-    return textureGenerator.get();
+  public String getTextureStyle() {
+    return textureStyle.get();
   }
 
-  public void setTextureGenerator(String textureGenerator) {
-    this.textureGenerator.set(textureGenerator);
+  public void setTextureStyle(String textureStyle) {
+    this.textureStyle.set(textureStyle);
   }
 
-  public StringProperty textureGeneratorProperty() {
-    return textureGenerator;
+  public StringProperty textureStyleProperty() {
+    return textureStyle;
   }
 
-  public String getResourceGenerator() {
-    return resourceGenerator.get();
+  public String getResourceStyle() {
+    return resourceStyle.get();
   }
 
-  public void setResourceGenerator(String resourceGenerator) {
-    this.resourceGenerator.set(resourceGenerator);
+  public void setResourceStyle(String resourceStyle) {
+    this.resourceStyle.set(resourceStyle);
   }
 
-  public StringProperty resourceGeneratorProperty() {
-    return resourceGenerator;
+  public StringProperty resourceStyleProperty() {
+    return resourceStyle;
   }
 
-  public String getPropGenerator() {
-    return propGenerator.get();
+  public String getPropStyle() {
+    return propStyle.get();
   }
 
-  public void setPropGenerator(String propGenerator) {
-    this.propGenerator.set(propGenerator);
+  public void setPropStyle(String propStyle) {
+    this.propStyle.set(propStyle);
   }
 
-  public StringProperty propGeneratorProperty() {
-    return propGenerator;
+  public StringProperty propStyleProperty() {
+    return propStyle;
   }
 }

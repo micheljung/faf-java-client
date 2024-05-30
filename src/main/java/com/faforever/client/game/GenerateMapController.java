@@ -292,10 +292,10 @@ public class GenerateMapController extends NodeController<Pane> {
       optionsBuilder.seed(seedTextField.getText());
     }
     if (customStyleCheckBox.isSelected() && generationTypeComboBox.getValue() == GenerationType.CASUAL) {
-      optionsBuilder.terrainGenerator(terrainComboBox.getValue());
-      optionsBuilder.textureGenerator(biomeComboBox.getValue());
-      optionsBuilder.resourceGenerator(resourcesComboBox.getValue());
-      optionsBuilder.propGenerator(propsComboBox.getValue());
+      optionsBuilder.terrainStyle(terrainComboBox.getValue());
+      optionsBuilder.textureStyle(biomeComboBox.getValue());
+      optionsBuilder.resourceStyle(resourcesComboBox.getValue());
+      optionsBuilder.propStyle(propsComboBox.getValue());
     }
     return optionsBuilder.build();
   }
@@ -384,56 +384,56 @@ public class GenerateMapController extends NodeController<Pane> {
     generatorPrefs.mapStyleProperty().bind(mapStyleComboBox.valueProperty());
   }
 
-  protected void setTerrainGenerators(List<String> terrainGenerators) {
-    ArrayList<String> terrainGeneratorList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
-    terrainGeneratorList.addAll(terrainGenerators);
-    terrainComboBox.setItems(FXCollections.observableList(terrainGeneratorList));
-    String terrainGenerator = generatorPrefs.getTerrainGenerator();
-    if (terrainComboBox.getItems().contains(terrainGenerator)) {
-      terrainComboBox.getSelectionModel().select(terrainGenerator);
+  protected void setTerrainStyles(List<String> terrainStyles) {
+    ArrayList<String> terrainStyleList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
+    terrainStyleList.addAll(terrainStyles);
+    terrainComboBox.setItems(FXCollections.observableList(terrainStyleList));
+    String terrainStyle = generatorPrefs.getTerrainStyle();
+    if (terrainComboBox.getItems().contains(terrainStyle)) {
+      terrainComboBox.getSelectionModel().select(terrainStyle);
     } else {
       terrainComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_OPTION);
     }
-    generatorPrefs.terrainGeneratorProperty().bind(terrainComboBox.valueProperty());
+    generatorPrefs.terrainStyleProperty().bind(terrainComboBox.valueProperty());
   }
 
-  protected void setTextureGenerators(List<String> textureGenerators) {
-    ArrayList<String> textureGeneratorList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
-    textureGeneratorList.addAll(textureGenerators);
-    biomeComboBox.setItems(FXCollections.observableList(textureGeneratorList));
-    String textureGenerator = generatorPrefs.getTextureGenerator();
-    if (biomeComboBox.getItems().contains(textureGenerator)) {
-      biomeComboBox.getSelectionModel().select(textureGenerator);
+  protected void setTextureStyles(List<String> textureStyles) {
+    ArrayList<String> textureStyleList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
+    textureStyleList.addAll(textureStyles);
+    biomeComboBox.setItems(FXCollections.observableList(textureStyleList));
+    String textureStyle = generatorPrefs.getTextureStyle();
+    if (biomeComboBox.getItems().contains(textureStyle)) {
+      biomeComboBox.getSelectionModel().select(textureStyle);
     } else {
       biomeComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_OPTION);
     }
-    generatorPrefs.textureGeneratorProperty().bind(biomeComboBox.valueProperty());
+    generatorPrefs.textureStyleProperty().bind(biomeComboBox.valueProperty());
   }
 
-  protected void setResourceGenerators(List<String> resourceGenerators) {
-    ArrayList<String> resourceGeneratorList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
-    resourceGeneratorList.addAll(resourceGenerators);
-    resourcesComboBox.setItems(FXCollections.observableList(resourceGeneratorList));
-    String resourceGenerator = generatorPrefs.getResourceGenerator();
-    if (resourcesComboBox.getItems().contains(resourceGenerator)) {
-      resourcesComboBox.getSelectionModel().select(resourceGenerator);
+  protected void setResourceStyles(List<String> resourceStyles) {
+    ArrayList<String> resourceStyleList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
+    resourceStyleList.addAll(resourceStyles);
+    resourcesComboBox.setItems(FXCollections.observableList(resourceStyleList));
+    String resourceStyle = generatorPrefs.getResourceStyle();
+    if (resourcesComboBox.getItems().contains(resourceStyle)) {
+      resourcesComboBox.getSelectionModel().select(resourceStyle);
     } else {
       resourcesComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_OPTION);
     }
-    generatorPrefs.resourceGeneratorProperty().bind(resourcesComboBox.valueProperty());
+    generatorPrefs.resourceStyleProperty().bind(resourcesComboBox.valueProperty());
   }
 
-  protected void setPropGenerators(List<String> propGenerators) {
-    ArrayList<String> propGeneratorList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
-    propGeneratorList.addAll(propGenerators);
-    propsComboBox.setItems(FXCollections.observableList(propGeneratorList));
-    String propGenerator = generatorPrefs.getPropGenerator();
-    if (propsComboBox.getItems().contains(propGenerator)) {
-      propsComboBox.getSelectionModel().select(propGenerator);
+  protected void setPropStyles(List<String> propStyles) {
+    ArrayList<String> propStyleList = new ArrayList<>(List.of(MapGeneratorService.GENERATOR_RANDOM_OPTION));
+    propStyleList.addAll(propStyles);
+    propsComboBox.setItems(FXCollections.observableList(propStyleList));
+    String propStyle = generatorPrefs.getPropStyle();
+    if (propsComboBox.getItems().contains(propStyle)) {
+      propsComboBox.getSelectionModel().select(propStyle);
     } else {
       propsComboBox.getSelectionModel().select(MapGeneratorService.GENERATOR_RANDOM_OPTION);
     }
-    generatorPrefs.propGeneratorProperty().bind(propsComboBox.valueProperty());
+    generatorPrefs.propStyleProperty().bind(propsComboBox.valueProperty());
   }
 
   public void onNewLabelClicked(MouseEvent mouseEvent) {

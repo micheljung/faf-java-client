@@ -441,10 +441,10 @@ public class CreateGameControllerTest extends PlatformTest {
     verify(mapGeneratorService).getGeneratorPropStyles();
     verify(generateMapController).setSymmetries(any());
     verify(generateMapController).setStyles(any());
-    verify(generateMapController).setTerrainGenerators(any());
-    verify(generateMapController).setTextureGenerators(any());
-    verify(generateMapController).setResourceGenerators(any());
-    verify(generateMapController).setPropGenerators(any());
+    verify(generateMapController).setTerrainStyles(any());
+    verify(generateMapController).setTextureStyles(any());
+    verify(generateMapController).setResourceStyles(any());
+    verify(generateMapController).setPropStyles(any());
     verify(generateMapController).setOnCloseButtonClickedListener(any());
   }
 

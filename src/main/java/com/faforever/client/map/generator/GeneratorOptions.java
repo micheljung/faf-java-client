@@ -11,9 +11,9 @@ public record GeneratorOptions(
     GenerationType generationType,
     String symmetry,
     String style,
-    String terrainGenerator,
-    String textureGenerator,
-    String resourceGenerator,
-    String propGenerator,
+    String terrainStyle,
+    String textureStyle,
+    String resourceStyle,
+    String propStyle,
     String commandLineArgs
 ) {}

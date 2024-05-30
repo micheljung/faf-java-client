@@ -431,22 +431,22 @@ public class CreateGameController extends NodeController<Pane> {
                                                                            .publishOn(
                                                                                fxApplicationThreadExecutor.asScheduler())
                                                                            .doOnNext(
-                                                                               generateMapController::setTerrainGenerators),
+                                                                               generateMapController::setTerrainStyles),
                                                         mapGeneratorService.getGeneratorTextureStyles()
                                                                            .publishOn(
                                                                                fxApplicationThreadExecutor.asScheduler())
                                                                            .doOnNext(
-                                                                               generateMapController::setTextureGenerators),
+                                                                               generateMapController::setTextureStyles),
                                                         mapGeneratorService.getGeneratorResourceStyles()
                                                                            .publishOn(
                                                                                fxApplicationThreadExecutor.asScheduler())
                                                                            .doOnNext(
-                                                                               generateMapController::setResourceGenerators),
+                                                                               generateMapController::setResourceStyles),
                                                         mapGeneratorService.getGeneratorPropStyles()
                                                                            .publishOn(
                                                                                fxApplicationThreadExecutor.asScheduler())
                                                                            .doOnNext(
-                                                                               generateMapController::setPropGenerators))))
+                                                                               generateMapController::setPropStyles))))
                        .publishOn(fxApplicationThreadExecutor.asScheduler())
                        .subscribe(null, throwable -> {
                          log.error("Opening map generation ui failed", throwable);

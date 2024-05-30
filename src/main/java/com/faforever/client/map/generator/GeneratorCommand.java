@@ -22,10 +22,10 @@ public record GeneratorCommand(
     GenerationType generationType,
     String symmetry,
     String style,
-    String terrainGenerator,
-    String textureGenerator,
-    String resourceGenerator,
-    String propGenerator,
+    String terrainStyle,
+    String textureStyle,
+    String resourceStyle,
+    String propStyle,
     String commandLineArgs
 ) {
 
@@ -77,20 +77,20 @@ public record GeneratorCommand(
         return command;
       }
 
-      if (terrainGenerator != null && !terrainGenerator.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
-        command.addAll(Arrays.asList("--terrain-style", terrainGenerator));
+      if (terrainStyle != null && !terrainStyle.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
+        command.addAll(Arrays.asList("--terrain-style", terrainStyle));
       }
 
-      if (textureGenerator != null && !textureGenerator.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
-        command.addAll(Arrays.asList("--texture-style", textureGenerator));
+      if (textureStyle != null && !textureStyle.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
+        command.addAll(Arrays.asList("--texture-style", textureStyle));
       }
 
-      if (resourceGenerator != null && !resourceGenerator.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
-        command.addAll(Arrays.asList("--resource-style", resourceGenerator));
+      if (resourceStyle != null && !resourceStyle.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
+        command.addAll(Arrays.asList("--resource-style", resourceStyle));
       }
 
-      if (propGenerator != null && !propGenerator.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
-        command.addAll(Arrays.asList("--prop-style", propGenerator));
+      if (propStyle != null && !propStyle.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
+        command.addAll(Arrays.asList("--prop-style", propStyle));
       }
 
       return command;

@@ -70,10 +70,10 @@ public class GenerateMapTask extends CompletableTask<String> {
                              .generationType(generatorOptions.generationType())
                              .symmetry(generatorOptions.symmetry())
                              .style(generatorOptions.style())
-                             .terrainGenerator(generatorOptions.terrainGenerator())
-                             .textureGenerator(generatorOptions.textureGenerator())
-                             .resourceGenerator(generatorOptions.resourceGenerator())
-                             .propGenerator(generatorOptions.propGenerator())
+                             .terrainStyle(generatorOptions.terrainStyle())
+                             .textureStyle(generatorOptions.textureStyle())
+                             .resourceStyle(generatorOptions.resourceStyle())
+                             .propStyle(generatorOptions.propStyle())
                              .commandLineArgs(generatorOptions.commandLineArgs());
     }
 

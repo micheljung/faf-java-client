@@ -56,10 +56,10 @@ public class GenerateMapControllerTest extends PlatformTest {
     generatorPrefs.seedProperty().unbind();
     generatorPrefs.fixedSeedProperty().unbind();
     generatorPrefs.customStyleProperty().unbind();
-    generatorPrefs.terrainGeneratorProperty().unbind();
-    generatorPrefs.textureGeneratorProperty().unbind();
-    generatorPrefs.resourceGeneratorProperty().unbind();
-    generatorPrefs.propGeneratorProperty().unbind();
+    generatorPrefs.terrainStyleProperty().unbind();
+    generatorPrefs.textureStyleProperty().unbind();
+    generatorPrefs.resourceStyleProperty().unbind();
+    generatorPrefs.propStyleProperty().unbind();
     generatorPrefs.commandLineArgsProperty().unbind();
   }
 
@@ -165,49 +165,49 @@ public class GenerateMapControllerTest extends PlatformTest {
   }
 
   @Test
-  public void testSetLastTerrainGenerator() {
-    generatorPrefs.setTerrainGenerator("Test");
+  public void testSetLastTerrainStyle() {
+    generatorPrefs.setTerrainStyle("Test");
 
     WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
     WaitForAsyncUtils.waitForFxEvents();
 
-    instance.setTerrainGenerators(new ArrayList<>(List.of("Test")));
+    instance.setTerrainStyles(new ArrayList<>(List.of("Test")));
 
     assertEquals(instance.terrainComboBox.getValue(), "Test");
   }
 
   @Test
-  public void testSetLastTextureGenerator() {
-    generatorPrefs.setTextureGenerator("Test");
+  public void testSetLastTextureStyle() {
+    generatorPrefs.setTextureStyle("Test");
 
     WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
     WaitForAsyncUtils.waitForFxEvents();
 
-    instance.setTextureGenerators(new ArrayList<>(List.of("Test")));
+    instance.setTextureStyles(new ArrayList<>(List.of("Test")));
 
     assertEquals(instance.biomeComboBox.getValue(), "Test");
   }
 
   @Test
-  public void testSetLastResourceGenerator() {
-    generatorPrefs.setResourceGenerator("Test");
+  public void testSetLastResourceStyle() {
+    generatorPrefs.setResourceStyle("Test");
 
     WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
     WaitForAsyncUtils.waitForFxEvents();
 
-    instance.setResourceGenerators(new ArrayList<>(List.of("Test")));
+    instance.setResourceStyles(new ArrayList<>(List.of("Test")));
 
     assertEquals(instance.resourcesComboBox.getValue(), "Test");
   }
 
   @Test
-  public void testSetLastPropGenerator() {
-    generatorPrefs.setPropGenerator("Test");
+  public void testSetLastPropStyle() {
+    generatorPrefs.setPropStyle("Test");
 
     WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
     WaitForAsyncUtils.waitForFxEvents();
 
-    instance.setPropGenerators(new ArrayList<>(List.of("Test")));
+    instance.setPropStyles(new ArrayList<>(List.of("Test")));
 
     assertEquals(instance.propsComboBox.getValue(), "Test");
   }
@@ -489,10 +489,10 @@ public class GenerateMapControllerTest extends PlatformTest {
     assertEquals(2, result.numTeams());
     assertEquals(GenerationType.CASUAL, result.generationType());
     assertNull(result.commandLineArgs());
-    assertEquals("TERRAIN", result.terrainGenerator());
-    assertEquals("BIOME", result.textureGenerator());
-    assertEquals("MEXES", result.resourceGenerator());
-    assertEquals("PROPS", result.propGenerator());
+    assertEquals("TERRAIN", result.terrainStyle());
+    assertEquals("BIOME", result.textureStyle());
+    assertEquals("MEXES", result.resourceStyle());
+    assertEquals("PROPS", result.propStyle());
   }
 
   @Test
@@ -526,10 +526,10 @@ public class GenerateMapControllerTest extends PlatformTest {
 
     GeneratorOptions result = captor.getValue();
 
-    assertNull(result.terrainGenerator());
-    assertNull(result.textureGenerator());
-    assertNull(result.resourceGenerator());
-    assertNull(result.propGenerator());
+    assertNull(result.terrainStyle());
+    assertNull(result.textureStyle());
+    assertNull(result.resourceStyle());
+    assertNull(result.propStyle());
   }
 }
 

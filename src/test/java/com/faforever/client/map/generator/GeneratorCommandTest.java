@@ -34,10 +34,10 @@ public class GeneratorCommandTest extends ServiceTest {
 
   private static GeneratorCommandBuilder customStyleBuilder() {
     return defaultBuilder()
-        .terrainGenerator("terrain")
-        .textureGenerator("texture")
-        .resourceGenerator("resource")
-        .propGenerator("prop");
+        .terrainStyle("terrain")
+        .textureStyle("texture")
+        .resourceStyle("resource")
+        .propStyle("prop");
   }
 
   private static GeneratorCommandBuilder maximumArgsBuilder() {
@@ -93,26 +93,26 @@ public class GeneratorCommandTest extends ServiceTest {
   }
 
   @Test
-  public void testTerrainGeneratorSet() {
-    List<String> command = defaultBuilder().terrainGenerator("TERRAIN").build().getCommand();
+  public void testTerrainStyleSet() {
+    List<String> command = defaultBuilder().terrainStyle("TERRAIN").build().getCommand();
     assertTrue(command.containsAll(List.of("--terrain-style", "TERRAIN")));
   }
 
   @Test
-  public void testTextureGeneratorSet() {
-    List<String> command = defaultBuilder().textureGenerator("BIOME").build().getCommand();
+  public void testTextureStyleSet() {
+    List<String> command = defaultBuilder().textureStyle("BIOME").build().getCommand();
     assertTrue(command.containsAll(List.of("--texture-style", "BIOME")));
   }
 
   @Test
-  public void testResourceGeneratorSet() {
-    List<String> command = defaultBuilder().resourceGenerator("RESOURCE").build().getCommand();
+  public void testResourceStyleSet() {
+    List<String> command = defaultBuilder().resourceStyle("RESOURCE").build().getCommand();
     assertTrue(command.containsAll(List.of("--resource-style", "RESOURCE")));
   }
 
   @Test
-  public void testPropGeneratorSet() {
-    List<String> command = defaultBuilder().propGenerator("PROPS").build().getCommand();
+  public void testPropStyleSet() {
+    List<String> command = defaultBuilder().propStyle("PROPS").build().getCommand();
     assertTrue(command.containsAll(List.of("--prop-style", "PROPS")));
   }
 
@@ -159,26 +159,26 @@ public class GeneratorCommandTest extends ServiceTest {
   }
 
   @Test
-  public void testRandomTerrainGeneratorSet() {
-    List<String> command = defaultBuilder().terrainGenerator("RANDOM").build().getCommand();
+  public void testRandomTerrainStyleSet() {
+    List<String> command = defaultBuilder().terrainStyle("RANDOM").build().getCommand();
     assertThat(command, not(contains("--terrain-style")));
   }
 
   @Test
-  public void testRandomTextureGeneratorSet() {
-    List<String> command = defaultBuilder().textureGenerator("RANDOM").build().getCommand();
+  public void testRandomTextureStyleSet() {
+    List<String> command = defaultBuilder().textureStyle("RANDOM").build().getCommand();
     assertThat(command, not(contains("--texture-style")));
   }
 
   @Test
-  public void testRandomResourceGeneratorSet() {
-    List<String> command = defaultBuilder().terrainGenerator("RANDOM").build().getCommand();
+  public void testRandomResourceStyleSet() {
+    List<String> command = defaultBuilder().resourceStyle("RANDOM").build().getCommand();
     assertThat(command, not(contains("--resource-style")));
   }
 
   @Test
-  public void testRandomPropGeneratorSet() {
-    List<String> command = defaultBuilder().terrainGenerator("RANDOM").build().getCommand();
+  public void testRandomPropStyleSet() {
+    List<String> command = defaultBuilder().propStyle("RANDOM").build().getCommand();
     assertThat(command, not(contains("--prop-style")));
   }
 
