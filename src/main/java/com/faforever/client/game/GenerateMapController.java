@@ -286,17 +286,21 @@ public class GenerateMapController extends NodeController<Pane> {
     optionsBuilder.mapSize((int) (mapSizeSpinner.getValue() * KM_TO_PIXEL_FACTOR));
     optionsBuilder.numTeams(numTeamsSpinner.getValue());
     optionsBuilder.generationType(generationTypeComboBox.getValue());
-    optionsBuilder.symmetry(symmetryComboBox.getValue());
-    optionsBuilder.style(mapStyleComboBox.getValue());
-    if (fixedSeedCheckBox.isSelected() && generationTypeComboBox.getValue() == GenerationType.CASUAL) {
-      optionsBuilder.seed(seedTextField.getText());
+    if (generationTypeComboBox.getValue() == GenerationType.CASUAL) {
+      optionsBuilder.symmetry(symmetryComboBox.getValue());
+      if (fixedSeedCheckBox.isSelected()) {
+        optionsBuilder.seed(seedTextField.getText());
+      }
+      if (customStyleCheckBox.isSelected()) {
+        optionsBuilder.terrainStyle(terrainComboBox.getValue());
+        optionsBuilder.textureStyle(biomeComboBox.getValue());
+        optionsBuilder.resourceStyle(resourcesComboBox.getValue());
+        optionsBuilder.propStyle(propsComboBox.getValue());
+      } else {
+        optionsBuilder.style(mapStyleComboBox.getValue());
+      }
     }
-    if (customStyleCheckBox.isSelected() && generationTypeComboBox.getValue() == GenerationType.CASUAL) {
-      optionsBuilder.terrainStyle(terrainComboBox.getValue());
-      optionsBuilder.textureStyle(biomeComboBox.getValue());
-      optionsBuilder.resourceStyle(resourcesComboBox.getValue());
-      optionsBuilder.propStyle(propsComboBox.getValue());
-    }
+
     return optionsBuilder.build();
   }
 
