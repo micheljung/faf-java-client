@@ -175,7 +175,7 @@ tasks.register('buildInstall4jMediaFiles', Install4jTask) {
 
 tasks.register('downloadIceAdapter', Download) {
   group "native dependencies"
-  src "https://github.com/FAForever/java-ice-adapter/releases/download/${iceAdapterVersion}/faf-ice-adapter-${iceAdapterVersion}-nojfx.jar"
+  src "https://github.com/FAForever/java-ice-adapter/releases/download/${iceAdapterVersion}/faf-ice-adapter.jar"
   dest file("${buildDir}/resources/native/faf-ice-adapter.jar")
   onlyIfNewer true
 }
@@ -245,7 +245,7 @@ dependencies {
   implementation("com.neovisionaries:nv-i18n:1.29")
   implementation("com.nativelibs4java:bridj:0.7.0")
   implementation("org.luaj:luaj-jse:3.0.1")
-  implementation("commons-validator:commons-validator:1.8.0") {
+  implementation("commons-validator:commons-validator:1.9.0") {
     exclude module: 'commons-logging'
   }
   implementation("com.github.micheljung:JJsonRpc:01a7fba5f4")

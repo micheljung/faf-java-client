@@ -29,14 +29,24 @@ public class TimeService {
   private final ChatPrefs chatPrefs;
   private final LocalizationPrefs localizationPrefs;
 
+  private static final DateTimeFormatter FORMATTER_DMY_SHORT = DateTimeFormatter.ofPattern("d/M/yy");
+  private static final DateTimeFormatter FORMATTER_DMY_MEDIUM = DateTimeFormatter.ofPattern("d MMM, yyyy");
+  private static final DateTimeFormatter FORMATTER_DMY_LONG = DateTimeFormatter.ofPattern("d MMMM, yyyy");
+  private static final DateTimeFormatter FORMATTER_DMY_FULL = DateTimeFormatter.ofPattern("EEEE, d MMMM, yyyy");
+
+  private static final DateTimeFormatter FORMATTER_MDY_SHORT = DateTimeFormatter.ofPattern("M/d/yy");
+  private static final DateTimeFormatter FORMATTER_MDY_MEDIUM = DateTimeFormatter.ofPattern("MMM d, yyyy");
+  private static final DateTimeFormatter FORMATTER_MDY_LONG = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+  private static final DateTimeFormatter FORMATTER_MDY_FULL = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+
   public String asDateTime(TemporalAccessor temporalAccessor) {
     if (temporalAccessor == null) {
       return i18n.get("noDateAvailable");
     }
     return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
-        .withLocale(getCurrentDateLocale())
-        .withZone(TimeZone.getDefault().toZoneId())
-        .format(temporalAccessor);
+                            .withLocale(getCurrentDateLocale())
+                            .withZone(TimeZone.getDefault().toZoneId())
+                            .format(temporalAccessor);
   }
 
   public String asDate(TemporalAccessor temporalAccessor) {
@@ -47,20 +57,27 @@ public class TimeService {
     if (temporalAccessor == null) {
       return i18n.get("noDateAvailable");
     }
-    return DateTimeFormatter.ofLocalizedDate(formatStyle)
-        .withLocale(getCurrentDateLocale())
-        .withZone(TimeZone.getDefault().toZoneId())
-        .format(temporalAccessor);
+
+    DateInfo dateInfo = localizationPrefs.getDateFormat();
+    DateTimeFormatter formatter = switch (dateInfo) {
+      case AUTO -> DateTimeFormatter.ofLocalizedDate(formatStyle);
+      case DAY_MONTH_YEAR -> getDMYFormatter(formatStyle);
+      case MONTH_DAY_YEAR -> getMDYFormatter(formatStyle);
+    };
+
+    return formatter.withLocale(i18n.getUserSpecificLocale())
+                    .withZone(TimeZone.getDefault().toZoneId())
+                    .format(temporalAccessor);
   }
 
-  
+
   public String asShortTime(Temporal temporal) {
     if (temporal == null) {
       return "";
     }
     return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-        .withLocale(getCurrentTimeLocale())
-        .format(ZonedDateTime.ofInstant(Instant.from(temporal), TimeZone.getDefault().toZoneId()));
+                            .withLocale(getCurrentTimeLocale())
+                            .format(ZonedDateTime.ofInstant(Instant.from(temporal), TimeZone.getDefault().toZoneId()));
   }
 
   private Locale getCurrentTimeLocale() {
@@ -78,6 +95,24 @@ public class TimeService {
     }
     return dateInfo.getUsedLocale();
 
+  }
+
+  private DateTimeFormatter getDMYFormatter(FormatStyle style) {
+    return switch (style) {
+      case SHORT -> FORMATTER_DMY_SHORT;
+      case MEDIUM -> FORMATTER_DMY_MEDIUM;
+      case LONG -> FORMATTER_DMY_LONG;
+      case FULL -> FORMATTER_DMY_FULL;
+    };
+  }
+
+  private DateTimeFormatter getMDYFormatter(FormatStyle style) {
+    return switch (style) {
+      case SHORT -> FORMATTER_MDY_SHORT;
+      case MEDIUM -> FORMATTER_MDY_MEDIUM;
+      case LONG -> FORMATTER_MDY_LONG;
+      case FULL -> FORMATTER_MDY_FULL;
+    };
   }
 
   /**
