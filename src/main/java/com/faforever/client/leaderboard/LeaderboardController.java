@@ -6,12 +6,15 @@ import com.faforever.client.domain.api.Subdivision;
 import com.faforever.client.fx.FxApplicationThreadExecutor;
 import com.faforever.client.fx.JavaFxUtil;
 import com.faforever.client.fx.NodeController;
+import com.faforever.client.fx.ToStringOnlyConverter;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.notification.NotificationService;
 import com.faforever.client.player.PlayerService;
 import com.faforever.client.util.TimeService;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -42,26 +45,29 @@ public class LeaderboardController extends NodeController<StackPane> {
   public StackPane leaderboardRoot;
   public Pane connectionProgressPane;
   public Pane contentPane;
-  public Label seasonLabel;
   public Label seasonDateLabel;
+  public ComboBox<LeagueSeason> seasonPicker;
   public LeaderboardRankingsController leaderboardRankingsController;
   public LeaderboardPlayerDetailsController leaderboardPlayerDetailsController;
   public LeaderboardDistributionController leaderboardDistributionController;
 
   private final ObjectProperty<LeagueSeason> leagueSeason = new SimpleObjectProperty<>();
+  private final ObjectProperty<List<LeagueSeason>> leagueSeasons = new SimpleObjectProperty<>(List.of());
 
   @Override
   protected void onInitialize() {
     JavaFxUtil.bindManagedToVisible(contentPane, connectionProgressPane);
     connectionProgressPane.visibleProperty().bind(contentPane.visibleProperty().not());
 
-    seasonLabel.textProperty()
-               .bind(leagueSeason.map(seasonBean -> i18n.getOrDefault(seasonBean.nameKey(),
-                                                                      "leaderboard.season.%s".formatted(
-                                                                          seasonBean.nameKey()),
-                                                                      seasonBean.seasonNumber()))
-                                 .map(String::toUpperCase)
-                                 .when(showing));
+    seasonPicker.setConverter(new ToStringOnlyConverter<>(
+        seasonBean -> i18n.get("leaderboard.season", seasonBean.seasonNumber())));
+
+    leagueSeason.bind(seasonPicker.getSelectionModel().selectedItemProperty());
+
+    leagueSeasons.map(FXCollections::observableList).when(showing).subscribe(seasons -> {
+      seasonPicker.getItems().setAll(seasons);
+      seasonPicker.getSelectionModel().selectFirst();
+    });
 
     seasonDateLabel.textProperty().bind(leagueSeason.map(seasonBean -> {
       String startDate = timeService.asDate(seasonBean.startDate(), FormatStyle.MEDIUM);
@@ -135,8 +141,8 @@ public class LeaderboardController extends NodeController<StackPane> {
     });
   }
 
-  public void setLeagueSeason(LeagueSeason leagueSeason) {
-    this.leagueSeason.set(leagueSeason);
+  public void setLeagueSeasons(List<LeagueSeason> leagueSeasons) {
+    this.leagueSeasons.set(leagueSeasons);
   }
 
   @Override

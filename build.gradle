@@ -175,7 +175,7 @@ tasks.register('buildInstall4jMediaFiles', Install4jTask) {
 
 tasks.register('downloadIceAdapter', Download) {
   group "native dependencies"
-  src "https://github.com/FAForever/java-ice-adapter/releases/download/${iceAdapterVersion}/faf-ice-adapter-${iceAdapterVersion}-nojfx.jar"
+  src "https://github.com/FAForever/java-ice-adapter/releases/download/${iceAdapterVersion}/faf-ice-adapter.jar"
   dest file("${buildDir}/resources/native/faf-ice-adapter.jar")
   onlyIfNewer true
 }

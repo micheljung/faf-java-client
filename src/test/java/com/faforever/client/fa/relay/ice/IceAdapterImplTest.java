@@ -182,7 +182,7 @@ public class IceAdapterImplTest extends ServiceTest {
     coturnServer.setCredential("test");
     coturnServer.setCredentialType("token");
     coturnServer.setUsername("0:1234");
-    coturnServer.setUrls(Set.of(URI.create("turn://test.coturn.com?transport=tcp")));
+    coturnServer.setUrls(Set.of(URI.create("turn:test.coturn.com?transport=tcp")));
 
     instance.setIceServers(List.of(coturnServer));
 
@@ -197,7 +197,7 @@ public class IceAdapterImplTest extends ServiceTest {
 
     assertEquals(coturnServer.getUsername(), iceMap.get("username"));
     assertEquals(coturnServer.getCredential(), iceMap.get("credential"));
-    assertEquals(List.of("turn://test.coturn.com?transport=tcp"), iceMap.get("urls"));
+    assertEquals(List.of("turn:test.coturn.com?transport=tcp"), iceMap.get("urls"));
   }
 
 }

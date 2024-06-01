@@ -824,16 +824,12 @@
   -fx-font-family: 'Source Sans Pro';
 }
 
-.season {
-  -fx-text-fill: #e0e0e0;
-  -fx-font-family: 'Source Sans Pro Semibold';
+.season-selector {
+  -fx-padding: 0;
+  -fx-border-width: 0;
   -fx-font-size: 30px;
-}
-
-.seasonDate {
-  -fx-text-fill: #777;
+  -fx-background-color: #1e1e1ebb;
   -fx-font-family: 'Source Sans Pro Semibold';
-  -fx-font-size: 20px;
 }
 
 .division-selector {
@@ -841,6 +837,35 @@
   -fx-font-size: 20px;
   -fx-background-color: #1e1e1ebb;
   -fx-font-family: 'Source Sans Pro Semibold';
+}
+
+.division-selector:showing,
+.season-selector:showing {
+  -fx-border-width: 0;
+}
+
+.division-selector .list-view,
+.season-selector .list-view {
+  -fx-border-width: 0;
+}
+
+.season-selector .list-view .list-cell{
+  -fx-text-fill: #e0e0e0;
+}
+
+.season-selector .list-cell{
+  -fx-text-fill: #e0e0e0;
+    -fx-padding: 0 10;
+}
+
+.season-selector .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+  -fx-padding: 0 10;
+}
+
+.seasonDate {
+  -fx-text-fill: #777;
+  -fx-font-family: 'Source Sans Pro Semibold';
+  -fx-font-size: 20px;
 }
 
 .subDivisionTabPane {

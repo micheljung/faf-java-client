@@ -11,8 +11,8 @@ import java.util.Map;
 @Mapper(config = MapperConfiguration.class)
 public interface IceServerMapper {
   default Map<String, Object> map(CoturnServer coturnServer) {
-    return Map.of(
-        "urls", coturnServer.getUrls().stream().map(URI::toString).toList(),
+    return Map.of("urls",
+                  coturnServer.getUrls().stream().map(URI::toString).map(url -> url.replaceAll("://", ":")).toList(),
         "credential", coturnServer.getCredential(),
         "username", coturnServer.getUsername()
     );

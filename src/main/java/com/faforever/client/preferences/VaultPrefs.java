@@ -27,7 +27,13 @@ public class VaultPrefs {
   @JsonMerge
   @Getter
   private final ReplaySearchPrefs replaySearch = new ReplaySearchPrefs();
-
+  @JsonMerge
+  @Getter
+  private final MapSearchPrefs mapSearch = new MapSearchPrefs();
+  @JsonMerge
+  @Getter
+  private final ModSearchPrefs modSearch = new ModSearchPrefs();
+  
   public SortConfig getOnlineReplaySortConfig() {
     return onlineReplaySortConfig.get();
   }

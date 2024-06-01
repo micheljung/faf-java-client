@@ -20,10 +20,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -61,17 +63,17 @@ public class LeaderboardsController extends NodeController<Node> {
     });
 
     leaderboardService.getLeagues()
-                      .map(league -> {
+                      .collectSortedList(Comparator.comparing(League::technicalName))
+                      .map(leagues -> leagues.stream().map(league -> {
                         String buttonText = i18n.getOrDefault(league.technicalName(), String.format("leaderboard.%s",
-                                                                            league.technicalName()));
+                                                                                                    league.technicalName()));
                         ToggleButton toggleButton = new ToggleButton(buttonText);
                         toggleButton.setToggleGroup(navigation);
                         toggleButton.getStyleClass().add("main-navigation-button");
                         toggleLeagueMap.put(toggleButton, league);
                         return toggleButton;
-                      })
+                      }).collect(Collectors.toList()))
                       .switchIfEmpty(Mono.error(new IllegalStateException("No leagues loaded")))
-                      .collectList()
                       .doOnNext(leagueButtons -> {
                         League lastLeagueTab = navigationHandler.getLastLeagueTab();
                         Toggle startingToggle = toggleLeagueMap.entrySet()
@@ -93,9 +95,10 @@ public class LeaderboardsController extends NodeController<Node> {
 
   private void setLeague(League league) {
     navigationHandler.setLastLeagueTab(league);
-    leaderboardService.getLatestSeason(league)
+    leaderboardService.getSeasons(league)
+                      .collectList()
                       .publishOn(fxApplicationThreadExecutor.asScheduler())
-                      .subscribe(leaderboardController::setLeagueSeason, throwable -> {
+                      .subscribe(leaderboardController::setLeagueSeasons, throwable -> {
                         log.error("Error while loading seasons", throwable);
                         notificationService.addImmediateErrorNotification(throwable,
                                                                           "leaderboard.failedToLoadLeaderboards");

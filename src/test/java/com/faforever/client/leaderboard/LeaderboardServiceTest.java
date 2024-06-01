@@ -105,11 +105,11 @@ public class LeaderboardServiceTest extends ServiceTest {
   }
 
   @Test
-  public void testGetLatestSeason() {
+  public void testGetSeasons() {
     when(fafApiAccessor.getMany(any())).thenReturn(Flux.empty());
     League league = Instancio.create(League.class);
 
-    StepVerifier.create(instance.getLatestSeason(league)).verifyComplete();
+    StepVerifier.create(instance.getSeasons(league)).verifyComplete();
 
     verify(fafApiAccessor).getMany(argThat(ElideMatchers.hasSort("startDate", false)));
     verify(fafApiAccessor).getMany(argThat(ElideMatchers.filterPresent()));

@@ -122,6 +122,7 @@ public class LeaderboardDistributionController extends NodeController<AnchorPane
 
     updateHighlightedSubdivision();
 
+    ratingDistributionChart.setAnimated(false);
     ratingDistributionChart.setData(FXCollections.observableArrayList(series));
     updateChartData(leagueEntries.getValue());
   }
