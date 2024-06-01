@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <VBox fx:id="loginRoot" alignment="CENTER" spacing="20.0" styleClass="login-root" xmlns="http://javafx.com/javafx/15"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.faforever.client.login.LoginController">
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.faforever.client.login.LoginController" minWidth="850" minHeight="400">
     <children>
         <VBox fx:id="messagesContainer" alignment="CENTER" maxWidth="500.0" prefWidth="500.0" spacing="5.0"/>
         <Pane maxHeight="1.7976931348623157E308" minHeight="0.0" VBox.vgrow="ALWAYS"/>
