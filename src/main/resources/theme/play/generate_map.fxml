@@ -17,7 +17,6 @@
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-      <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
     </columnConstraints>
     <rowConstraints>
         <RowConstraints minHeight="10.0" vgrow="NEVER" />
@@ -38,13 +37,11 @@
         <RowConstraints minHeight="10.0" vgrow="NEVER" />
         <RowConstraints minHeight="10.0" vgrow="NEVER" />
         <RowConstraints minHeight="10.0" vgrow="NEVER" />
-      <RowConstraints />
-        <RowConstraints />
     </rowConstraints>
     <padding>
         <Insets left="20.0" right="20.0" />
     </padding>
-    <Label onMouseClicked="#onNewLabelClicked" styleClass="h2" text="%game.generateMap.generateNew" GridPane.columnIndex="0" GridPane.columnSpan="2" />
+    <Label onMouseClicked="#onNewLabelClicked" styleClass="game-generate-map-heading" text="%game.generateMap.generateNew" GridPane.columnSpan="2" />
     <Label fx:id="commandLineLabel" text="%game.generateMap.commandLine" visible="false" GridPane.columnIndex="0" GridPane.rowIndex="1" />
     <TextField fx:id="commandLineArgsText" maxHeight="Infinity" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
     <Label text="%game.create.spawnCount" GridPane.columnIndex="0" GridPane.rowIndex="2" />
