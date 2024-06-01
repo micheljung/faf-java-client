@@ -160,6 +160,8 @@ public class LeaderboardRankingsController extends NodeController<VBox> {
 
     ratingTable.setRowFactory(param -> entriesRowFactory());
 
+    ratingTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+
     rankColumn.setCellValueFactory(param -> ObservableConstant.valueOf(param.getValue().rank()));
     rankColumn.setCellFactory(param -> new StringCell<>(rank -> i18n.number(rank.intValue())));
 
