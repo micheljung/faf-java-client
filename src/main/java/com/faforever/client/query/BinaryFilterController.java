@@ -4,6 +4,7 @@ import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -78,6 +79,22 @@ public class BinaryFilterController extends FilterNodeController {
   @Override
   public Node getRoot() {
     return binaryFilter;
+  }
+
+  public BooleanProperty firstSelectedProperty() {
+    return this.firstCheckBox.selectedProperty();
+  }
+
+  public void setFirstSelected(boolean isSelected) {
+    firstCheckBox.setSelected(isSelected);
+  }
+
+  public BooleanProperty secondSelectedProperty() {
+    return this.secondCheckBox.selectedProperty();
+  }
+
+  public void setSecondSelected(boolean isSelected) {
+    secondCheckBox.setSelected(isSelected);
   }
 
 }

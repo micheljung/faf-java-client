@@ -10,8 +10,14 @@ import com.faforever.client.main.event.NavigateEvent;
 import com.faforever.client.main.event.OpenModVaultEvent;
 import com.faforever.client.notification.NotificationService;
 import com.faforever.client.preferences.ForgedAlliancePrefs;
+import com.faforever.client.preferences.ModSearchPrefs;
 import com.faforever.client.preferences.VaultPrefs;
+import com.faforever.client.query.BinaryFilterController;
+import com.faforever.client.query.DateRangeFilterController;
+import com.faforever.client.query.RangeFilterController;
 import com.faforever.client.query.SearchablePropertyMappings;
+import com.faforever.client.query.TextFilterController;
+import com.faforever.client.query.ToggleFilterController;
 import com.faforever.client.reporting.ReportingService;
 import com.faforever.client.theme.UiService;
 import com.faforever.client.ui.dialog.Dialog;
@@ -147,14 +153,38 @@ public class ModVaultController extends VaultEntityController<ModVersion> {
     searchController.setVaultRoot(vaultRoot);
     searchController.setSavedQueries(vaultPrefs.getSavedModQueries());
 
-    searchController.addTextFilter("displayName", i18n.get("mod.displayName"), false);
-    searchController.addTextFilter("author", i18n.get("mod.author"), false);
-    searchController.addDateRangeFilter("latestVersion.updateTime", i18n.get("mod.uploadedDateTime"), 0);
-    searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"), 0, 5, 10, 4, 1);
+    ModSearchPrefs modSearch = vaultPrefs.getModSearch();
 
-    searchController.addBinaryFilter("latestVersion.type", i18n.get("mod.type"),
+    TextFilterController textFilterController = searchController.addTextFilter("displayName", i18n.get("mod.displayName"), false);
+    textFilterController.setText(modSearch.getModNameField());
+    modSearch.modNameFieldProperty().bind(textFilterController.textFieldProperty().when(showing));
+    textFilterController = searchController.addTextFilter("author", i18n.get("mod.author"), false);
+    textFilterController.setText(modSearch.getModAuthorField());
+    modSearch.modAuthorFieldProperty().bind(textFilterController.textFieldProperty().when(showing));
+
+    DateRangeFilterController dateRangeFilterController = searchController.addDateRangeFilter("latestVersion.updateTime", i18n.get("mod.uploadedDateTime"), 0);
+    dateRangeFilterController.setBeforeDate(modSearch.getUploadedBeforeDate());
+    dateRangeFilterController.setAfterDate(modSearch.getUploadedAfterDate());
+    modSearch.uploadedBeforeDateProperty().bind(dateRangeFilterController.beforeDateProperty().when(showing));
+    modSearch.uploadedAfterDateProperty().bind(dateRangeFilterController.afterDateProperty().when(showing));
+
+    RangeFilterController rangeFilter = searchController.addRangeFilter("reviewsSummary.averageScore", i18n.get("reviews.averageScore"), 0, 5, 10, 4, 1);
+    rangeFilter.setLowValue(modSearch.getAverageReviewScoresMin());
+    rangeFilter.setHighValue(modSearch.getAverageReviewScoresMax());
+    modSearch.averageReviewScoresMinProperty().bind(rangeFilter.lowValueProperty().asObject().when(showing));
+    modSearch.averageReviewScoresMaxProperty().bind(rangeFilter.highValueProperty().asObject().when(showing));
+
+
+    BinaryFilterController binaryFilter = searchController.addBinaryFilter("latestVersion.type", i18n.get("mod.type"),
         ModType.UI.toString(), ModType.SIM.toString(), i18n.get("modType.ui"), i18n.get("modType.sim"));
-    searchController.addToggleFilter("latestVersion.ranked", i18n.get("mod.onlyRanked"), "true");
+    binaryFilter.setFirstSelected(modSearch.getUiMod());
+    binaryFilter.setSecondSelected(modSearch.getSimMod());
+    modSearch.uiModProperty().bind(binaryFilter.firstSelectedProperty().when(showing));
+    modSearch.simModProperty().bind(binaryFilter.secondSelectedProperty().when(showing));
+
+    ToggleFilterController toggleFilterController = searchController.addToggleFilter("latestVersion.ranked", i18n.get("mod.onlyRanked"), "true");
+    toggleFilterController.setSelected(modSearch.getOnlyRanked());
+    modSearch.onlyRankedProperty().bind(toggleFilterController.selectedProperty().when(showing));
   }
 
   @Override
