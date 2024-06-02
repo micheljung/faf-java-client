@@ -1,6 +1,8 @@
 package com.faforever.client.mod;
 
 import com.faforever.client.api.FafApiAccessor;
+import com.faforever.client.domain.api.Mod;
+import com.faforever.client.domain.api.ModVersion;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.preferences.DataPrefs;
 import com.faforever.client.test.PlatformTest;
@@ -11,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import reactor.core.publisher.Mono;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -48,6 +51,9 @@ public class ModUploadTaskTest extends PlatformTest {
     Files.createDirectories(dataPrefs.getCacheDirectory());
     lenient().when(i18n.get(any())).thenReturn("");
     lenient().when(fafApiAccessor.uploadFile(any(), any(), any(), any())).thenReturn(Mono.empty());
+    lenient().when(modService.extractModInfo(any()))
+             .thenReturn(new ModVersion(-1, "uid", "description", null, null, null, null, false, false,
+                                        new Mod(null, null, null, false, null, null, null), null, null));
   }
 
   @Test
@@ -67,7 +73,7 @@ public class ModUploadTaskTest extends PlatformTest {
     Path pathToMod = tempDirectory.resolve("test-mod");
     Path pathToModInfo = pathToMod.resolve("mod_info.lua");
 
-    Files.createDirectories(pathToMod);
+    Files.createDirectory(pathToMod);
     Files.copy(Objects.requireNonNull(getClass().getResourceAsStream("/mods/eco_manager_mod_info.lua")), pathToModInfo);
 
     instance.setModPath(pathToMod);

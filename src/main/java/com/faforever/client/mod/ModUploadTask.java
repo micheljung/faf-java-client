@@ -77,6 +77,9 @@ public class ModUploadTask extends CompletableTask<Void> {
 
       // retrieve information from the mod_info.lua to send to the API
       ModVersion modVersionInfo = modService.extractModInfo(modPath);
+      if (modVersionInfo != null) {
+
+      }
       URL repositoryURL = modVersionInfo.mod().repositoryURL();
 
       log.debug("Uploading mod `{}` as `{}`", modPath, tmpFile);
