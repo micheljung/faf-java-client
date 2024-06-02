@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -77,7 +78,12 @@ public class ModUploadTask extends CompletableTask<Void> {
       log.debug("Uploading mod `{}` as `{}`", modPath, tmpFile);
       updateTitle(i18n.get("modVault.upload.uploading"));
 
-      return fafApiAccessor.uploadFile("/mods/upload", tmpFile, byteListener, Map.of("metadata", Map.of("repositoryUrl", repositoryURL))).block();
+      HashMap<String, String> parameters = new HashMap<>();
+      if (repositoryURL != null) {
+        parameters.put("repositoryUrl", repositoryURL.toString());
+      }
+
+      return fafApiAccessor.uploadFile("/mods/upload", tmpFile, byteListener, Map.of("metadata", parameters)).block();
     } finally {
       Files.delete(tmpFile);
       ResourceLocks.freeUploadLock();
