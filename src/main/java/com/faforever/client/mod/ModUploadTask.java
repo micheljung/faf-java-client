@@ -40,9 +40,6 @@ public class ModUploadTask extends CompletableTask<Void> {
 
   private Path modPath;
 
-  @Setter
-  private URL repositoryURL;
-
   @Autowired
   public ModUploadTask(ModService modService, FafApiAccessor fafApiAccessor, I18n i18n, DataPrefs dataPrefs) {
     super(Priority.HIGH);
@@ -79,7 +76,6 @@ public class ModUploadTask extends CompletableTask<Void> {
       }
 
       // retrieve information from the mod_info.lua to send to the API
-
       ModVersion modVersionInfo = modService.extractModInfo(modPath);
       URL repositoryURL = modVersionInfo.mod().repositoryURL();
 
