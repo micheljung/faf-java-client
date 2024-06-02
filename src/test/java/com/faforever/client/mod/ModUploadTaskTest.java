@@ -64,8 +64,8 @@ public class ModUploadTaskTest extends PlatformTest {
   @Test
   public void testCall() throws Exception {
 
-    Path pathToMod =tempDirectory.resolve("test-mod");
-    Path pathToModInfo = tempDirectory.resolve("test-mod/mod_info.lua");
+    Path pathToMod = tempDirectory.resolve("test-mod");
+    Path pathToModInfo = pathToMod.resolve("mod_info.lua");
 
     Files.createDirectories(pathToMod);
     Files.copy(Objects.requireNonNull(getClass().getResourceAsStream("/mods/eco_manager_mod_info.lua")), pathToModInfo);
