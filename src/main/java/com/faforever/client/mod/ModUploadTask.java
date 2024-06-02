@@ -8,6 +8,7 @@ import com.faforever.client.task.ResourceLocks;
 import com.faforever.client.util.Validator;
 import com.faforever.commons.io.ByteCountListener;
 import com.faforever.commons.io.Zipper;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -34,6 +36,9 @@ public class ModUploadTask extends CompletableTask<Void> {
   private final DataPrefs dataPrefs;
 
   private Path modPath;
+
+  @Setter
+  private URL repositoryURL;
 
   @Autowired
   public ModUploadTask(FafApiAccessor fafApiAccessor, I18n i18n, DataPrefs dataPrefs) {
@@ -72,7 +77,7 @@ public class ModUploadTask extends CompletableTask<Void> {
       log.debug("Uploading mod `{}` as `{}`", modPath, tmpFile);
       updateTitle(i18n.get("modVault.upload.uploading"));
 
-      return fafApiAccessor.uploadFile("/mods/upload", tmpFile, byteListener, Map.of()).block();
+      return fafApiAccessor.uploadFile("/mods/upload", tmpFile, byteListener, Map.of("metadata", Map.of("repositoryUrl", repositoryURL))).block();
     } finally {
       Files.delete(tmpFile);
       ResourceLocks.freeUploadLock();

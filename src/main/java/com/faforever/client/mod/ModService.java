@@ -337,6 +337,10 @@ public class ModService implements InitializingBean, DisposableBean {
     ModUploadTask modUploadTask = modUploadTaskFactory.getObject();
     modUploadTask.setModPath(modPath);
 
+    // retrieve information from the mod_info.lua to send to the API
+    ModVersion modVersion = extractModInfo(modPath);
+    modUploadTask.setRepositoryURL(modVersion.mod().repositoryURL());
+
     return taskService.submitTask(modUploadTask);
   }
 

@@ -18,6 +18,7 @@ public interface ModMapper {
   @Mapping(target = "modType", source = "modInfo.uiOnly")
   @Mapping(target = "mod", expression = "java(new ModBean())")
   @Mapping(target = "mod.displayName", source = "modInfo.name")
+  @Mapping(target = "mod.repositoryURL", source = "modInfo.url")
   ModVersion map(com.faforever.commons.mod.Mod modInfo, Path basePath);
 
   default ModType mapModType(boolean isUIOnly) {

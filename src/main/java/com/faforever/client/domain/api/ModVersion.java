@@ -12,7 +12,10 @@ public record ModVersion(
     ComparableVersion version,
     URL thumbnailUrl,
     URL downloadUrl,
-    ModType modType, boolean ranked, boolean hidden, Mod mod,
+    ModType modType,
+    boolean ranked,
+    boolean hidden,
+    Mod mod,
     OffsetDateTime createTime,
     OffsetDateTime updateTime
 ) {}
