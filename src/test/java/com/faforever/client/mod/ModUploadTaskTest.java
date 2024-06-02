@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsArrayWithSize.emptyArray;
@@ -62,8 +63,14 @@ public class ModUploadTaskTest extends PlatformTest {
 
   @Test
   public void testCall() throws Exception {
-    instance.setModPath(Files.createDirectories(tempDirectory.resolve("test-mod")));
 
+    Path pathToMod =tempDirectory.resolve("test-mod");
+    Path pathToModInfo = tempDirectory.resolve("test-mod/mod_info.lua");
+
+    Files.createDirectories(pathToMod);
+    Files.copy(Objects.requireNonNull(getClass().getResourceAsStream("/mods/eco_manager_mod_info.lua")), pathToModInfo);
+
+    instance.setModPath(pathToMod);
     instance.call();
 
     verify(fafApiAccessor).uploadFile(any(), any(), any(), any());
