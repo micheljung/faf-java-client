@@ -34,6 +34,7 @@ public interface ModMapper {
   }
 
   @Mapping(target = "reviewsSummary", source = "modReviewsSummary")
+  @Mapping(target = "repositoryURL", source = "repositoryUrl")
   Mod map(com.faforever.commons.api.dto.Mod dto);
 
   @InheritInverseConfiguration

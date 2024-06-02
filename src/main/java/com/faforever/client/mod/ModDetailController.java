@@ -9,6 +9,7 @@ import com.faforever.client.fx.FxApplicationThreadExecutor;
 import com.faforever.client.fx.ImageViewHelper;
 import com.faforever.client.fx.JavaFxUtil;
 import com.faforever.client.fx.NodeController;
+import com.faforever.client.fx.PlatformService;
 import com.faforever.client.fx.SimpleChangeListener;
 import com.faforever.client.fx.contextmenu.ContextMenuBuilder;
 import com.faforever.client.i18n.I18n;
@@ -29,6 +30,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
@@ -43,12 +45,16 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.net.URL;
+import java.util.Objects;
+
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 @RequiredArgsConstructor
 public class ModDetailController extends NodeController<Node> {
 
+  private final PlatformService platformService;
   private final ModService modService;
   private final NotificationService notificationService;
   private final I18n i18n;
@@ -81,6 +87,7 @@ public class ModDetailController extends NodeController<Node> {
   public Node modDetailRoot;
   public ReviewsController<ModVersionReview> reviewsController;
   public Label authorLabel;
+  public Hyperlink urlHyperlink;
 
   @Override
   protected void onInitialize() {
@@ -98,6 +105,20 @@ public class ModDetailController extends NodeController<Node> {
     bindProperties();
     modVersion.addListener((SimpleChangeListener<ModVersion>) this::onModVersionChanged);
 
+    urlHyperlink.setOnAction(event -> {
+      ModVersion modVersionCurrent = modVersion.get();
+      if (modVersionCurrent == null) {
+        return;
+      }
+
+      URL repositoryURL = modVersionCurrent.mod().repositoryURL();
+      if (repositoryURL ==  null) {
+        return;
+      }
+
+      platformService.showDocument(repositoryURL.toString());
+    });
+
     // TODO hidden until dependencies are available
     dependenciesTitle.setManaged(false);
     dependenciesContainer.setManaged(false);
@@ -109,7 +130,11 @@ public class ModDetailController extends NodeController<Node> {
         .bind(modVersion.map(modService::loadThumbnail)
             .flatMap(imageViewHelper::createPlaceholderImageOnErrorObservable)
             .when(showing));
+
     nameLabel.textProperty().bind(modObservable.map(Mod::displayName).when(showing));
+
+    urlHyperlink.visibleProperty().bind(modObservable.map(Mod::repositoryURL).map(Objects::nonNull).when(showing));
+
     authorLabel.textProperty().bind(modObservable.map(Mod::author)
             .map(author -> i18n.get("modVault.details.author", author))
             .when(showing));
