@@ -167,7 +167,7 @@ public class ModDetailControllerTest extends PlatformTest {
                                      .set(field(Mod::repositoryURL),
                                           URI.create("https://github.com/FAForever/fa").toURL())
                                      .create();
-
+    runOnFxThreadAndWait(() -> instance.setModVersion(modVersion));
     WaitForAsyncUtils.waitForFxEvents();
 
     assertTrue(instance.urlHyperlink.isVisible());
@@ -177,6 +177,7 @@ public class ModDetailControllerTest extends PlatformTest {
   public void testWithoutRepositoryURL() {
     modVersion = Instancio.of(ModVersion.class).set(field(Mod::repositoryURL), null).create();
 
+    runOnFxThreadAndWait(() -> instance.setModVersion(modVersion));
     WaitForAsyncUtils.waitForFxEvents();
 
     assertFalse(instance.urlHyperlink.isVisible());
