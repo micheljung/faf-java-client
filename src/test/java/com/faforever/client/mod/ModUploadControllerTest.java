@@ -69,7 +69,7 @@ public class ModUploadControllerTest extends PlatformTest {
       return null;
     }).when(executorService).execute(any());
 
-    modUploadTask = new ModUploadTask(fafApiAccessor, i18n, dataPrefs) {
+    modUploadTask = new ModUploadTask(modService, fafApiAccessor, i18n, dataPrefs) {
       @Override
       protected Void call() {
         return null;

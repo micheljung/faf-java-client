@@ -26,7 +26,11 @@ public class ModUploadTaskTest extends PlatformTest {
   @TempDir
   public Path tempDirectory;
 
+
   private ModUploadTask instance;
+
+  @Mock
+  private ModService modService;
 
   @Mock
   private FafApiAccessor fafApiAccessor;
@@ -37,7 +41,7 @@ public class ModUploadTaskTest extends PlatformTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    instance = new ModUploadTask(fafApiAccessor, i18n, dataPrefs);
+    instance = new ModUploadTask(modService, fafApiAccessor, i18n, dataPrefs);
     dataPrefs.setBaseDataDirectory(tempDirectory);
 
     Files.createDirectories(dataPrefs.getCacheDirectory());

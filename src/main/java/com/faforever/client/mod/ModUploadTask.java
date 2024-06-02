@@ -1,6 +1,7 @@
 package com.faforever.client.mod;
 
 import com.faforever.client.api.FafApiAccessor;
+import com.faforever.client.domain.api.ModVersion;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.preferences.DataPrefs;
 import com.faforever.client.task.CompletableTask;
@@ -32,6 +33,7 @@ import static java.nio.file.Files.newOutputStream;
 @Slf4j
 public class ModUploadTask extends CompletableTask<Void> {
 
+  private final ModService modService;
   private final FafApiAccessor fafApiAccessor;
   private final I18n i18n;
   private final DataPrefs dataPrefs;
@@ -42,8 +44,9 @@ public class ModUploadTask extends CompletableTask<Void> {
   private URL repositoryURL;
 
   @Autowired
-  public ModUploadTask(FafApiAccessor fafApiAccessor, I18n i18n, DataPrefs dataPrefs) {
+  public ModUploadTask(ModService modService, FafApiAccessor fafApiAccessor, I18n i18n, DataPrefs dataPrefs) {
     super(Priority.HIGH);
+    this.modService = modService;
     this.dataPrefs = dataPrefs;
     this.fafApiAccessor = fafApiAccessor;
     this.i18n = i18n;
@@ -74,6 +77,11 @@ public class ModUploadTask extends CompletableTask<Void> {
             .listener(byteListener)
             .zip();
       }
+
+      // retrieve information from the mod_info.lua to send to the API
+
+      ModVersion modVersionInfo = modService.extractModInfo(modPath);
+      URL repositoryURL = modVersionInfo.mod().repositoryURL();
 
       log.debug("Uploading mod `{}` as `{}`", modPath, tmpFile);
       updateTitle(i18n.get("modVault.upload.uploading"));
