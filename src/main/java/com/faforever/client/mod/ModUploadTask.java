@@ -59,6 +59,16 @@ public class ModUploadTask extends CompletableTask<Void> {
     Path tmpFile = createTempFile(cacheDirectory, "mod", ".zip");
 
     try {
+
+      log.debug("Retrieve information from mod_info.lua at: {}", modPath);
+      ModVersion modVersionInfo = modService.extractModInfo(modPath);
+      URL repositoryURL = modVersionInfo.mod().repositoryURL();
+
+      HashMap<String, String> parameters = new HashMap<>();
+      if (repositoryURL != null) {
+        parameters.put("repositoryUrl", repositoryURL.toString());
+      }
+
       log.debug("Zipping mod `{}` to `{}`", modPath, tmpFile);
       updateTitle(i18n.get("modVault.upload.compressing"));
 
@@ -77,15 +87,6 @@ public class ModUploadTask extends CompletableTask<Void> {
 
       log.debug("Uploading mod `{}` as `{}`", modPath, tmpFile);
       updateTitle(i18n.get("modVault.upload.uploading"));
-
-      // retrieve information from `mod_info.lua`
-      ModVersion modVersionInfo = modService.extractModInfo(modPath);
-      URL repositoryURL = modVersionInfo.mod().repositoryURL();
-
-      HashMap<String, String> parameters = new HashMap<>();
-      if (repositoryURL != null) {
-        parameters.put("repositoryUrl", repositoryURL.toString());
-      }
 
       return fafApiAccessor.uploadFile("/mods/upload", tmpFile, byteListener, Map.of("metadata", parameters)).block();
     } finally {
