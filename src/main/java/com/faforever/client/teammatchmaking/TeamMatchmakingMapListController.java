@@ -28,6 +28,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -209,11 +210,36 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     return controller.getRoot();
   }
 
+  private double scalingFixer(double scaling, int tilecount) {
+    if (tilecount < 2 || !Arrays.asList(1.25, 1.5, 1.75).contains(scaling)) {
+      return 0;
+    }
+
+    String stringScaling = String.valueOf(scaling);
+
+    double baseGrow = switch (stringScaling) {
+      case "1.25" -> 1;
+      case "1.5" -> 0.334;
+      case "1.75" -> 0.429;
+      default -> 0;
+    };
+
+    double constantSummand = switch(stringScaling) {
+      case "1.25" -> 0.801;
+      case "1.5", "1.75" -> 0.001;
+      default -> 0;
+    };
+
+    return (tilecount - 2) * baseGrow + constantSummand;
+  }
+
   private void resizeToContent() {
     int tilecount = this.sortedMaps.getValue().size();
     if (tilecount == 0) {
       return;
     }
+
+    double scalingFactor = javafx.stage.Screen.getPrimary().getOutputScaleX(); // Assuming uniform scaling in X and Y
 
     double hgap = tilesContainer.getHgap();
     double vgap = tilesContainer.getVgap();
@@ -224,7 +250,7 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     int maxTilesInLine = (int) Math.min(10, Math.floor((getMaxWidth() * 0.95 - PADDING * 2 + hgap) / tileHSize));
     int maxLinesWithoutScroll = (int) Math.floor((getMaxHeight() * 0.95 - PADDING * 2 + vgap) / tileVSize);
 
-    double maxScrollPaneHeight = maxLinesWithoutScroll * tileVSize - vgap;
+    double maxScrollPaneHeight = maxLinesWithoutScroll * tileVSize + scalingFixer(scalingFactor, maxLinesWithoutScroll) - vgap;
     this.scrollContainer.setMaxHeight(maxScrollPaneHeight);
 
     int tilesInOneLine = Math.min(maxTilesInLine,
@@ -232,8 +258,8 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
                                            (int) Math.ceil(Math.sqrt(tilecount))));
     int numberOfLines = Math.ceilDiv(tilecount, tilesInOneLine);
 
-    double preferredWidth = tileHSize * tilesInOneLine - hgap;
-    double gridHeight = tileVSize * numberOfLines - vgap;
+    double preferredWidth = tileHSize * tilesInOneLine + scalingFixer(scalingFactor, tilesInOneLine) - hgap;
+    double gridHeight = tileVSize * numberOfLines + scalingFixer(scalingFactor, numberOfLines) - vgap;
 
     if (gridHeight > maxScrollPaneHeight) {
       int scrollWidth = 18;
