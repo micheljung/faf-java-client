@@ -16,6 +16,7 @@ import com.faforever.client.game.GameService;
 import com.faforever.client.game.KnownFeaturedMod;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.map.MapService;
+import com.faforever.client.map.MapSize;
 import com.faforever.client.mapstruct.ReplayMapper;
 import com.faforever.client.notification.Action;
 import com.faforever.client.notification.NotificationService;
@@ -32,8 +33,12 @@ import com.faforever.commons.api.dto.GameReviewsSummary;
 import com.faforever.commons.api.elide.ElideNavigator;
 import com.faforever.commons.api.elide.ElideNavigatorOnCollection;
 import com.faforever.commons.api.elide.ElideNavigatorOnId;
+import com.faforever.commons.replay.ReplayContainer;
 import com.faforever.commons.replay.ReplayDataParser;
+import com.faforever.commons.replay.ReplayLoader;
 import com.faforever.commons.replay.ReplayMetadata;
+import com.faforever.commons.replay.ReplaySemantics;
+import com.faforever.commons.replay.header.GameScenario;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +63,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -283,18 +289,29 @@ public class ReplayService {
    * Reads the specified replay file in order to add more information to the specified replay instance.
    */
   public ReplayDetails loadReplayDetails(Path path) throws CompressorException, IOException {
-    ReplayDataParser replayDataParser = replayFileReader.parseReplay(path);
-    List<ChatMessage> chatMessages = replayDataParser.getChatMessages().stream().map(replayMapper::map).toList();
-    List<GameOption> gameOptions = Stream.concat(
-        Stream.of(new GameOption("FAF Version", String.valueOf(parseSupComVersion(replayDataParser)))),
-        replayDataParser.getGameOptions().stream().map(replayMapper::map).sorted(Comparator.comparing(GameOption::key, String.CASE_INSENSITIVE_ORDER))).toList();
 
-    String mapFolderName = parseMapFolderName(replayDataParser);
-    Map map = new Map(null, mapFolderName, 0, null, false, null, null);
-    MapVersion mapVersion = new MapVersion(null, mapFolderName, 0, null, 0, null, null, false, false, null, null, null,
-                                           map, null);
+    // the new replay container construct
+    ReplayContainer replayContainer = ReplayLoader.loadFAFReplayFromDisk(path);
 
-    return new ReplayDetails(chatMessages, gameOptions, mapVersion);
+    // get the chat message
+    List<ChatMessage> chatMessages = ReplaySemantics.getChatMessages(replayContainer.header().sources(),
+                                                                     replayContainer.registeredEvents())
+                                                    .stream()
+                                                    .map(replayMapper::map)
+                                                    .toList();
+
+    // get mod options
+    List<GameOption> modOptions = new ArrayList<>();
+    replayContainer.header().scenario().modOptions().forEach((k, v) -> modOptions.add(new GameOption(k, v)));
+
+    // get scenario related information
+    GameScenario gameScenario = replayContainer.header().scenario();
+    Map map = new Map(null, ReplaySemantics.getMapFolder(replayContainer), 0, null, false, null, null);
+    MapVersion mapVersion = new MapVersion(null, gameScenario.mapScenarioPath(), 0, gameScenario.mapDescription(), 0,
+                                           new MapSize(gameScenario.mapSizeX(), gameScenario.mapSizeZ()), null, false,
+                                           false, null, null, null, map, null);
+
+    return new ReplayDetails(chatMessages, modOptions, mapVersion);
   }
 
   public CompletableFuture<Integer> getFileSize(Replay replay) {
