@@ -15,12 +15,12 @@
                  text="%game.map"/>
     <TableColumn fx:id="coopMissionName" editable="false" minWidth="100.0" prefWidth="-1.0" text="%game.missionName"/>
     <TableColumn fx:id="gameTitleColumn" editable="false" minWidth="20.0" prefWidth="100.0" text="%game.title"/>
-    <TableColumn fx:id="lifetimeColumn" editable="false" minWidth="20.0" prefWidth="100.0" text="%game.lifetime"/>
     <TableColumn fx:id="playersColumn" editable="false" minWidth="20.0" prefWidth="50.0" text="%game.players"/>
     <TableColumn fx:id="averageRatingColumn" editable="false" minWidth="20.0" prefWidth="50.0"
                  text="%game.averageRating"/>
     <TableColumn fx:id="ratingRangeColumn" editable="false" minWidth="20.0" prefWidth="100.0" text="%game.ratingRange"/>
     <TableColumn fx:id="hostColumn" editable="false" minWidth="20.0" text="%game.host"/>
+    <TableColumn fx:id="lifetimeColumn" editable="false" minWidth="20.0" prefWidth="30.0" text="%game.lifetime"/>
     <TableColumn fx:id="modsColumn" editable="false" minWidth="20.0" prefWidth="-1.0" text="%game.mods"/>
   </columns>
   <columnResizePolicy>
