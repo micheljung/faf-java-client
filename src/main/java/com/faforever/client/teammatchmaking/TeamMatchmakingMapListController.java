@@ -19,7 +19,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -29,7 +28,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -91,18 +89,14 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
 
   private void bindProperties() {
     JavaFxUtil.bindManagedToVisible(loadingPane);
+    tilesContainer.getChildren().subscribe(()->this.loadingPane.setVisible(false));
 
     this.queue.when(showing).subscribe(value -> {
       if (value == null) {
         return;
       }
       loadingPane.setVisible(true);
-      mapService.getMatchmakerBrackets(value).subscribe(rawBrackets -> {
-        loadingPane.setVisible(false);
-        this.scrollContainer.setPrefWidth(Region.USE_COMPUTED_SIZE);
-        this.scrollContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
-        this.brackets.set(rawBrackets);
-      });
+      mapService.getMatchmakerBrackets(value).subscribe(this.brackets::set);
     });
 
     playerRating.bind(playerService.currentPlayerProperty()

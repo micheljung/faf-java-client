@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.TilePane?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="root" styleClass="tmm-maplist" fx:controller="com.faforever.client.teammatchmaking.TeamMatchmakingMapListController">
-    <ScrollPane fx:id="scrollContainer" prefHeight="530" prefWidth="530" hbarPolicy="NEVER">
+    <ScrollPane fx:id="scrollContainer" hbarPolicy="NEVER">
         <StackPane styleClass="tmm-maplist-inner">
             <VBox prefWidth="530" prefHeight="530" fx:id="loadingPane" alignment="CENTER" maxHeight="1.7976931348623157E308"
                   maxWidth="1.7976931348623157E308" mouseTransparent="true" spacing="10.0">
