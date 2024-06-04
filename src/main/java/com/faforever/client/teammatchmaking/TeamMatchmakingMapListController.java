@@ -19,7 +19,8 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +80,7 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
                                                                                            playerRating);
 
   public Pane root;
-  public FlowPane tilesContainer;
+  public TilePane tilesContainer;
   public ScrollPane scrollContainer;
   public VBox loadingPane;
 
@@ -98,6 +99,8 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
       loadingPane.setVisible(true);
       mapService.getMatchmakerBrackets(value).subscribe(rawBrackets -> {
         loadingPane.setVisible(false);
+        this.scrollContainer.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        this.scrollContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
         this.brackets.set(rawBrackets);
       });
     });
@@ -109,8 +112,8 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
                                    .orElse(0)
                                    .when(showing));
 
-    this.maxWidth.when(showing).subscribe(this::resizeToContent);
-    this.maxHeight.when(showing).subscribe(this::resizeToContent);
+    this.maxWidth.subscribe(this::resizeToContent);
+    this.maxHeight.subscribe(this::resizeToContent);
     this.sortedMaps.when(showing).subscribe(this::updateContent);
     this.playerBracketIndex.when(showing).subscribe(this::updateContent);
   }
@@ -210,36 +213,11 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     return controller.getRoot();
   }
 
-  private double scalingFixer(double scaling, int tilecount) {
-    if (tilecount < 2 || !Arrays.asList(1.25, 1.5, 1.75).contains(scaling)) {
-      return 0;
-    }
-
-    String stringScaling = String.valueOf(scaling);
-
-    double baseGrow = switch (stringScaling) {
-      case "1.25" -> 1;
-      case "1.5" -> 0.334;
-      case "1.75" -> 0.429;
-      default -> 0;
-    };
-
-    double constantSummand = switch(stringScaling) {
-      case "1.25" -> 0.801;
-      case "1.5", "1.75" -> 0.001;
-      default -> 0;
-    };
-
-    return (tilecount - 2) * baseGrow + constantSummand;
-  }
-
   private void resizeToContent() {
     int tilecount = this.sortedMaps.getValue().size();
     if (tilecount == 0) {
       return;
     }
-
-    double scalingFactor = javafx.stage.Screen.getPrimary().getOutputScaleX(); // Assuming uniform scaling in X and Y
 
     double hgap = tilesContainer.getHgap();
     double vgap = tilesContainer.getVgap();
@@ -250,27 +228,11 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     int maxTilesInLine = (int) Math.min(10, Math.floor((getMaxWidth() * 0.95 - PADDING * 2 + hgap) / tileHSize));
     int maxLinesWithoutScroll = (int) Math.floor((getMaxHeight() * 0.95 - PADDING * 2 + vgap) / tileVSize);
 
-    double maxScrollPaneHeight = maxLinesWithoutScroll * tileVSize + scalingFixer(scalingFactor, maxLinesWithoutScroll) - vgap;
-    this.scrollContainer.setMaxHeight(maxScrollPaneHeight);
-
     int tilesInOneLine = Math.min(maxTilesInLine,
                                   Math.max(Math.max(4, Math.ceilDiv(tilecount, Math.max(1, maxLinesWithoutScroll))),
                                            (int) Math.ceil(Math.sqrt(tilecount))));
-    int numberOfLines = Math.ceilDiv(tilecount, tilesInOneLine);
 
-    double preferredWidth = tileHSize * tilesInOneLine + scalingFixer(scalingFactor, tilesInOneLine) - hgap;
-    double gridHeight = tileVSize * numberOfLines + scalingFixer(scalingFactor, numberOfLines) - vgap;
-
-    if (gridHeight > maxScrollPaneHeight) {
-      int scrollWidth = 18;
-      scrollContainer.setPrefWidth(preferredWidth + scrollWidth);
-      scrollContainer.setPrefHeight(maxScrollPaneHeight);
-    } else {
-      scrollContainer.setPrefWidth(preferredWidth);
-      scrollContainer.setPrefHeight(gridHeight);
-    }
-
-    tilesContainer.setPrefWidth(preferredWidth);
+    tilesContainer.setPrefColumns(tilesInOneLine);
   }
 
   private void updateContent() {
