@@ -135,6 +135,27 @@ public class TimeService {
   }
 
   /**
+   * Returns the localized time of duration, ignoring precision, ex minutes without seconds or hours without
+   * minutes and seconds
+   */
+  public String shortDurationWithoutPrecision(Duration duration) {
+    if (duration == null) {
+      return "";
+    }
+
+    if (Duration.ofMinutes(1).compareTo(duration) > 0) {
+      return i18n.get("duration.minute");
+    }
+    if (Duration.ofHours(1).compareTo(duration) > 0) {
+      return i18n.get("duration.minutes", duration.toMinutes());
+    }
+    if (Duration.ofDays(1).compareTo(duration) > 0) {
+      return i18n.get("duration.hours", duration.toHours());
+    }
+    return i18n.get("duration.days", duration.toDays());
+  }
+
+  /**
    * Returns e.g. "3:21:12" (h:mm:ss).
    */
   public String asHms(Duration duration) {

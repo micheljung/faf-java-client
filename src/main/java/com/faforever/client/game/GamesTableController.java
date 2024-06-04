@@ -15,6 +15,7 @@ import com.faforever.client.map.MapService.PreviewSize;
 import com.faforever.client.player.PlayerService;
 import com.faforever.client.preferences.Preferences;
 import com.faforever.client.social.SocialService;
+import com.faforever.client.util.TimeService;
 import com.faforever.commons.lobby.GameType;
 import com.google.common.base.Joiner;
 import javafx.beans.binding.Bindings;
@@ -43,6 +44,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +70,7 @@ public class GamesTableController extends NodeController<Node> {
   private final AvatarService avatarService;
   private final Preferences preferences;
   private final FxApplicationThreadExecutor fxApplicationThreadExecutor;
+  private final TimeService timeService;
 
 
   public TableView<GameInfo> gamesTable;
@@ -79,6 +83,7 @@ public class GamesTableController extends NodeController<Node> {
   public TableColumn<GameInfo, String> hostColumn;
   public TableColumn<GameInfo, Boolean> passwordProtectionColumn;
   public TableColumn<GameInfo, String> coopMissionName;
+  public TableColumn<GameInfo, OffsetDateTime> lifetimeColumn;
   public GameTooltipController gameTooltipController;
 
   private Tooltip tooltip;
@@ -140,6 +145,10 @@ public class GamesTableController extends NodeController<Node> {
     modsColumn.setCellValueFactory(param -> param.getValue().simModsProperty().when(showing));
     modsColumn.setCellFactory(param -> new StringCell<>(this::convertSimModsToContent));
     coopMissionName.setVisible(coopMissionNameProvider != null);
+
+    lifetimeColumn.setCellValueFactory(param -> param.getValue().hostedAtProperty().when(showing));
+    lifetimeColumn.setCellFactory(param -> new StringCell<>(offsetDateTime -> timeService.shortDurationWithoutPrecision(
+        Duration.between(offsetDateTime, OffsetDateTime.now()))));
 
     if (averageRatingColumn != null) {
       averageRatingColumn.setCellValueFactory(param -> playerService.getAverageRatingPropertyForGame(param.getValue())

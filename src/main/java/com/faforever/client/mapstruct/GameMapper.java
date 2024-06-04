@@ -45,4 +45,11 @@ public interface GameMapper {
     }
     return TimeUtil.fromPythonTime(launchedAt.longValue());
   }
+
+  default OffsetDateTime mapHostedAt(String hostedAt) {
+    if (hostedAt == null) {
+      return null;
+    }
+    return OffsetDateTime.parse(hostedAt);
+  }
 }
