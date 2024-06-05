@@ -55,6 +55,7 @@ public class GameInfo {
   private final ObjectProperty<GameStatus> status = new SimpleObjectProperty<>();
   private final ObjectProperty<VictoryCondition> victoryCondition = new SimpleObjectProperty<>();
   private final ObjectProperty<OffsetDateTime> startTime = new SimpleObjectProperty<>();
+  private final ObjectProperty<OffsetDateTime> hostedAt = new SimpleObjectProperty<>();
   private final BooleanProperty enforceRating = new SimpleBooleanProperty();
   private final ObjectProperty<GameType> gameType = new SimpleObjectProperty<>();
   /**
@@ -293,6 +294,18 @@ public class GameInfo {
 
   public ObjectProperty<OffsetDateTime> startTimeProperty() {
     return startTime;
+  }
+
+  public OffsetDateTime getHostedAt() {
+    return hostedAt.get();
+  }
+
+  public void setHostedAt(OffsetDateTime hostedAt) {
+    this.hostedAt.set(hostedAt);
+  }
+
+  public ObjectProperty<OffsetDateTime> hostedAtProperty() {
+    return hostedAt;
   }
 
   public Collection<Integer> getAllPlayersInGame() {
