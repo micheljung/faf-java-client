@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.FormatStyle;
@@ -158,5 +159,26 @@ class TimeServiceTest {
 
   private OffsetDateTime generateDate() {
     return OffsetDateTime.of(2022, 5, 9, 9, 9, 9, 9, ZoneOffset.UTC);
+  }
+
+  @Test
+  public void testShortDurationWithoutPrecision() {
+    OffsetDateTime fixedDateTime = OffsetDateTime.of(2024, 6, 12, 10, 20, 30, 40, ZoneOffset.UTC);
+
+    Duration duration1 = Duration.between(fixedDateTime, fixedDateTime.plusSeconds(50));
+    when(i18n.get("duration.minute")).thenReturn("< 1min");
+    assertEquals("< 1min", service.shortDurationWithoutPrecision(duration1));
+
+    Duration duration2 = Duration.between(fixedDateTime, fixedDateTime.plusMinutes(10));
+    when(i18n.get("duration.minutes", duration2.toMinutes())).thenReturn("10min");
+    assertEquals("10min", service.shortDurationWithoutPrecision(duration2));
+
+    Duration duration3 = Duration.between(fixedDateTime, fixedDateTime.plusHours(1));
+    when(i18n.get("duration.hours", duration3.toHours())).thenReturn("6h");
+    assertEquals("6h", service.shortDurationWithoutPrecision(duration3));
+
+    Duration duration4 = Duration.between(fixedDateTime, fixedDateTime.plusDays(1));
+    when(i18n.get("duration.days", duration4.toDays())).thenReturn("1d");
+    assertEquals("1d", service.shortDurationWithoutPrecision(duration4));
   }
 }

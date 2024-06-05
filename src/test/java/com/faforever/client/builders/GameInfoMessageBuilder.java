@@ -28,6 +28,7 @@ public class GameInfoMessageBuilder {
   private String title;
   private Map<String, String> simMods;
   private String mapname;
+  private String hostedAt;
   private Double launchedAt;
   private String ratingType;
   private Integer ratingMin;
@@ -46,7 +47,7 @@ public class GameInfoMessageBuilder {
 
   public GameInfo get() {
     return new GameInfo(uid, title, host, gameType, maxPlayers, numPlayers, visibility, passwordProtected, state,
-        featuredMod, ratingType, simMods, mapname, mapname, launchedAt, teams, teamIds, ratingMin, ratingMax,
+        featuredMod, ratingType, simMods, mapname, mapname, hostedAt, launchedAt, teams, teamIds, ratingMin, ratingMax,
         enforceRatingRange, games);
   }
 
