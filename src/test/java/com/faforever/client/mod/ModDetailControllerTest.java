@@ -24,6 +24,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import org.instancio.Instancio;
+import org.instancio.TargetSelector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,6 +35,9 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 
 import static org.instancio.Select.field;
@@ -158,6 +162,27 @@ public class ModDetailControllerTest extends PlatformTest {
   }
 
   @Test
+  public void testWithRepositoryURL() throws MalformedURLException {
+    modVersion = Instancio.of(ModVersion.class)
+                                     .set(field(Mod::repositoryURL),
+                                          URI.create("https://github.com/FAForever/fa").toURL())
+                                     .create();
+    runOnFxThreadAndWait(() -> instance.setModVersion(modVersion));
+
+    assertTrue(instance.urlHyperlink.isVisible());
+  }
+
+  @Test
+  public void testWithoutRepositoryURL() {
+    modVersion = Instancio.of(ModVersion.class).set(field(Mod::repositoryURL), null).create();
+
+    runOnFxThreadAndWait(() -> instance.setModVersion(modVersion));
+
+    assertFalse(instance.urlHyperlink.isVisible());
+  }
+
+
+  @Test
   public void testSetModNoThumbnailLoadsDefault() {
     Image image = new Image(InputStream.nullInputStream());
     when(modService.loadThumbnail(modVersion)).thenReturn(image);
@@ -191,7 +216,8 @@ public class ModDetailControllerTest extends PlatformTest {
     WaitForAsyncUtils.waitForFxEvents();
 
     verify(modService).downloadIfNecessary(any(ModVersion.class), any(), any());
-    verify(notificationService).addImmediateErrorNotification(any(Throwable.class), anyString(), anyString(), anyString());
+    verify(notificationService).addImmediateErrorNotification(any(Throwable.class), anyString(), anyString(),
+                                                              anyString());
   }
 
   @Test
@@ -229,7 +255,8 @@ public class ModDetailControllerTest extends PlatformTest {
     WaitForAsyncUtils.waitForFxEvents();
 
     verify(modService).uninstallMod(modVersion);
-    verify(notificationService).addImmediateErrorNotification(any(Throwable.class), anyString(), anyString(), anyString());
+    verify(notificationService).addImmediateErrorNotification(any(Throwable.class), anyString(), anyString(),
+                                                              anyString());
   }
 
   @Test
@@ -270,8 +297,7 @@ public class ModDetailControllerTest extends PlatformTest {
     installed.set(true);
     ModVersion modVersion = Instancio.of(ModVersion.class)
                                      .set(field(Mod::uploader).within(scope(Mod.class)), currentPlayer)
-                                     .set(field(Mod::author).within(scope(Mod.class)),
-                                              currentPlayer.getUsername())
+                                     .set(field(Mod::author).within(scope(Mod.class)), currentPlayer.getUsername())
                                      .create();
     runOnFxThreadAndWait(() -> instance.setModVersion(modVersion));
 
