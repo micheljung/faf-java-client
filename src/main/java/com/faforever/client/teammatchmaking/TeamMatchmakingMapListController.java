@@ -19,8 +19,8 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -106,10 +106,14 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
                                    .orElse(0)
                                    .when(showing));
 
-    this.maxWidth.subscribe(this::resizeToContent);
-    this.maxHeight.subscribe(this::resizeToContent);
     this.sortedMaps.when(showing).subscribe(this::updateContent);
     this.playerBracketIndex.when(showing).subscribe(this::updateContent);
+  }
+
+  @Override
+  protected void onShow() {
+    addShownSubscription(this.maxWidth.subscribe(this::resizeToContent));
+    addShownSubscription(this.maxHeight.subscribe(this::resizeToContent));
   }
 
   @Override
