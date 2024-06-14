@@ -13,10 +13,10 @@
     <children>
         <fx:include fx:id="mainMenuButton" source="main_menu_button.fxml"/>
         <HBox fx:id="leftMenuPane" minWidth="10.0">
+            <fx:define>
+                <ToggleGroup fx:id="mainNavigation"/>
+            </fx:define>
             <children>
-                <fx:define>
-                    <ToggleGroup fx:id="mainNavigation"/>
-                </fx:define>
                 <ToggleButton fx:id="newsButton" minWidth="-Infinity" mnemonicParsing="false"
                               onAction="#onNavigateButtonClicked" styleClass="main-navigation-button"
                               text="%main.news" toggleGroup="$mainNavigation"/>
