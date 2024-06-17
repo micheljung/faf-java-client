@@ -419,15 +419,34 @@ public class CreateGameController extends NodeController<Pane> {
   public void onGenerateMapButtonClicked() {
     GenerateMapController generateMapController = uiService.loadFxml("theme/play/generate_map.fxml");
     mapGeneratorService.getNewestGenerator()
-                       .then(Mono.defer(() -> Mono.when(mapGeneratorService.getGeneratorStyles()
+                       .then(Mono.defer(() -> Mono.when(mapGeneratorService.getGeneratorSymmetries()
+                                                                           .publishOn(
+                                                                               fxApplicationThreadExecutor.asScheduler())
+                                                                           .doOnNext(generateMapController::setSymmetries),
+                                                        mapGeneratorService.getGeneratorStyles()
                                                                            .publishOn(
                                                                                fxApplicationThreadExecutor.asScheduler())
                                                                            .doOnNext(generateMapController::setStyles),
-                                                        mapGeneratorService.getGeneratorBiomes()
+                                                        mapGeneratorService.getGeneratorTerrainStyles()
                                                                            .publishOn(
                                                                                fxApplicationThreadExecutor.asScheduler())
                                                                            .doOnNext(
-                                                                               generateMapController::setBiomes))))
+                                                                               generateMapController::setTerrainStyles),
+                                                        mapGeneratorService.getGeneratorTextureStyles()
+                                                                           .publishOn(
+                                                                               fxApplicationThreadExecutor.asScheduler())
+                                                                           .doOnNext(
+                                                                               generateMapController::setTextureStyles),
+                                                        mapGeneratorService.getGeneratorResourceStyles()
+                                                                           .publishOn(
+                                                                               fxApplicationThreadExecutor.asScheduler())
+                                                                           .doOnNext(
+                                                                               generateMapController::setResourceStyles),
+                                                        mapGeneratorService.getGeneratorPropStyles()
+                                                                           .publishOn(
+                                                                               fxApplicationThreadExecutor.asScheduler())
+                                                                           .doOnNext(
+                                                                               generateMapController::setPropStyles))))
                        .publishOn(fxApplicationThreadExecutor.asScheduler())
                        .subscribe(null, throwable -> {
                          log.error("Opening map generation ui failed", throwable);
