@@ -1,0 +1,44 @@
+name: Client Feature Request
+description: Suggest an idea for the Client
+title: "[Feature]: "
+labels: ["enhancement"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! This template will help you with creating a report that we can use to understand the bug.
+
+        - This repository is maintained by volunteers, it may take a while for them to come back to you.
+        - Remember to include sufficient details and context.
+        - If you have multiple questions, suggestions, or bugs, please submit them in separate issues.
+        - We accept pull request. If you know how to fix it - go ahead!
+
+        Please provide the following details about the issue you encountered. *Issues that do not provide the information requested in this form will be flagged as **incomplete** & automatically closed.*
+  - type: markdown
+    attributes:
+      value: Provide a clear & concise details about the bug.
+  - type: textarea
+    id: issues
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+    validations:
+      required: true
+  - type: textarea
+    id: describe
+    attributes:
+      label: Describe the solution you'd like
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: A clear and concise description of any alternative solutions or features you've considered.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: _This bug report will be read by people that have not experienced the bug themselves - this report is all they have to investigate. The more precise your report, the easier it becomes for us to help you._
