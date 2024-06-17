@@ -2,13 +2,11 @@ package com.faforever.client.chat;
 
 import com.faforever.client.exception.ProgrammingError;
 import com.faforever.client.fx.FxApplicationThreadExecutor;
-import com.faforever.client.fx.JavaFxUtil;
 import com.faforever.client.fx.NodeController;
 import com.faforever.client.net.ConnectionState;
 import com.faforever.client.theme.UiService;
-import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.collections.WeakMapChangeListener;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -22,25 +20,19 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Slf4j
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 public class ChatController extends NodeController<AnchorPane> {
 
+  public static String ADD_CHANNEL_TAB_ID = "_add_channel_tab_";
+
   private final ChatService chatService;
   private final UiService uiService;
   private final FxApplicationThreadExecutor fxApplicationThreadExecutor;
+  private final ChatNavigation chatNavigation;
 
-  private final Map<ChatChannel, AbstractChatTabController> channelToChatTabController = new HashMap<>();
-  private final ListChangeListener<Tab> tabListChangeListener = change -> {
-    while (change.next()) {
-      change.getRemoved().forEach(tab -> channelToChatTabController.remove((ChatChannel) tab.getUserData()));
-    }
-  };
   private final MapChangeListener<String, ChatChannel> channelChangeListener = change -> {
     if (change.wasRemoved()) {
       onChannelLeft(change.getValueRemoved());
@@ -52,21 +44,25 @@ public class ChatController extends NodeController<AnchorPane> {
 
   public AnchorPane chatRoot;
   public TabPane tabPane;
+  public Tab addChannelTab;
   public Pane connectingProgressPane;
   public VBox noOpenTabsContainer;
   public TextField channelNameTextField;
   public VBox disconnectedPane;
 
+  private ObservableList<Tab> openedTabs;
+
   @Override
   protected void onInitialize() {
     super.onInitialize();
+    addChannelTab.setId(ADD_CHANNEL_TAB_ID);
+    openedTabs = tabPane.getTabs();
 
     chatService.addChannelsListener(new WeakMapChangeListener<>(channelChangeListener));
     chatService.getChannels().forEach(this::onChannelJoined);
 
     chatService.connectionStateProperty().when(showing).subscribe(this::onConnectionStateChange);
-
-    JavaFxUtil.addListener(tabPane.getTabs(), new WeakListChangeListener<>(tabListChangeListener));
+    tabPane.getSelectionModel().selectedItemProperty().subscribe(tab -> chatNavigation.setLastOpenedTabId(tab.getId()));
   }
 
   private void onChannelLeft(ChatChannel chatChannel) {
@@ -90,7 +86,7 @@ public class ChatController extends NodeController<AnchorPane> {
       disconnectedPane.setVisible(true);
       connectingProgressPane.setVisible(false);
       tabPane.setVisible(false);
-      tabPane.getTabs().removeIf(Tab::isClosable);
+      openedTabs.removeIf(Tab::isClosable);
     });
   }
 
@@ -112,40 +108,39 @@ public class ChatController extends NodeController<AnchorPane> {
   }
 
   private void removeTab(ChatChannel chatChannel) {
-    AbstractChatTabController controller = channelToChatTabController.remove(chatChannel);
-    if (controller != null) {
-      fxApplicationThreadExecutor.execute(() -> tabPane.getTabs().remove(controller.getRoot()));
-    }
+    fxApplicationThreadExecutor.execute(() -> {
+      String channelName = chatChannel.getName();
+      openedTabs.removeIf(tab -> channelName.equals(tab.getId()));
+      chatNavigation.removeTab(channelName);
+    });
   }
 
   private void addAndSelectTab(ChatChannel chatChannel) {
-    if (!channelToChatTabController.containsKey(chatChannel)) {
+    if (!containsTab(chatChannel)) {
       fxApplicationThreadExecutor.execute(() -> {
-        AbstractChatTabController tabController;
-        if (chatChannel.isPrivateChannel()) {
-          tabController = uiService.loadFxml("theme/chat/private_chat_tab.fxml");
-        } else {
-          tabController = uiService.loadFxml("theme/chat/channel_tab.fxml");
-        }
-        tabController.setChatChannel(chatChannel);
-        channelToChatTabController.put(chatChannel, tabController);
-        Tab tab = tabController.getRoot();
-        tab.setUserData(chatChannel);
+        Tab tab = createTab(chatChannel);
+        int index = chatService.isDefaultChannel(chatChannel) ? 0 : openedTabs.size() - 1; // Last index is `add channel` tab
+        openedTabs.add(index, tab);
 
-
-        if (chatService.isDefaultChannel(chatChannel)) {
-          tabPane.getTabs().addFirst(tab);
+        String channelName = chatChannel.getName();
+        if (chatNavigation.addTabIfMissing(channelName) || channelName.equals(chatNavigation.getLastOpenedTabId())) {
           tabPane.getSelectionModel().select(tab);
-        } else {
-          tabPane.getTabs().add(tabPane.getTabs().size() - 1, tab);
-
-          if (chatChannel.isPrivateChannel() || tabPane.getSelectionModel().getSelectedIndex() == tabPane.getTabs()
-                                                                                                         .size() - 1) {
-            tabPane.getSelectionModel().select(tab);
-          }
         }
       });
     }
+  }
+
+  private boolean containsTab(ChatChannel chatChannel) {
+    return openedTabs.stream().anyMatch(tab -> chatChannel.getName().equals(tab.getId()));
+  }
+
+  private Tab createTab(ChatChannel chatChannel) {
+    String fxmlFile = chatChannel.isPrivateChannel() ? "theme/chat/private_chat_tab.fxml" : "theme/chat/channel_tab.fxml";
+    AbstractChatTabController tabController = uiService.loadFxml(fxmlFile);
+    tabController.setChatChannel(chatChannel);
+    Tab tab = tabController.getRoot();
+    tab.setId(chatChannel.getName());
+    return tab;
   }
 
   private void onConnectionStateChange(ConnectionState newValue) {

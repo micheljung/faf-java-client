@@ -14,7 +14,7 @@
     <children>
         <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" visible="false">
-            <Tab text="+" closable="false">
+            <Tab fx:id="addChannelTab" text="+" closable="false">
                 <VBox fx:id="noOpenTabsContainer" alignment="CENTER" fillWidth="false">
                     <children>
                         <Label styleClass="h2" text="%chat.joinAChannel">
