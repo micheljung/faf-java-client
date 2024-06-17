@@ -9,7 +9,7 @@ plugins {
   id("java")
   id("distribution")
   id("me.champeau.jmh") version "0.7.2"
-  id("io.github.sheikah45.fx2j") version "0.0.0"
+  id("io.github.sheikah45.fx2j") version "0.1.0"
   id("com.adarshr.test-logger") version "4.0.0"
 }
 
