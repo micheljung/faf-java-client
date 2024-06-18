@@ -115,6 +115,10 @@ public abstract class PlatformTest {
 
   protected void runOnFxThreadAndWait(Runnable runnable) {
     Platform.runLater(runnable);
+    waitFxEvents();
+  }
+
+  protected void waitFxEvents() {
     WaitForAsyncUtils.waitForFxEvents();
   }
 
