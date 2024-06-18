@@ -2,6 +2,7 @@ package com.faforever.client.chat;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,7 @@ public class ChatNavigation { // TODO: Not a very good name of class
     currentTabs.removeIf(chatTab -> chatTab.getId().equals(tabId));
   }
 
+  @Nullable
   public String getLastOpenedTabId() {
     return currentTabs.stream().filter(ChatTab::isSelected).findFirst().map(ChatTab::getId).orElse(null);
   }
@@ -32,10 +34,6 @@ public class ChatNavigation { // TODO: Not a very good name of class
       return;
     }
 
-    currentTabs.stream()
-               .peek(chatTab -> chatTab.setSelected(false))
-               .filter(chatTab -> chatTab.getId().equals(tabId))
-               .findFirst()
-               .ifPresent(chatTab -> chatTab.setSelected(true));
+    currentTabs.forEach(tab -> tab.setSelected(tab.getId().equals(tabId)));
   }
 }

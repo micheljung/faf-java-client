@@ -52,6 +52,8 @@ public class ChatControllerTest extends PlatformTest {
   private ChatService chatService;
   @Mock
   private NotificationService notificationService;
+  @Mock
+  private ChatNavigation chatNavigation;
   @Captor
   private ArgumentCaptor<MapChangeListener<String, ChatChannel>> channelsListener;
 
