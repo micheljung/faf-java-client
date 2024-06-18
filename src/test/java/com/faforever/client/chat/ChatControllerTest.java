@@ -23,6 +23,7 @@ import static javafx.collections.FXCollections.observableHashMap;
 import static javafx.collections.FXCollections.synchronizedObservableMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -124,6 +125,7 @@ public class ChatControllerTest extends PlatformTest {
     assertFalse(instance.connectingProgressPane.isVisible());
     assertFalse(instance.tabPane.isVisible());
     assertEquals(1, openedTabs.size());
+    assertNull(chatNavigation.getLastOpenedTabId());
   }
 
   @Test

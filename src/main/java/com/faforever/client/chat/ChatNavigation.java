@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 
 @Component
 @Lazy
-public class ChatNavigation { // TODO: Not a very good name of class
+public class ChatNavigation {
 
   private final LinkedHashSet<ChatTab> currentTabs = new LinkedHashSet<>();
 
@@ -31,5 +31,9 @@ public class ChatNavigation { // TODO: Not a very good name of class
     }
 
     currentTabs.forEach(tab -> tab.setSelected(tab.getId().equals(tabId)));
+  }
+
+  public void clear() {
+    currentTabs.clear();
   }
 }

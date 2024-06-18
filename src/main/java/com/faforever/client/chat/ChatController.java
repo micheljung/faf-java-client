@@ -87,6 +87,7 @@ public class ChatController extends NodeController<AnchorPane> {
       connectingProgressPane.setVisible(false);
       tabPane.setVisible(false);
       openedTabs.removeIf(Tab::isClosable);
+      chatNavigation.clear();
     });
   }
 
