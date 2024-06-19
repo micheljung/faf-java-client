@@ -26,8 +26,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ChatController extends NodeController<AnchorPane> {
 
-  public static String ADD_CHANNEL_TAB_ID = "_add_channel_tab_";
-
   private final ChatService chatService;
   private final UiService uiService;
   private final FxApplicationThreadExecutor fxApplicationThreadExecutor;
@@ -44,7 +42,6 @@ public class ChatController extends NodeController<AnchorPane> {
 
   public AnchorPane chatRoot;
   public TabPane tabPane;
-  public Tab addChannelTab;
   public Pane connectingProgressPane;
   public VBox noOpenTabsContainer;
   public TextField channelNameTextField;
@@ -55,14 +52,17 @@ public class ChatController extends NodeController<AnchorPane> {
   @Override
   protected void onInitialize() {
     super.onInitialize();
-    addChannelTab.setId(ADD_CHANNEL_TAB_ID);
     openedTabs = tabPane.getTabs();
 
     chatService.addChannelsListener(new WeakMapChangeListener<>(channelChangeListener));
     chatService.getChannels().forEach(this::onChannelJoined);
 
     chatService.connectionStateProperty().when(showing).subscribe(this::onConnectionStateChange);
-    tabPane.getSelectionModel().selectedItemProperty().subscribe(tab -> chatNavigation.setLastOpenedTabId(tab.getId()));
+    tabPane.getSelectionModel().selectedItemProperty().subscribe(tab -> {
+      if (tab.isClosable()) {
+        chatNavigation.setLastOpenedTabId(tab.getId());
+      }
+    });
   }
 
   private void onChannelLeft(ChatChannel chatChannel) {

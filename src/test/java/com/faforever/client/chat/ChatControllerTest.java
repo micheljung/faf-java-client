@@ -69,7 +69,7 @@ public class ChatControllerTest extends PlatformTest {
   @Test
   public void testOnlyOneAddChannelTabAfterInitialized() {
     assertEquals(1, openedTabs.size());
-    assertEquals(ChatController.ADD_CHANNEL_TAB_ID, openedTabs.getFirst().getId());
+    assertFalse(openedTabs.getFirst().isClosable());
   }
 
   @Test

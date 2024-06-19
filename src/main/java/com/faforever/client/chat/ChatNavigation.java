@@ -26,10 +26,6 @@ public class ChatNavigation {
   }
 
   public void setLastOpenedTabId(String tabId) {
-    if (ChatController.ADD_CHANNEL_TAB_ID.equals(tabId)) {
-      return;
-    }
-
     currentTabs.forEach(tab -> tab.setSelected(tab.getId().equals(tabId)));
   }
 
