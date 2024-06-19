@@ -260,10 +260,10 @@ public class GenerateMapController extends NodeController<Pane> {
     generatorPrefs.reclaimDensityMaxProperty().bind(reclaimDensitySlider.highValueProperty());
     reclaimDensitySlider.setLowValue(generatorPrefs.getReclaimDensityMin());
     generatorPrefs.reclaimDensityMinProperty().bind(reclaimDensitySlider.lowValueProperty());
-    resourcesDensitySlider.setHighValue(generatorPrefs.getResourcesDensityMax());
-    generatorPrefs.resourcesDensityMaxProperty().bind(resourcesDensitySlider.highValueProperty());
-    resourcesDensitySlider.setLowValue(generatorPrefs.getResourcesDensityMin());
-    generatorPrefs.resourcesDensityMinProperty().bind(resourcesDensitySlider.lowValueProperty());
+    resourcesDensitySlider.setHighValue(generatorPrefs.getResourceDensityMax());
+    generatorPrefs.resourceDensityMaxProperty().bind(resourcesDensitySlider.highValueProperty());
+    resourcesDensitySlider.setLowValue(generatorPrefs.getResourceDensityMin());
+    generatorPrefs.resourceDensityMinProperty().bind(resourcesDensitySlider.lowValueProperty());
   }
 
   private void initSeedField() {

@@ -30,8 +30,8 @@ public class GeneratorPrefs {
   private final StringProperty propStyle = new SimpleStringProperty("");
   private final IntegerProperty reclaimDensityMin = new SimpleIntegerProperty(0);
   private final IntegerProperty reclaimDensityMax = new SimpleIntegerProperty(127);
-  private final IntegerProperty resourcesDensityMin = new SimpleIntegerProperty(0);
-  private final IntegerProperty resourcesDensityMax = new SimpleIntegerProperty(127);
+  private final IntegerProperty resourceDensityMin = new SimpleIntegerProperty(0);
+  private final IntegerProperty resourceDensityMax = new SimpleIntegerProperty(127);
 
   public GenerationType getGenerationType() {
     return generationType.get();
@@ -233,27 +233,27 @@ public class GeneratorPrefs {
     this.reclaimDensityMax.set(max);
   }
 
-  public int getResourcesDensityMin() {
-    return resourcesDensityMin.get();
+  public int getResourceDensityMin() {
+    return resourceDensityMin.get();
   }
 
-  public IntegerProperty resourcesDensityMinProperty() {
-    return resourcesDensityMin;
+  public IntegerProperty resourceDensityMinProperty() {
+    return resourceDensityMin;
   }
 
-  public void setResourcesDensityMin(int min) {
-    this.resourcesDensityMin.set(min);
+  public void setResourceDensityMin(int min) {
+    this.resourceDensityMin.set(min);
   }
 
-  public int getResourcesDensityMax() {
-    return resourcesDensityMax.get();
+  public int getResourceDensityMax() {
+    return resourceDensityMax.get();
   }
 
-  public IntegerProperty resourcesDensityMaxProperty() {
-    return resourcesDensityMax;
+  public IntegerProperty resourceDensityMaxProperty() {
+    return resourceDensityMax;
   }
 
-  public void setResourcesDensityMax(int max) {
-    this.resourcesDensityMax.set(max);
+  public void setResourceDensityMax(int max) {
+    this.resourceDensityMax.set(max);
   }
 }

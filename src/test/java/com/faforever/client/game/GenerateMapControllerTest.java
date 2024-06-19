@@ -62,8 +62,8 @@ public class GenerateMapControllerTest extends PlatformTest {
     generatorPrefs.commandLineArgsProperty().unbind();
     generatorPrefs.reclaimDensityMinProperty().unbind();
     generatorPrefs.reclaimDensityMaxProperty().unbind();
-    generatorPrefs.resourcesDensityMinProperty().unbind();
-    generatorPrefs.resourcesDensityMaxProperty().unbind();
+    generatorPrefs.resourceDensityMinProperty().unbind();
+    generatorPrefs.resourceDensityMaxProperty().unbind();
   }
 
   @BeforeEach
@@ -453,8 +453,8 @@ public class GenerateMapControllerTest extends PlatformTest {
     generatorPrefs.setNumTeams(2);
     generatorPrefs.setMapSizeInKm(10.0);
     generatorPrefs.setGenerationType(GenerationType.CASUAL);
-    generatorPrefs.setResourcesDensityMin(5);
-    generatorPrefs.setResourcesDensityMax(5);
+    generatorPrefs.setResourceDensityMin(5);
+    generatorPrefs.setResourceDensityMax(5);
     generatorPrefs.setReclaimDensityMin(10);
     generatorPrefs.setReclaimDensityMax(10);
 
