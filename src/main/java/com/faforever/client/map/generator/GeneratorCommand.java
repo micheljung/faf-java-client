@@ -25,7 +25,7 @@ public record GeneratorCommand(
     String terrainStyle,
     String textureStyle,
     String resourceStyle,
-    String propStyle,
+    String propStyle, Float reclaimDensity, Float resourceDensity,
     String commandLineArgs
 ) {
 
@@ -91,6 +91,14 @@ public record GeneratorCommand(
 
       if (propStyle != null && !propStyle.equals(MapGeneratorService.GENERATOR_RANDOM_OPTION)) {
         command.addAll(Arrays.asList("--prop-style", propStyle));
+      }
+
+      if (resourceDensity != null) {
+        command.addAll(Arrays.asList("--resource-density", String.valueOf(resourceDensity)));
+      }
+
+      if (reclaimDensity != null) {
+        command.addAll(Arrays.asList("--reclaim-density", String.valueOf(reclaimDensity)));
       }
 
       return command;

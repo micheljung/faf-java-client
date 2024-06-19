@@ -37,7 +37,6 @@ public class GenerateMapTask extends CompletableTask<String> {
   private Path generatorExecutableFile;
   private ComparableVersion version;
   private GeneratorOptions generatorOptions;
-  private String seed;
   private String mapName;
 
   @Autowired
@@ -57,10 +56,12 @@ public class GenerateMapTask extends CompletableTask<String> {
     updateTitle(i18n.get("game.mapGeneration.generateMap.title", version));
 
     GeneratorCommand.GeneratorCommandBuilder generatorCommandBuilder = GeneratorCommand.builder()
-        .version(version)
-        .generatorExecutableFile(generatorExecutableFile)
-        .javaExecutable(operatingSystem.getJavaExecutablePath())
-        .mapName(mapName);
+                                                                                       .version(version)
+                                                                                       .generatorExecutableFile(
+                                                                                           generatorExecutableFile)
+                                                                                       .javaExecutable(
+                                                                                           operatingSystem.getJavaExecutablePath())
+                                                                                       .mapName(mapName);
 
     if (generatorOptions != null) {
       generatorCommandBuilder.spawnCount(generatorOptions.spawnCount())
@@ -74,6 +75,8 @@ public class GenerateMapTask extends CompletableTask<String> {
                              .textureStyle(generatorOptions.textureStyle())
                              .resourceStyle(generatorOptions.resourceStyle())
                              .propStyle(generatorOptions.propStyle())
+                             .resourceDensity(generatorOptions.resourceDensity())
+                             .reclaimDensity(generatorOptions.reclaimDensity())
                              .commandLineArgs(generatorOptions.commandLineArgs());
     }
 
@@ -86,8 +89,8 @@ public class GenerateMapTask extends CompletableTask<String> {
       processBuilder.directory(workingDirectory.toFile());
       processBuilder.command(command);
 
-      log.info("Starting map generator in directory: `{}` with command: `{}`",
-          processBuilder.directory(), String.join(" ", processBuilder.command()));
+      log.info("Starting map generator in directory: `{}` with command: `{}`", processBuilder.directory(),
+               String.join(" ", processBuilder.command()));
 
       Process process = processBuilder.start();
       OsUtils.gobbleLines(process.getInputStream(), msg -> {
@@ -106,7 +109,8 @@ public class GenerateMapTask extends CompletableTask<String> {
                                                                                                   "--visualize")) {
         log.warn("Map generation timed out, killing process");
         process.destroyForcibly();
-        notificationService.addImmediateErrorNotification(new RuntimeException("Map generation timed out"), "game.mapGeneration.failed.message");
+        notificationService.addImmediateErrorNotification(new RuntimeException("Map generation timed out"),
+                                                          "game.mapGeneration.failed.message");
       }
     } catch (Exception e) {
       log.error("Could not start map generator", e);

@@ -10,6 +10,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -83,37 +84,49 @@ public class GeneratorCommandTest extends ServiceTest {
   @Test
   public void testSeedSet() {
     List<String> command = defaultBuilder().seed("100").build().getCommand();
-    assertTrue(command.containsAll(List.of("--seed", "100")));
+    assertThat(command, containsInRelativeOrder("--seed", "100"));
   }
 
   @Test
   public void testSymmetrySet() {
     List<String> command = defaultBuilder().symmetry("XZ").build().getCommand();
-    assertTrue(command.containsAll(List.of("--terrain-symmetry", "XZ")));
+    assertThat(command, containsInRelativeOrder("--terrain-symmetry", "XZ"));
   }
 
   @Test
   public void testTerrainStyleSet() {
     List<String> command = defaultBuilder().terrainStyle("TERRAIN").build().getCommand();
-    assertTrue(command.containsAll(List.of("--terrain-style", "TERRAIN")));
+    assertThat(command, containsInRelativeOrder("--terrain-style", "TERRAIN"));
   }
 
   @Test
   public void testTextureStyleSet() {
     List<String> command = defaultBuilder().textureStyle("BIOME").build().getCommand();
-    assertTrue(command.containsAll(List.of("--texture-style", "BIOME")));
+    assertThat(command, containsInRelativeOrder("--texture-style", "BIOME"));
   }
 
   @Test
   public void testResourceStyleSet() {
     List<String> command = defaultBuilder().resourceStyle("RESOURCE").build().getCommand();
-    assertTrue(command.containsAll(List.of("--resource-style", "RESOURCE")));
+    assertThat(command, containsInRelativeOrder("--resource-style", "RESOURCE"));
   }
 
   @Test
   public void testPropStyleSet() {
     List<String> command = defaultBuilder().propStyle("PROPS").build().getCommand();
-    assertTrue(command.containsAll(List.of("--prop-style", "PROPS")));
+    assertThat(command, containsInRelativeOrder("--prop-style", "PROPS"));
+  }
+
+  @Test
+  public void testResourceDensitySet() {
+    List<String> command = defaultBuilder().resourceDensity(.5f).build().getCommand();
+    assertThat(command, containsInRelativeOrder("--resource-density", "0.5"));
+  }
+
+  @Test
+  public void testReclaimDensitySet() {
+    List<String> command = defaultBuilder().reclaimDensity(.5f).build().getCommand();
+    assertThat(command, containsInRelativeOrder("--reclaim-density", "0.5"));
   }
 
   @Test
@@ -143,7 +156,7 @@ public class GeneratorCommandTest extends ServiceTest {
   @Test
   public void testStyleSet() {
     List<String> command = defaultBuilder().style("TEST").build().getCommand();
-    assertTrue(command.containsAll(List.of("--style", "TEST")));
+    assertThat(command, containsInRelativeOrder("--style", "TEST"));
   }
 
   @Test

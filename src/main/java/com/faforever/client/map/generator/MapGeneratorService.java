@@ -122,7 +122,6 @@ public class MapGeneratorService implements DisposableBean {
 
     GenerateMapTask generateMapTask = generateMapTaskFactory.getObject();
     generateMapTask.setVersion(version);
-    generateMapTask.setSeed(seed);
     generateMapTask.setMapName(mapName);
     generateMapTask.setGeneratorExecutableFile(generatorExecutablePath);
 

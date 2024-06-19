@@ -2,6 +2,7 @@ package com.faforever.client.game;
 
 import com.faforever.client.fx.JavaFxUtil;
 import com.faforever.client.fx.NodeController;
+import com.faforever.client.fx.ToStringOnlyConverter;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.map.generator.GenerationType;
 import com.faforever.client.map.generator.GeneratorOptions;
@@ -14,6 +15,7 @@ import com.google.common.annotations.VisibleForTesting;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -28,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.StringConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.controlsfx.control.RangeSlider;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -63,55 +66,44 @@ public class GenerateMapController extends NodeController<Pane> {
   public Label commandLineLabel;
   public TextField commandLineArgsText;
   public ComboBox<GenerationType> generationTypeComboBox;
-  public Label mapStyleLabel;
   public ComboBox<String> mapStyleComboBox;
-  public Label biomeLabel;
   public ComboBox<String> biomeComboBox;
   public Spinner<Integer> spawnCountSpinner;
   public Spinner<Double> mapSizeSpinner;
-  public Label symmetryLabel;
   public ComboBox<String> symmetryComboBox;
-  public Label customStyleLabel;
   public CheckBox customStyleCheckBox;
-  public Label fixedSeedLabel;
   public CheckBox fixedSeedCheckBox;
   public TextField seedTextField;
   public Button seedRerollButton;
-  public Label terrainLabel;
   public ComboBox<String> terrainComboBox;
-  public Label resourceLabel;
   public ComboBox<String> resourcesComboBox;
-  public Label propLabel;
   public ComboBox<String> propsComboBox;
+  public RangeSlider reclaimDensitySlider;
+  public RangeSlider resourcesDensitySlider;
 
   private Runnable onCloseButtonClickedListener;
-  private final ObservableList<Integer> validTeamSizes = FXCollections.observableList(IntStream.range(0, 17)
-      .filter(value -> value != 1)
-      .boxed()
-      .collect(Collectors.toList()));
+  private final ObservableList<Integer> validTeamSizes = FXCollections.observableList(
+      IntStream.range(0, 17).filter(value -> value != 1).boxed().collect(Collectors.toList()));
   private final FilteredList<Integer> selectableTeamSizes = new FilteredList<>(validTeamSizes);
-  private final ObservableList<Integer> validSpawnCount = FXCollections.observableList(IntStream.range(2, 17)
-      .boxed()
-      .collect(Collectors.toList()));
+  private final ObservableList<Integer> validSpawnCount = FXCollections.observableList(
+      IntStream.range(2, 17).boxed().collect(Collectors.toList()));
   private final FilteredList<Integer> selectableSpawnCounts = new FilteredList<>(validSpawnCount);
   public Spinner<Integer> numTeamsSpinner;
 
   @Override
   protected void onInitialize() {
-    JavaFxUtil.bindManagedToVisible(commandLineLabel, commandLineArgsText, mapStyleComboBox, mapStyleLabel, biomeComboBox, biomeLabel);
+    JavaFxUtil.bindManagedToVisible(commandLineLabel, commandLineArgsText);
     initCommandlineArgs();
     initGenerationTypeComboBox();
     initSymmetryComboBox();
     initMapStyleComboBox();
-    initCheckBoxes();
+    initCustomStyleOptions();
     initNumTeamsSpinner();
     initSpawnCountSpinner();
     initMapSizeSpinner();
     initSeedField();
-    initGeneratorComboBox(terrainComboBox);
-    initGeneratorComboBox(biomeComboBox);
-    initGeneratorComboBox(resourcesComboBox);
-    initGeneratorComboBox(propsComboBox);
+    bindCustomStyleDisabledProperty(terrainComboBox, biomeComboBox, resourcesComboBox, propsComboBox,
+                                    resourcesDensitySlider, reclaimDensitySlider);
   }
 
   private StringConverter<GenerationType> getGenerationTypeConverter() {
@@ -164,8 +156,9 @@ public class GenerateMapController extends NodeController<Pane> {
     generationTypeComboBox.setValue(generationType);
     generatorPrefs.generationTypeProperty().bind(generationTypeComboBox.valueProperty());
     generationTypeComboBox.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(commandLineArgsText.textProperty().isNotEmpty()));
+                          .bind(previousMapName.textProperty()
+                                               .isNotEmpty()
+                                               .or(commandLineArgsText.textProperty().isNotEmpty()));
   }
 
   private void initNumTeamsSpinner() {
@@ -192,8 +185,8 @@ public class GenerateMapController extends NodeController<Pane> {
     });
     generatorPrefs.numTeamsProperty().bind(numTeamsSpinner.valueProperty());
     numTeamsSpinner.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(commandLineArgsText.textProperty().isNotEmpty()));
+                   .bind(
+                       previousMapName.textProperty().isNotEmpty().or(commandLineArgsText.textProperty().isNotEmpty()));
     int lastIndex = selectableTeamSizes.indexOf(numTeamsProperty);
     numTeamsSpinner.increment(lastIndex >= 0 ? lastIndex : 1);
   }
@@ -207,8 +200,9 @@ public class GenerateMapController extends NodeController<Pane> {
     spawnCountSpinner.setValueFactory(new ListSpinnerValueFactory<>(selectableSpawnCounts));
     generatorPrefs.spawnCountProperty().bind(spawnCountSpinner.valueProperty());
     spawnCountSpinner.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(commandLineArgsText.textProperty().isNotEmpty()));
+                     .bind(previousMapName.textProperty()
+                                          .isNotEmpty()
+                                          .or(commandLineArgsText.textProperty().isNotEmpty()));
     int lastIndex = selectableSpawnCounts.indexOf(spawnCountProperty);
     spawnCountSpinner.increment(Math.max(lastIndex, 0));
   }
@@ -219,61 +213,85 @@ public class GenerateMapController extends NodeController<Pane> {
     mapSizeSpinner.getValueFactory().setConverter(getMapSizeConverter());
     generatorPrefs.mapSizeInKmProperty().bind(mapSizeSpinner.getValueFactory().valueProperty());
     mapSizeSpinner.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(commandLineArgsText.textProperty().isNotEmpty()));
+                  .bind(
+                      previousMapName.textProperty().isNotEmpty().or(commandLineArgsText.textProperty().isNotEmpty()));
   }
 
   private void initSymmetryComboBox() {
     symmetryComboBox.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
-            .or(commandLineArgsText.textProperty().isNotEmpty()));
+                    .bind(previousMapName.textProperty()
+                                         .isNotEmpty()
+                                         .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
+                                         .or(commandLineArgsText.textProperty().isNotEmpty()));
   }
 
   private void initMapStyleComboBox() {
     mapStyleComboBox.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
-            .or(commandLineArgsText.textProperty().isNotEmpty())
-            .or(customStyleCheckBox.selectedProperty()));
+                    .bind(previousMapName.textProperty()
+                                         .isNotEmpty()
+                                         .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
+                                         .or(commandLineArgsText.textProperty().isNotEmpty())
+                                         .or(customStyleCheckBox.selectedProperty()));
   }
 
-  private void initCheckBoxes() {
+  private void initCustomStyleOptions() {
     customStyleCheckBox.setSelected(generatorPrefs.getCustomStyle());
     generatorPrefs.customStyleProperty().bind(customStyleCheckBox.selectedProperty());
     customStyleCheckBox.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
-            .or(commandLineArgsText.textProperty().isNotEmpty()));
+                       .bind(previousMapName.textProperty()
+                                            .isNotEmpty()
+                                            .or(generationTypeComboBox.valueProperty()
+                                                                      .isNotEqualTo(GenerationType.CASUAL))
+                                            .or(commandLineArgsText.textProperty().isNotEmpty()));
     fixedSeedCheckBox.setSelected(generatorPrefs.getFixedSeed());
     generatorPrefs.fixedSeedProperty().bind(fixedSeedCheckBox.selectedProperty());
     fixedSeedCheckBox.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
-            .or(commandLineArgsText.textProperty().isNotEmpty()));
+                     .bind(previousMapName.textProperty()
+                                          .isNotEmpty()
+                                          .or(generationTypeComboBox.valueProperty()
+                                                                    .isNotEqualTo(GenerationType.CASUAL))
+                                          .or(commandLineArgsText.textProperty().isNotEmpty()));
+
+    reclaimDensitySlider.setLabelFormatter(
+        new LessMoreStringConverter(reclaimDensitySlider.getMin(), reclaimDensitySlider.getMax()));
+    resourcesDensitySlider.setLabelFormatter(
+        new LessMoreStringConverter(resourcesDensitySlider.getMin(), resourcesDensitySlider.getMax()));
+    reclaimDensitySlider.setHighValue(generatorPrefs.getReclaimDensityMax());
+    generatorPrefs.reclaimDensityMaxProperty().bind(reclaimDensitySlider.highValueProperty());
+    reclaimDensitySlider.setLowValue(generatorPrefs.getReclaimDensityMin());
+    generatorPrefs.reclaimDensityMinProperty().bind(reclaimDensitySlider.lowValueProperty());
+    resourcesDensitySlider.setHighValue(generatorPrefs.getResourcesDensityMax());
+    generatorPrefs.resourcesDensityMaxProperty().bind(resourcesDensitySlider.highValueProperty());
+    resourcesDensitySlider.setLowValue(generatorPrefs.getResourcesDensityMin());
+    generatorPrefs.resourcesDensityMinProperty().bind(resourcesDensitySlider.lowValueProperty());
   }
 
   private void initSeedField() {
     seedTextField.setText(String.valueOf(generatorPrefs.getSeed()));
     generatorPrefs.seedProperty().bind(seedTextField.textProperty());
     seedTextField.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
-            .or(commandLineArgsText.textProperty().isNotEmpty())
-            .or(fixedSeedCheckBox.selectedProperty().not()));
+                 .bind(previousMapName.textProperty()
+                                      .isNotEmpty()
+                                      .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
+                                      .or(commandLineArgsText.textProperty().isNotEmpty())
+                                      .or(fixedSeedCheckBox.selectedProperty().not()));
     seedRerollButton.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
-            .or(commandLineArgsText.textProperty().isNotEmpty())
-            .or(fixedSeedCheckBox.selectedProperty().not()));
+                    .bind(previousMapName.textProperty()
+                                         .isNotEmpty()
+                                         .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
+                                         .or(commandLineArgsText.textProperty().isNotEmpty())
+                                         .or(fixedSeedCheckBox.selectedProperty().not()));
   }
 
-  private void initGeneratorComboBox(ComboBox<String> comboBox) {
-    comboBox.disableProperty()
-        .bind(previousMapName.textProperty().isNotEmpty()
-            .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
-            .or(commandLineArgsText.textProperty().isNotEmpty())
-            .or(customStyleCheckBox.selectedProperty().not()));
+  private void bindCustomStyleDisabledProperty(Node... nodes) {
+    for (Node node : nodes) {
+      node.disableProperty()
+          .bind(previousMapName.textProperty()
+                               .isNotEmpty()
+                               .or(generationTypeComboBox.valueProperty().isNotEqualTo(GenerationType.CASUAL))
+                               .or(commandLineArgsText.textProperty().isNotEmpty())
+                               .or(customStyleCheckBox.selectedProperty().not()));
+    }
   }
 
   private GeneratorOptions getGeneratorOptions() {
@@ -296,6 +314,21 @@ public class GenerateMapController extends NodeController<Pane> {
         optionsBuilder.textureStyle(biomeComboBox.getValue());
         optionsBuilder.resourceStyle(resourcesComboBox.getValue());
         optionsBuilder.propStyle(propsComboBox.getValue());
+        Random random = new Random();
+        int reclaimLowValue = (int) reclaimDensitySlider.getLowValue();
+        int reclaimHighValue = (int) reclaimDensitySlider.getHighValue();
+        if (reclaimLowValue == reclaimHighValue) {
+          optionsBuilder.reclaimDensity(reclaimLowValue / 127f);
+        } else {
+          optionsBuilder.reclaimDensity(random.nextInt(reclaimLowValue, reclaimHighValue) / 127f);
+        }
+        int resourcesLowValue = (int) resourcesDensitySlider.getLowValue();
+        int resourcesHighValue = (int) resourcesDensitySlider.getHighValue();
+        if (resourcesLowValue == resourcesHighValue) {
+          optionsBuilder.resourceDensity(resourcesLowValue / 127f);
+        } else {
+          optionsBuilder.resourceDensity(random.nextInt(resourcesLowValue, resourcesHighValue) / 127f);
+        }
       } else {
         optionsBuilder.style(mapStyleComboBox.getValue());
       }
@@ -457,5 +490,21 @@ public class GenerateMapController extends NodeController<Pane> {
 
   public void onSeedRerollButtonClicked() {
     seedTextField.setText(String.valueOf(new Random().nextLong()));
+  }
+
+  private class LessMoreStringConverter extends ToStringOnlyConverter<Number> {
+    public LessMoreStringConverter(Number min, Number max) {
+      super(number -> {
+        if (number.equals(max)) {
+          return i18n.get("more");
+        }
+
+        if (number.equals(min)) {
+          return i18n.get("less");
+        }
+
+        return "";
+      });
+    }
   }
 }

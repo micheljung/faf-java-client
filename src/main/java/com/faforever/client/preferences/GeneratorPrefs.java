@@ -28,6 +28,10 @@ public class GeneratorPrefs {
   private final StringProperty textureStyle = new SimpleStringProperty("");
   private final StringProperty resourceStyle = new SimpleStringProperty("");
   private final StringProperty propStyle = new SimpleStringProperty("");
+  private final IntegerProperty reclaimDensityMin = new SimpleIntegerProperty(0);
+  private final IntegerProperty reclaimDensityMax = new SimpleIntegerProperty(127);
+  private final IntegerProperty resourcesDensityMin = new SimpleIntegerProperty(0);
+  private final IntegerProperty resourcesDensityMax = new SimpleIntegerProperty(127);
 
   public GenerationType getGenerationType() {
     return generationType.get();
@@ -195,5 +199,61 @@ public class GeneratorPrefs {
 
   public StringProperty propStyleProperty() {
     return propStyle;
+  }
+
+  public boolean isFixedSeed() {
+    return fixedSeed.get();
+  }
+
+  public boolean isCustomStyle() {
+    return customStyle.get();
+  }
+
+  public int getReclaimDensityMin() {
+    return reclaimDensityMin.get();
+  }
+
+  public IntegerProperty reclaimDensityMinProperty() {
+    return reclaimDensityMin;
+  }
+
+  public void setReclaimDensityMin(int min) {
+    this.reclaimDensityMin.set(min);
+  }
+
+  public int getReclaimDensityMax() {
+    return reclaimDensityMax.get();
+  }
+
+  public IntegerProperty reclaimDensityMaxProperty() {
+    return reclaimDensityMax;
+  }
+
+  public void setReclaimDensityMax(int max) {
+    this.reclaimDensityMax.set(max);
+  }
+
+  public int getResourcesDensityMin() {
+    return resourcesDensityMin.get();
+  }
+
+  public IntegerProperty resourcesDensityMinProperty() {
+    return resourcesDensityMin;
+  }
+
+  public void setResourcesDensityMin(int min) {
+    this.resourcesDensityMin.set(min);
+  }
+
+  public int getResourcesDensityMax() {
+    return resourcesDensityMax.get();
+  }
+
+  public IntegerProperty resourcesDensityMaxProperty() {
+    return resourcesDensityMax;
+  }
+
+  public void setResourcesDensityMax(int max) {
+    this.resourcesDensityMax.set(max);
   }
 }

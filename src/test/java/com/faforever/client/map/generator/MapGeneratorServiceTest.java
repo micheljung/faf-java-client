@@ -125,7 +125,6 @@ public class MapGeneratorServiceTest extends ServiceTest {
     verify(taskService).submitTask(generateMapTask);
 
     verify(generateMapTask).setVersion(versionGeneratorPresent);
-    verify(generateMapTask).setSeed(seed);
     verify(generateMapTask).setMapName(testMapNameGenerator);
 
     String generatorExecutableName = String.format(MapGeneratorService.GENERATOR_EXECUTABLE_FILENAME, versionGeneratorPresent);
@@ -160,7 +159,6 @@ public class MapGeneratorServiceTest extends ServiceTest {
     verify(generateMapTask).setVersion(versionGeneratorPresent);
     verify(generateMapTask).setGeneratorOptions(generatorOptions);
     verify(generateMapTask, never()).setMapName(anyString());
-    verify(generateMapTask, never()).setSeed(anyString());
   }
 
   @Test

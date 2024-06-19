@@ -14,7 +14,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.testfx.util.WaitForAsyncUtils;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -61,6 +60,10 @@ public class GenerateMapControllerTest extends PlatformTest {
     generatorPrefs.resourceStyleProperty().unbind();
     generatorPrefs.propStyleProperty().unbind();
     generatorPrefs.commandLineArgsProperty().unbind();
+    generatorPrefs.reclaimDensityMinProperty().unbind();
+    generatorPrefs.reclaimDensityMaxProperty().unbind();
+    generatorPrefs.resourcesDensityMinProperty().unbind();
+    generatorPrefs.resourcesDensityMaxProperty().unbind();
   }
 
   @BeforeEach
@@ -74,8 +77,7 @@ public class GenerateMapControllerTest extends PlatformTest {
 
   @Test
   public void testBadMapNameFails() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.previousMapName.setText("Bad");
     instance.onGenerateMap();
 
@@ -84,8 +86,7 @@ public class GenerateMapControllerTest extends PlatformTest {
 
   @Test
   public void testSetLastSpawnCount() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     assertEquals(10, instance.spawnCountSpinner.getValue().intValue());
   }
@@ -94,8 +95,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastNumTeams() {
     generatorPrefs.setNumTeams(5);
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     assertEquals(instance.numTeamsSpinner.getValue().intValue(), 5);
   }
@@ -103,8 +103,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   @Test
   public void testSetLastMapSize() {
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     assertEquals(instance.mapSizeSpinner.getValue(), 10.0);
     assertEquals((int) instance.spawnCountSpinner.getValue(), 10);
@@ -114,8 +113,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastSymmetry() {
     generatorPrefs.setSymmetry("Test");
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     instance.setSymmetries(new ArrayList<>(List.of("Test")));
 
@@ -126,8 +124,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastFixedSeed() {
     generatorPrefs.setFixedSeed(true);
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     assertTrue(instance.fixedSeedCheckBox.isSelected());
   }
@@ -136,8 +133,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastSeed() {
     generatorPrefs.setSeed("100");
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     assertEquals(instance.seedTextField.getText(), "100");
   }
@@ -146,8 +142,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastMapStyle() {
     generatorPrefs.setMapStyle("TEST");
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     instance.setStyles(new ArrayList<>(List.of("TEST")));
 
@@ -158,8 +153,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastCustomStyle() {
     generatorPrefs.setCustomStyle(true);
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     assertTrue(instance.customStyleCheckBox.isSelected());
   }
@@ -168,8 +162,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastTerrainStyle() {
     generatorPrefs.setTerrainStyle("Test");
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     instance.setTerrainStyles(new ArrayList<>(List.of("Test")));
 
@@ -180,8 +173,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastTextureStyle() {
     generatorPrefs.setTextureStyle("Test");
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     instance.setTextureStyles(new ArrayList<>(List.of("Test")));
 
@@ -192,8 +184,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastResourceStyle() {
     generatorPrefs.setResourceStyle("Test");
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     instance.setResourceStyles(new ArrayList<>(List.of("Test")));
 
@@ -204,8 +195,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastPropStyle() {
     generatorPrefs.setPropStyle("Test");
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     instance.setPropStyles(new ArrayList<>(List.of("Test")));
 
@@ -216,8 +206,7 @@ public class GenerateMapControllerTest extends PlatformTest {
   public void testSetLastCommandLineArgs() {
     generatorPrefs.setCommandLineArgs("--help");
 
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     assertEquals("--help", instance.commandLineArgsText.getText());
     assertTrue(instance.commandLineArgsText.isVisible());
@@ -226,8 +215,7 @@ public class GenerateMapControllerTest extends PlatformTest {
 
   @Test
   public void testCommandLineArgsNotVisibleWhenNotSetInitially() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     assertFalse(instance.commandLineArgsText.isVisible());
     assertFalse(instance.commandLineLabel.isVisible());
@@ -235,14 +223,12 @@ public class GenerateMapControllerTest extends PlatformTest {
 
   @Test
   public void testToggleCommandLineArgs() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
 
     assertFalse(instance.commandLineArgsText.isVisible());
     assertFalse(instance.commandLineLabel.isVisible());
 
-    WaitForAsyncUtils.asyncFx(() -> instance.toggleCommandlineInput());
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> instance.toggleCommandlineInput());
 
     assertTrue(instance.commandLineArgsText.isVisible());
     assertTrue(instance.commandLineLabel.isVisible());
@@ -250,8 +236,7 @@ public class GenerateMapControllerTest extends PlatformTest {
 
   @Test
   public void testOptionsNotDisabledWithoutMapName() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.previousMapName.setText("neroxis_map_generator");
     instance.previousMapName.setText("");
 
@@ -266,9 +251,9 @@ public class GenerateMapControllerTest extends PlatformTest {
 
   @Test
   public void testOptionsDisabledWithMapName() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.previousMapName.setText("neroxis_map_generator");
+    instance.customStyleCheckBox.setSelected(true);
 
     assertTrue(instance.commandLineArgsText.isDisabled());
     assertTrue(instance.generationTypeComboBox.isDisabled());
@@ -284,14 +269,15 @@ public class GenerateMapControllerTest extends PlatformTest {
     assertTrue(instance.terrainComboBox.isDisabled());
     assertTrue(instance.biomeComboBox.isDisabled());
     assertTrue(instance.resourcesComboBox.isDisabled());
-    assertTrue(instance.propsComboBox.isDisabled());
+    assertTrue(instance.resourcesDensitySlider.isDisabled());
+    assertTrue(instance.reclaimDensitySlider.isDisabled());
   }
 
   @Test
   public void testOptionsDisabledWithCommandLine() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.commandLineArgsText.setText("--help");
+    instance.customStyleCheckBox.setSelected(true);
 
     assertTrue(instance.generationTypeComboBox.isDisabled());
     assertTrue(instance.spawnCountSpinner.isDisabled());
@@ -307,12 +293,13 @@ public class GenerateMapControllerTest extends PlatformTest {
     assertTrue(instance.biomeComboBox.isDisabled());
     assertTrue(instance.resourcesComboBox.isDisabled());
     assertTrue(instance.propsComboBox.isDisabled());
+    assertTrue(instance.resourcesDensitySlider.isDisabled());
+    assertTrue(instance.reclaimDensitySlider.isDisabled());
   }
 
   @Test
   public void testOptionsDisabledWithoutCustomStyle() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.customStyleCheckBox.setSelected(false);
 
     assertFalse(instance.mapStyleComboBox.isDisabled());
@@ -320,12 +307,13 @@ public class GenerateMapControllerTest extends PlatformTest {
     assertTrue(instance.biomeComboBox.isDisabled());
     assertTrue(instance.resourcesComboBox.isDisabled());
     assertTrue(instance.propsComboBox.isDisabled());
+    assertTrue(instance.resourcesDensitySlider.isDisabled());
+    assertTrue(instance.reclaimDensitySlider.isDisabled());
   }
 
   @Test
   public void testOptionsNotDisabledWithCustomStyle() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.customStyleCheckBox.setSelected(true);
 
     assertTrue(instance.mapStyleComboBox.isDisabled());
@@ -333,12 +321,13 @@ public class GenerateMapControllerTest extends PlatformTest {
     assertFalse(instance.biomeComboBox.isDisabled());
     assertFalse(instance.resourcesComboBox.isDisabled());
     assertFalse(instance.propsComboBox.isDisabled());
+    assertFalse(instance.resourcesDensitySlider.isDisabled());
+    assertFalse(instance.reclaimDensitySlider.isDisabled());
   }
 
   @Test
   public void testSeedDisabledWithoutFixedSeed() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.fixedSeedCheckBox.setSelected(false);
 
     assertTrue(instance.seedTextField.isDisabled());
@@ -347,8 +336,7 @@ public class GenerateMapControllerTest extends PlatformTest {
 
   @Test
   public void testSeedNotDisabledWithFixedSeed() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.fixedSeedCheckBox.setSelected(true);
 
     assertFalse(instance.seedTextField.isDisabled());
@@ -357,8 +345,7 @@ public class GenerateMapControllerTest extends PlatformTest {
 
   @Test
   public void testOptionsNotDisabledWithCasual() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.generationTypeComboBox.setValue(GenerationType.TOURNAMENT);
     instance.generationTypeComboBox.setValue(GenerationType.CASUAL);
 
@@ -373,9 +360,9 @@ public class GenerateMapControllerTest extends PlatformTest {
 
   @Test
   public void testOptionsDisabledWithTournament() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.generationTypeComboBox.setValue(GenerationType.TOURNAMENT);
+    instance.customStyleCheckBox.setSelected(true);
 
     assertFalse(instance.generationTypeComboBox.isDisabled());
     assertFalse(instance.spawnCountSpinner.isDisabled());
@@ -391,13 +378,15 @@ public class GenerateMapControllerTest extends PlatformTest {
     assertTrue(instance.biomeComboBox.isDisabled());
     assertTrue(instance.resourcesComboBox.isDisabled());
     assertTrue(instance.propsComboBox.isDisabled());
+    assertTrue(instance.resourcesDensitySlider.isDisabled());
+    assertTrue(instance.reclaimDensitySlider.isDisabled());
   }
 
   @Test
   public void testOptionsDisabledWithBlind() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.generationTypeComboBox.setValue(GenerationType.BLIND);
+    instance.customStyleCheckBox.setSelected(true);
 
     assertFalse(instance.generationTypeComboBox.isDisabled());
     assertFalse(instance.spawnCountSpinner.isDisabled());
@@ -413,13 +402,15 @@ public class GenerateMapControllerTest extends PlatformTest {
     assertTrue(instance.biomeComboBox.isDisabled());
     assertTrue(instance.resourcesComboBox.isDisabled());
     assertTrue(instance.propsComboBox.isDisabled());
+    assertTrue(instance.resourcesDensitySlider.isDisabled());
+    assertTrue(instance.reclaimDensitySlider.isDisabled());
   }
 
   @Test
   public void testOptionsDisabledWithUnexplored() {
-    WaitForAsyncUtils.asyncFx(() -> reinitialize(instance));
-    WaitForAsyncUtils.waitForFxEvents();
+    runOnFxThreadAndWait(() -> reinitialize(instance));
     instance.generationTypeComboBox.setValue(GenerationType.UNEXPLORED);
+    instance.customStyleCheckBox.setSelected(true);
 
     assertFalse(instance.generationTypeComboBox.isDisabled());
     assertFalse(instance.spawnCountSpinner.isDisabled());
@@ -435,6 +426,8 @@ public class GenerateMapControllerTest extends PlatformTest {
     assertTrue(instance.biomeComboBox.isDisabled());
     assertTrue(instance.resourcesComboBox.isDisabled());
     assertTrue(instance.propsComboBox.isDisabled());
+    assertTrue(instance.resourcesDensitySlider.isDisabled());
+    assertTrue(instance.reclaimDensitySlider.isDisabled());
   }
 
   @Test
@@ -460,6 +453,10 @@ public class GenerateMapControllerTest extends PlatformTest {
     generatorPrefs.setNumTeams(2);
     generatorPrefs.setMapSizeInKm(10.0);
     generatorPrefs.setGenerationType(GenerationType.CASUAL);
+    generatorPrefs.setResourcesDensityMin(5);
+    generatorPrefs.setResourcesDensityMax(5);
+    generatorPrefs.setReclaimDensityMin(10);
+    generatorPrefs.setReclaimDensityMax(10);
 
     instance.symmetryComboBox.setItems(FXCollections.observableList(List.of("SYMMETRY")));
     instance.symmetryComboBox.getSelectionModel().selectFirst();
@@ -493,6 +490,8 @@ public class GenerateMapControllerTest extends PlatformTest {
     assertEquals("BIOME", result.textureStyle());
     assertEquals("MEXES", result.resourceStyle());
     assertEquals("PROPS", result.propStyle());
+    assertEquals(10 / 127f, result.reclaimDensity());
+    assertEquals(5 / 127f, result.resourceDensity());
   }
 
   @Test
@@ -530,6 +529,8 @@ public class GenerateMapControllerTest extends PlatformTest {
     assertNull(result.textureStyle());
     assertNull(result.resourceStyle());
     assertNull(result.propStyle());
+    assertNull(result.resourceDensity());
+    assertNull(result.reclaimDensity());
   }
 }
 
