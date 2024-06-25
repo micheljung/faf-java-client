@@ -598,7 +598,8 @@
                                                 <Label styleClass="setting-title"
                                                        text="%settings.notifications.matchFound"
                                                        GridPane.rowIndex="6"/>
-                                                <CheckBox fx:id="displayMatchFoundSoundCheckBox" mnemonicParsing="false"
+                                                <CheckBox fx:id="displayMatchFoundNotificationCheckBox" mnemonicParsing="false"
+                                                          disable="true"
                                                           GridPane.columnIndex="1" GridPane.halignment="CENTER"
                                                           GridPane.rowIndex="6" GridPane.valignment="CENTER"/>
                                                 <CheckBox fx:id="playMatchFoundSoundCheckBox" mnemonicParsing="false"
@@ -609,7 +610,7 @@
                                                        GridPane.rowIndex="7"/>
                                                 <CheckBox fx:id="afterGameReviewCheckBox" mnemonicParsing="false"
                                                           GridPane.columnIndex="1" GridPane.halignment="CENTER"
-                                                          GridPane.rowIndex="6" GridPane.valignment="CENTER"/>
+                                                          GridPane.rowIndex="7" GridPane.valignment="CENTER"/>
                                             </children>
                                         </GridPane>
                                     </children>

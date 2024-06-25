@@ -293,6 +293,9 @@ public class NotificationPrefs {
   public boolean isMatchFoundSoundEnabled() {
     return isMatchFoundSoundEnabled.get();
   }
+  public BooleanProperty isMatchFoundSoundEnabledProperty() {
+    return isMatchFoundSoundEnabled;
+  }
 
   public int getSilenceBetweenSounds() {
     return silenceBetweenSounds.get();

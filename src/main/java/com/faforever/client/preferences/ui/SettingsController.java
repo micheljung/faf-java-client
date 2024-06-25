@@ -140,7 +140,7 @@ public class SettingsController extends NodeController<Node> {
   public CheckBox playFriendJoinsGameSoundCheckBox;
   public CheckBox playFriendPlaysGameSoundCheckBox;
   public CheckBox displayPmReceivedToastCheckBox;
-  public CheckBox displayMatchFoundSoundCheckBox;
+  public CheckBox displayMatchFoundNotificationCheckBox;
   public CheckBox playMatchFoundSoundCheckBox;
   public CheckBox playPmReceivedSoundCheckBox;
   public CheckBox afterGameReviewCheckBox;
@@ -397,6 +397,9 @@ public class SettingsController extends NodeController<Node> {
         .bindBidirectional(notificationPrefs.friendPlaysGameSoundEnabledProperty());
     playPmReceivedSoundCheckBox.selectedProperty()
         .bindBidirectional(notificationPrefs.privateMessageSoundEnabledProperty());
+    displayMatchFoundNotificationCheckBox.selectedProperty().setValue(true);
+    playMatchFoundSoundCheckBox.selectedProperty()
+        .bindBidirectional(notificationPrefs.isMatchFoundSoundEnabledProperty());
     afterGameReviewCheckBox.selectedProperty().bindBidirectional(notificationPrefs.afterGameReviewEnabledProperty());
     notifyOnAtMentionOnlyToggle.selectedProperty()
         .bindBidirectional(notificationPrefs.notifyOnAtMentionOnlyEnabledProperty());
