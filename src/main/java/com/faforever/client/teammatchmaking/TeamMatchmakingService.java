@@ -1,6 +1,7 @@
 package com.faforever.client.teammatchmaking;
 
 import com.faforever.client.api.FafApiAccessor;
+import com.faforever.client.audio.AudioService;
 import com.faforever.client.chat.ChatService;
 import com.faforever.client.domain.server.MatchmakerQueueInfo;
 import com.faforever.client.domain.server.PartyInfo;
@@ -29,6 +30,7 @@ import com.faforever.client.notification.TransientNotification;
 import com.faforever.client.player.PlayerService;
 import com.faforever.client.player.ServerStatus;
 import com.faforever.client.preferences.MatchmakerPrefs;
+import com.faforever.client.preferences.NotificationPrefs;
 import com.faforever.client.preferences.PreferencesService;
 import com.faforever.client.remote.FafServerAccessor;
 import com.faforever.client.user.LoginService;
@@ -110,6 +112,8 @@ public class TeamMatchmakingService implements InitializingBean {
   private final MatchmakerMapper matchmakerMapper;
   private final MatchmakerPrefs matchmakerPrefs;
   private final GamePathHandler gamePathHandler;
+  private final AudioService audioService;
+  private final NotificationPrefs notificationPrefs;
 
   @Getter
   private final PartyInfo party = new PartyInfo();
@@ -342,6 +346,10 @@ public class TeamMatchmakingService implements InitializingBean {
   }
 
   private void notifyMatchFound() {
+    if (notificationPrefs.isMatchFoundSoundEnabled()) {
+      audioService.playMatchFoundSound();
+    }
+
     notificationService.addNotification(
         new TransientNotification(i18n.get("teammatchmaking.notification.matchFound.title"),
                                   i18n.get("teammatchmaking.notification.matchFound.message")));

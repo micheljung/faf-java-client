@@ -49,6 +49,7 @@ public class AudioServiceTest extends ServiceTest {
     notificationPrefs.setFriendOnlineSoundEnabled(true);
     notificationPrefs.setFriendPlaysGameSoundEnabled(true);
     notificationPrefs.setFriendOfflineSoundEnabled(true);
+    notificationPrefs.setIsMatchFoundSoundEnabled(true);
     notificationPrefs.setSilenceBetweenSounds(SILENCE_BETWEEN_SOUNDS);
 
     instance.afterPropertiesSet();
@@ -67,6 +68,7 @@ public class AudioServiceTest extends ServiceTest {
     instance.playFriendOnlineSound();
     instance.playFriendOfflineSound();
     instance.playFriendPlaysGameSound();
+    instance.playMatchFoundSound();
     instance.playInfoNotificationSound();
     verify(audioClipPlayer, never()).playSound(any());
   }
@@ -82,6 +84,7 @@ public class AudioServiceTest extends ServiceTest {
     notificationPrefs.setFriendOnlineSoundEnabled(false);
     notificationPrefs.setFriendPlaysGameSoundEnabled(false);
     notificationPrefs.setPrivateMessageSoundEnabled(false);
+    notificationPrefs.setIsMatchFoundSoundEnabled(false);
     instance.playChatMentionSound();
     instance.playPrivateMessageSound();
     instance.playInfoNotificationSound();
@@ -92,6 +95,7 @@ public class AudioServiceTest extends ServiceTest {
     instance.playFriendOfflineSound();
     instance.playFriendPlaysGameSound();
     instance.playInfoNotificationSound();
+    instance.playMatchFoundSound();
     verify(audioClipPlayer, never()).playSound(any());
   }
 
@@ -164,8 +168,15 @@ public class AudioServiceTest extends ServiceTest {
   }
 
   @Test
-  public void testPlayFriendJoinsGamSound() {
+  public void testPlayFriendJoinsGameSound() {
     instance.playFriendJoinsGameSound();
+
+    verify(audioClipPlayer).playSound(any(AudioClip.class));
+  }
+
+  @Test
+  public void testMatchFoundSoundPlays() {
+    instance.playMatchFoundSound();
 
     verify(audioClipPlayer).playSound(any(AudioClip.class));
   }
