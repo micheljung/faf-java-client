@@ -27,7 +27,7 @@ public class AudioService implements InitializingBean {
   private static final String FRIEND_OFFLINE_SOUND = "theme/sounds/friendOfflineSound.mp3";
   private static final String FRIEND_JOINS_GAME_SOUND = "theme/sounds/friendJoinsGameSound.mp3";
   private static final String FRIEND_PLAYS_GAME_SOUND = "theme/sounds/friendPlaysGameSound.mp3";
-  private static final String MATCH_FOUND_SOUND = "theme/sounds/friendPlaysGameSound.mp3";
+  private static final String MATCH_FOUND_SOUND = "theme/sounds/matchFoundSound.mp3";
 
   private final AudioClipPlayer audioClipPlayer;
   private final ThemeService themeService;
@@ -67,7 +67,7 @@ public class AudioService implements InitializingBean {
     friendOfflineSound = loadSound(FRIEND_OFFLINE_SOUND);
     friendJoinsGameSound = loadSound(FRIEND_JOINS_GAME_SOUND);
     friendPlaysGameSound = loadSound(FRIEND_PLAYS_GAME_SOUND);
-    playMatchFoundSound = loadSound(FRIEND_PLAYS_GAME_SOUND);
+    playMatchFoundSound = loadSound(MATCH_FOUND_SOUND);
   }
 
   private AudioClip loadSound(String sound) throws IOException {
@@ -156,7 +156,7 @@ public class AudioService implements InitializingBean {
     if (!notificationPrefs.isMatchFoundSoundEnabled()) {
       return;
     }
-    playSound(friendPlaysGameSound);
+    playSound(playMatchFoundSound);
   }
 
 
