@@ -140,6 +140,8 @@ public class SettingsController extends NodeController<Node> {
   public CheckBox playFriendJoinsGameSoundCheckBox;
   public CheckBox playFriendPlaysGameSoundCheckBox;
   public CheckBox displayPmReceivedToastCheckBox;
+  public CheckBox displayMatchFoundSoundCheckBox;
+  public CheckBox playMatchFoundSoundCheckBox;
   public CheckBox playPmReceivedSoundCheckBox;
   public CheckBox afterGameReviewCheckBox;
   public CheckBox disableSteamStartCheckBox;
