@@ -399,7 +399,7 @@ public class SettingsController extends NodeController<Node> {
         .bindBidirectional(notificationPrefs.privateMessageSoundEnabledProperty());
     displayMatchFoundNotificationCheckBox.selectedProperty().setValue(true);
     playMatchFoundSoundCheckBox.selectedProperty()
-        .bindBidirectional(notificationPrefs.isMatchFoundSoundEnabledProperty());
+        .bindBidirectional(notificationPrefs.matchFoundSoundEnabledProperty());
     afterGameReviewCheckBox.selectedProperty().bindBidirectional(notificationPrefs.afterGameReviewEnabledProperty());
     notifyOnAtMentionOnlyToggle.selectedProperty()
         .bindBidirectional(notificationPrefs.notifyOnAtMentionOnlyEnabledProperty());

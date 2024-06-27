@@ -1,6 +1,7 @@
 package com.faforever.client.teammatchmaking;
 
 import com.faforever.client.api.FafApiAccessor;
+import com.faforever.client.audio.AudioService;
 import com.faforever.client.builders.GameInfoBuilder;
 import com.faforever.client.builders.GameLaunchMessageBuilder;
 import com.faforever.client.builders.PartyInfoBuilder.PartyMemberBuilder;
@@ -119,6 +120,8 @@ public class TeamMatchmakingServiceTest extends ServiceTest {
   private GameRunner gameRunner;
   @Mock
   private NavigationHandler navigationHandler;
+  @Mock
+  private AudioService audioService;
   @Spy
   private MatchmakerPrefs matchmakerPrefs = new MatchmakerPrefs();
 
@@ -141,7 +144,6 @@ public class TeamMatchmakingServiceTest extends ServiceTest {
   private final TestPublisher<GameLaunchResponse> gameLaunchResponseTestPublisher = TestPublisher.create();
   private final SimpleObjectProperty<ConnectionState> connectionState = new SimpleObjectProperty<>(
       ConnectionState.DISCONNECTED);
-  ;
 
   @BeforeEach
   public void setUp() throws Exception {

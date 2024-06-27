@@ -49,7 +49,7 @@ public class AudioServiceTest extends ServiceTest {
     notificationPrefs.setFriendOnlineSoundEnabled(true);
     notificationPrefs.setFriendPlaysGameSoundEnabled(true);
     notificationPrefs.setFriendOfflineSoundEnabled(true);
-    notificationPrefs.setIsMatchFoundSoundEnabled(true);
+    notificationPrefs.setMatchFoundSoundEnabled(true);
     notificationPrefs.setSilenceBetweenSounds(SILENCE_BETWEEN_SOUNDS);
 
     instance.afterPropertiesSet();
@@ -84,7 +84,7 @@ public class AudioServiceTest extends ServiceTest {
     notificationPrefs.setFriendOnlineSoundEnabled(false);
     notificationPrefs.setFriendPlaysGameSoundEnabled(false);
     notificationPrefs.setPrivateMessageSoundEnabled(false);
-    notificationPrefs.setIsMatchFoundSoundEnabled(false);
+    notificationPrefs.setMatchFoundSoundEnabled(false);
     instance.playChatMentionSound();
     instance.playPrivateMessageSound();
     instance.playInfoNotificationSound();
