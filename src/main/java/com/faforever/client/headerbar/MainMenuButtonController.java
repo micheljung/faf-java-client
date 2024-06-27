@@ -12,6 +12,7 @@ import com.faforever.client.theme.ThemeService;
 import com.faforever.client.theme.UiService;
 import com.faforever.client.ui.StageHolder;
 import javafx.scene.control.MenuButton;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.RequiredArgsConstructor;
@@ -73,12 +74,13 @@ public class MainMenuButtonController {
     SettingsController settingsController = uiService.loadFxml("theme/settings/settings.fxml");
     FxStage fxStage = FxStage.create(settingsController.getRoot())
         .initOwner(menuButton.getScene().getWindow())
-                             .withSceneFactory(themeService::createScene)
+        .withSceneFactory(themeService::createScene)
         .allowMinimize(false)
         .apply()
         .setTitleBar(settingsController.settingsHeader);
 
     Stage stage = fxStage.getStage();
+    stage.initModality(Modality.WINDOW_MODAL);
 
     stage.setTitle(i18n.get("settings.windowTitle"));
     stage.show();
