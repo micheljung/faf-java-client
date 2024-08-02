@@ -74,7 +74,7 @@ public class GeneratorOptionsTask extends CompletableTask<List<String>> {
         }
       });
       OsUtils.gobbleLines(process.getErrorStream(), generatorLogger::error);
-      process.waitFor(2, TimeUnit.SECONDS);
+      process.waitFor(6, TimeUnit.SECONDS);
       if (process.isAlive()) {
         process.destroyForcibly();
         log.warn("Map generator option run timed out");
