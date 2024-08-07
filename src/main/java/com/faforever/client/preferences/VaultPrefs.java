@@ -29,6 +29,9 @@ public class VaultPrefs {
   private final ReplaySearchPrefs replaySearch = new ReplaySearchPrefs();
   @JsonMerge
   @Getter
+  private final LiveReplaySearchPrefs liveReplaySearch = new LiveReplaySearchPrefs();
+  @JsonMerge
+  @Getter
   private final MapSearchPrefs mapSearch = new MapSearchPrefs();
   @JsonMerge
   @Getter

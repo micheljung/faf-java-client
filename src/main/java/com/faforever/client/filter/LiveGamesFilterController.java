@@ -11,6 +11,7 @@ import com.faforever.client.fx.ToStringOnlyConverter;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.map.generator.MapGeneratorService;
 import com.faforever.client.player.PlayerService;
+import com.faforever.client.preferences.Preferences;
 import com.faforever.client.social.SocialService;
 import com.faforever.client.theme.UiService;
 import com.faforever.commons.lobby.GameType;
@@ -32,40 +33,58 @@ public class LiveGamesFilterController extends AbstractFilterController<GameInfo
   private final PlayerService playerService;
   private final FeaturedModService featuredModService;
   private final MapGeneratorService mapGeneratorService;
+  private final Preferences preferences;
+
+  private FilterCheckboxController<GameInfo> hideModdedGamesFilter;
+  private FilterCheckboxController<GameInfo> hideSingleGamesFilter;
+  private FilterCheckboxController<GameInfo> onlyGamesWithFriendsFilter;
+  private FilterCheckboxController<GameInfo> onlyGeneratedMapsFilter;
+
+  private FilterMultiCheckboxController<GameType,GameInfo> gameTypeFilter;
+  private FilterMultiCheckboxController<FeaturedMod, GameInfo> featuredModFilter;
+
+  private FilterTextFieldController<GameInfo> playerFilter;
+
 
   public LiveGamesFilterController(UiService uiService, I18n i18n, FeaturedModService featuredModService,
                                    PlayerService playerService,
                                    MapGeneratorService mapGeneratorService,
                                    FxApplicationThreadExecutor fxApplicationThreadExecutor,
-                                   SocialService socialService) {
+                                   SocialService socialService,
+                                   Preferences preferences) {
     super(uiService, i18n, fxApplicationThreadExecutor);
     this.featuredModService = featuredModService;
     this.playerService = playerService;
     this.mapGeneratorService = mapGeneratorService;
     this.socialService = socialService;
+    this.preferences = preferences;
   }
 
   @Override
   protected void build(FilterBuilder<GameInfo> filterBuilder) {
-    filterBuilder.checkbox(i18n.get("moddedGames"), new SimModsFilterFunction());
+    hideModdedGamesFilter = filterBuilder.checkbox(i18n.get("moddedGames"), new SimModsFilterFunction());
 
-    filterBuilder.checkbox(i18n.get("hideSingleGames"), (selected, game) -> !selected || game.getNumActivePlayers() != 1);
+    hideSingleGamesFilter = filterBuilder.checkbox(i18n.get("hideSingleGames"),
+                                                   (selected, game) -> !selected || game.getNumActivePlayers() != 1);
 
-    filterBuilder.checkbox(i18n.get("showGamesWithFriends"),
-                           (selected, game) -> !selected || socialService.areFriendsInGame(game));
+    onlyGamesWithFriendsFilter = filterBuilder.checkbox(i18n.get("showGamesWithFriends"),
+                                                        (selected, game) -> !selected || socialService.areFriendsInGame(
+                                                        game));
 
-    filterBuilder.checkbox(i18n.get("showGeneratedMaps"), (selected, game) -> !selected || mapGeneratorService.isGeneratedMap(game.getMapFolderName()));
+    onlyGeneratedMapsFilter = filterBuilder.checkbox(i18n.get("showGeneratedMaps"),
+                                                     (selected, game) -> !selected || mapGeneratorService.isGeneratedMap(
+                                                   game.getMapFolderName()));
 
-    filterBuilder.multiCheckbox(i18n.get("gameType"), List.of(GameType.CUSTOM, GameType.MATCHMAKER, GameType.COOP), gameTypeConverter,
+    gameTypeFilter = filterBuilder.multiCheckbox(i18n.get("gameType"), List.of(GameType.CUSTOM, GameType.MATCHMAKER, GameType.COOP), gameTypeConverter,
         (selectedGameTypes, game) -> selectedGameTypes.isEmpty() || selectedGameTypes.contains(game.getGameType()));
 
-    FilterMultiCheckboxController<FeaturedMod, GameInfo> featuredModFilter = filterBuilder.multiCheckbox(
+    featuredModFilter = filterBuilder.multiCheckbox(
         i18n.get("featuredMod.displayName"), new ToStringOnlyConverter<>(FeaturedMod::displayName),
         new FeaturedModFilterFunction());
 
     featuredModService.getFeaturedMods().collectList().subscribe(featuredModFilter::setItems);
 
-    filterBuilder.textField(i18n.get("game.player.username"), (text, game) -> text.isEmpty() || game.getTeams()
+    playerFilter = filterBuilder.textField(i18n.get("game.player.username"), (text, game) -> text.isEmpty() || game.getTeams()
         .values()
         .stream()
         .flatMap(Collection::stream)
@@ -90,4 +109,16 @@ public class LiveGamesFilterController extends AbstractFilterController<GameInfo
       throw new UnsupportedOperationException("Not supported");
     }
   };
+
+  @Override
+  protected void afterBuilt() {
+    hideModdedGamesFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getHideModdedGames());
+    hideSingleGamesFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getHideSingleGames());
+    onlyGamesWithFriendsFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getOnlyGamesWithFriends());
+    onlyGeneratedMapsFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getOnlyGeneratedMaps());
+    gameTypeFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getGameTypes());
+    featuredModFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getModName());
+    playerFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getPlayerName());
+  }
+
 }
