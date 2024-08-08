@@ -11,7 +11,7 @@ import com.faforever.client.fx.ToStringOnlyConverter;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.map.generator.MapGeneratorService;
 import com.faforever.client.player.PlayerService;
-import com.faforever.client.preferences.Preferences;
+import com.faforever.client.preferences.LiveReplaySearchPrefs;
 import com.faforever.client.social.SocialService;
 import com.faforever.client.theme.UiService;
 import com.faforever.commons.lobby.GameType;
@@ -33,7 +33,8 @@ public class LiveGamesFilterController extends AbstractFilterController<GameInfo
   private final PlayerService playerService;
   private final FeaturedModService featuredModService;
   private final MapGeneratorService mapGeneratorService;
-  private final Preferences preferences;
+
+  private final LiveReplaySearchPrefs liveReplaySearchPrefs;
 
   private FilterCheckboxController<GameInfo> hideModdedGamesFilter;
   private FilterCheckboxController<GameInfo> hideSingleGamesFilter;
@@ -51,13 +52,13 @@ public class LiveGamesFilterController extends AbstractFilterController<GameInfo
                                    MapGeneratorService mapGeneratorService,
                                    FxApplicationThreadExecutor fxApplicationThreadExecutor,
                                    SocialService socialService,
-                                   Preferences preferences) {
+                                   LiveReplaySearchPrefs liveReplaySearchPrefs) {
     super(uiService, i18n, fxApplicationThreadExecutor);
     this.featuredModService = featuredModService;
     this.playerService = playerService;
     this.mapGeneratorService = mapGeneratorService;
     this.socialService = socialService;
-    this.preferences = preferences;
+    this.liveReplaySearchPrefs = liveReplaySearchPrefs;
   }
 
   @Override
@@ -112,13 +113,13 @@ public class LiveGamesFilterController extends AbstractFilterController<GameInfo
 
   @Override
   protected void afterBuilt() {
-    hideModdedGamesFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getHideModdedGames());
-    hideSingleGamesFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getHideSingleGames());
-    onlyGamesWithFriendsFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getOnlyGamesWithFriends());
-    onlyGeneratedMapsFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getOnlyGeneratedMaps());
-    gameTypeFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getGameTypes());
-    featuredModFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getModName());
-    playerFilter.valueProperty().bindBidirectional(preferences.getVault().getLiveReplaySearch().getPlayerName());
+    hideModdedGamesFilter.valueProperty().bindBidirectional(liveReplaySearchPrefs.hideModdedGamesProperty());
+    hideSingleGamesFilter.valueProperty().bindBidirectional(liveReplaySearchPrefs.hideSingleGamesProperty());
+    onlyGamesWithFriendsFilter.valueProperty().bindBidirectional(liveReplaySearchPrefs.onlyGamesWithFriendsProperty());
+    onlyGeneratedMapsFilter.valueProperty().bindBidirectional(liveReplaySearchPrefs.onlyGeneratedMapsProperty());
+    gameTypeFilter.valueProperty().bindBidirectional(liveReplaySearchPrefs.gameTypesProperty());
+    featuredModFilter.valueProperty().bindBidirectional(liveReplaySearchPrefs.modNameProperty());
+    playerFilter.valueProperty().bindBidirectional(liveReplaySearchPrefs.playerNameProperty());
   }
 
 }

@@ -10,6 +10,7 @@ import com.faforever.client.preferences.ForgedAlliancePrefs;
 import com.faforever.client.preferences.GeneralPrefs;
 import com.faforever.client.preferences.GeneratorPrefs;
 import com.faforever.client.preferences.LastGamePrefs;
+import com.faforever.client.preferences.LiveReplaySearchPrefs;
 import com.faforever.client.preferences.LocalizationPrefs;
 import com.faforever.client.preferences.LoginPrefs;
 import com.faforever.client.preferences.MatchmakerPrefs;
@@ -152,6 +153,11 @@ public class PreferencesConfig implements DisposableBean {
   @Bean
   public VaultPrefs vault() {
     return preferences().getVault();
+  }
+
+  @Bean
+  public LiveReplaySearchPrefs liveReplaySearchPrefs() {
+    return preferences().getVault().getLiveReplaySearch();
   }
 
   @Bean
