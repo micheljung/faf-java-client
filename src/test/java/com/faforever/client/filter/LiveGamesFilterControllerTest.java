@@ -1,16 +1,22 @@
 package com.faforever.client.filter;
 
 import com.faforever.client.builders.PlayerInfoBuilder;
+import com.faforever.client.domain.api.FeaturedMod;
 import com.faforever.client.domain.server.GameInfo;
 import com.faforever.client.domain.server.PlayerInfo;
 import com.faforever.client.featuredmod.FeaturedModService;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.map.generator.MapGeneratorService;
 import com.faforever.client.player.PlayerService;
+import com.faforever.client.preferences.LiveReplaySearchPrefs;
 import com.faforever.client.social.SocialService;
 import com.faforever.client.test.PlatformTest;
 import com.faforever.client.theme.UiService;
 import com.faforever.commons.lobby.GameType;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -28,7 +34,6 @@ import static com.faforever.client.builders.GameInfoBuilder.create;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,41 +54,62 @@ public class LiveGamesFilterControllerTest extends PlatformTest {
   private MapGeneratorService mapGeneratorService;
 
   @Mock
-  private FilterCheckboxController<GameInfo> singleGamesController;
+  private LiveReplaySearchPrefs liveReplaySearchPrefs;
+
   @Mock
-  private FilterCheckboxController<GameInfo> gamesWithFriendsController;
+  private FilterCheckboxController<GameInfo> hideModdedGamesFilter;
   @Mock
-  private FilterMultiCheckboxController<GameType, GameInfo> gameTypeController;
+  private FilterCheckboxController<GameInfo> hideSingleGamesFilter;
   @Mock
-  private FilterTextFieldController<GameInfo> playerNameController;
+  private FilterCheckboxController<GameInfo> onlyGamesWithFriendsFilter;
   @Mock
-  private FilterCheckboxController<GameInfo> generatedMapsController;
+  private FilterCheckboxController<GameInfo> onlyGeneratedMapsFilter;
+
+  @Mock
+  private FilterMultiCheckboxController<GameType, GameInfo> gameTypeFilter;
+  @Mock
+  private FilterMultiCheckboxController<FeaturedMod, GameInfo> featuredModFilter;
+
+  @Mock
+  private FilterTextFieldController<GameInfo> playerNameFilter;
+
 
   @InjectMocks
   private LiveGamesFilterController instance;
 
   @BeforeEach
   public void setUp() throws Exception {
-    // Order is important
     when(uiService.loadFxml(anyString())).thenReturn(
-        mock(FilterCheckboxController.class), // Sim mods
-        singleGamesController,
-        gamesWithFriendsController,
-        generatedMapsController,
-        gameTypeController,
-        mock(FilterMultiCheckboxController.class), // Featured mods
-        playerNameController
+        hideModdedGamesFilter, // Sim mods
+        hideSingleGamesFilter,
+        onlyGamesWithFriendsFilter,
+        onlyGeneratedMapsFilter,
+        gameTypeFilter,
+        featuredModFilter,
+        playerNameFilter
     );
     when(featuredModService.getFeaturedMods()).thenReturn(Flux.empty());
 
+    when(hideModdedGamesFilter.valueProperty()).thenReturn(new SimpleBooleanProperty());
+    when(hideSingleGamesFilter.valueProperty()).thenReturn(new SimpleBooleanProperty());
+    when(onlyGamesWithFriendsFilter.valueProperty()).thenReturn(new SimpleBooleanProperty());
+    when(onlyGeneratedMapsFilter.valueProperty()).thenReturn(new SimpleBooleanProperty());
+
+    when(gameTypeFilter.valueProperty()).thenReturn(new SimpleListProperty<>(FXCollections.observableArrayList()));
+    when(featuredModFilter.valueProperty()).thenReturn(new SimpleListProperty<>(FXCollections.observableArrayList()));
+
+    when(playerNameFilter.valueProperty()).thenReturn(new SimpleStringProperty());
+
     loadFxml("theme/filter/filter.fxml", clazz -> instance, instance);
+
+
   }
 
   @Test
   public void testGameTypeFilter() {
     ArgumentCaptor<BiFunction<List<GameType>, GameInfo, Boolean>> argumentCaptor = ArgumentCaptor.forClass(
         BiFunction.class);
-    verify(gameTypeController).registerListener(argumentCaptor.capture());
+    verify(gameTypeFilter).registerListener(argumentCaptor.capture());
 
     BiFunction<List<GameType>, GameInfo, Boolean> filter = argumentCaptor.getValue();
 
@@ -99,7 +125,7 @@ public class LiveGamesFilterControllerTest extends PlatformTest {
   @Test
   public void testPlayerNameFilter() {
     ArgumentCaptor<BiFunction<String, GameInfo, Boolean>> argumentCaptor = ArgumentCaptor.forClass(BiFunction.class);
-    verify(playerNameController).registerListener(argumentCaptor.capture());
+    verify(playerNameFilter).registerListener(argumentCaptor.capture());
 
     PlayerInfo player1 = PlayerInfoBuilder.create().defaultValues().id(1).username("player1").get();
     PlayerInfo player2 = PlayerInfoBuilder.create().defaultValues().id(2).username("player2").get();
@@ -122,7 +148,7 @@ public class LiveGamesFilterControllerTest extends PlatformTest {
   @Test
   public void testSingleGamesFilter() {
     ArgumentCaptor<BiFunction<Boolean, GameInfo, Boolean>> argumentCaptor = ArgumentCaptor.forClass(BiFunction.class);
-    verify(singleGamesController).registerListener(argumentCaptor.capture());
+    verify(hideSingleGamesFilter).registerListener(argumentCaptor.capture());
 
     BiFunction<Boolean, GameInfo, Boolean> filter = argumentCaptor.getValue();
 
@@ -135,7 +161,7 @@ public class LiveGamesFilterControllerTest extends PlatformTest {
   @Test
   public void testGameWithFriendsFilter() {
     ArgumentCaptor<BiFunction<Boolean, GameInfo, Boolean>> argumentCaptor = ArgumentCaptor.forClass(BiFunction.class);
-    verify(gamesWithFriendsController).registerListener(argumentCaptor.capture());
+    verify(onlyGamesWithFriendsFilter).registerListener(argumentCaptor.capture());
 
     GameInfo game = create().defaultValues().get();
 
@@ -151,7 +177,7 @@ public class LiveGamesFilterControllerTest extends PlatformTest {
   @Test
   public void testGeneratedMapsFilter() {
     ArgumentCaptor<BiFunction<Boolean, GameInfo, Boolean>> argumentCaptor = ArgumentCaptor.forClass(BiFunction.class);
-    verify(generatedMapsController).registerListener(argumentCaptor.capture());
+    verify(onlyGeneratedMapsFilter).registerListener(argumentCaptor.capture());
 
     GameInfo game = create().defaultValues().get();
 
