@@ -120,7 +120,6 @@ public class LiveGamesFilterController extends AbstractFilterController<GameInfo
     gameTypeFilter.valueProperty().bindBidirectional(liveReplaySearchPrefs.gameTypesProperty());
     featuredModFilter.valueProperty().bindBidirectional(liveReplaySearchPrefs.modNameProperty());
     playerFilter.valueProperty().bindBidirectional(liveReplaySearchPrefs.playerNameProperty());
-
   }
 
 }

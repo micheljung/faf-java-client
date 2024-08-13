@@ -16,12 +16,12 @@ import com.faforever.commons.lobby.GameType;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import reactor.core.publisher.Flux;
 
 import java.util.Collections;
@@ -41,41 +41,41 @@ import static org.mockito.Mockito.when;
 public class LiveGamesFilterControllerTest extends PlatformTest {
 
   @Mock
-  private UiService uiService;
+  protected UiService uiService;
   @Mock
-  private I18n i18n;
+  protected I18n i18n;
   @Mock
-  private FeaturedModService featuredModService;
+  protected FeaturedModService featuredModService;
   @Mock
-  private PlayerService playerService;
+  protected PlayerService playerService;
   @Mock
-  private SocialService socialService;
+  protected SocialService socialService;
   @Mock
-  private MapGeneratorService mapGeneratorService;
+  protected MapGeneratorService mapGeneratorService;
+
+  @Spy
+  protected LiveReplaySearchPrefs liveReplaySearchPrefs;
 
   @Mock
-  private LiveReplaySearchPrefs liveReplaySearchPrefs;
+  protected FilterCheckboxController<GameInfo> hideModdedGamesFilter;
+  @Mock
+  protected FilterCheckboxController<GameInfo> hideSingleGamesFilter;
+  @Mock
+  protected FilterCheckboxController<GameInfo> onlyGamesWithFriendsFilter;
+  @Mock
+  protected FilterCheckboxController<GameInfo> onlyGeneratedMapsFilter;
 
   @Mock
-  private FilterCheckboxController<GameInfo> hideModdedGamesFilter;
+  protected FilterMultiCheckboxController<GameType, GameInfo> gameTypeFilter;
   @Mock
-  private FilterCheckboxController<GameInfo> hideSingleGamesFilter;
-  @Mock
-  private FilterCheckboxController<GameInfo> onlyGamesWithFriendsFilter;
-  @Mock
-  private FilterCheckboxController<GameInfo> onlyGeneratedMapsFilter;
+  protected FilterMultiCheckboxController<FeaturedMod, GameInfo> featuredModFilter;
 
   @Mock
-  private FilterMultiCheckboxController<GameType, GameInfo> gameTypeFilter;
-  @Mock
-  private FilterMultiCheckboxController<FeaturedMod, GameInfo> featuredModFilter;
-
-  @Mock
-  private FilterTextFieldController<GameInfo> playerNameFilter;
+  protected FilterTextFieldController<GameInfo> playerNameFilter;
 
 
   @InjectMocks
-  private LiveGamesFilterController instance;
+  protected LiveGamesFilterController instance;
 
   @BeforeEach
   public void setUp() throws Exception {
@@ -95,14 +95,12 @@ public class LiveGamesFilterControllerTest extends PlatformTest {
     when(onlyGamesWithFriendsFilter.valueProperty()).thenReturn(new SimpleBooleanProperty());
     when(onlyGeneratedMapsFilter.valueProperty()).thenReturn(new SimpleBooleanProperty());
 
-    when(gameTypeFilter.valueProperty()).thenReturn(new SimpleListProperty<>(FXCollections.observableArrayList()));
-    when(featuredModFilter.valueProperty()).thenReturn(new SimpleListProperty<>(FXCollections.observableArrayList()));
+    when(gameTypeFilter.valueProperty()).thenReturn(new SimpleListProperty<>());
+    when(featuredModFilter.valueProperty()).thenReturn(new SimpleListProperty<>());
 
     when(playerNameFilter.valueProperty()).thenReturn(new SimpleStringProperty());
 
     loadFxml("theme/filter/filter.fxml", clazz -> instance, instance);
-
-
   }
 
   @Test
