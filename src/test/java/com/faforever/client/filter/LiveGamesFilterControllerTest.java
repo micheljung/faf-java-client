@@ -41,37 +41,37 @@ import static org.mockito.Mockito.when;
 public class LiveGamesFilterControllerTest extends PlatformTest {
 
   @Mock
-  protected UiService uiService;
+  private UiService uiService;
   @Mock
-  protected I18n i18n;
+  private I18n i18n;
   @Mock
-  protected FeaturedModService featuredModService;
+  private FeaturedModService featuredModService;
   @Mock
-  protected PlayerService playerService;
+  private PlayerService playerService;
   @Mock
-  protected SocialService socialService;
+  private SocialService socialService;
   @Mock
-  protected MapGeneratorService mapGeneratorService;
+  private MapGeneratorService mapGeneratorService;
 
   @Spy
-  protected LiveReplaySearchPrefs liveReplaySearchPrefs;
+  private LiveReplaySearchPrefs liveReplaySearchPrefs;
 
   @Mock
-  protected FilterCheckboxController<GameInfo> hideModdedGamesFilter;
+  private FilterCheckboxController<GameInfo> hideModdedGamesFilter;
   @Mock
-  protected FilterCheckboxController<GameInfo> hideSingleGamesFilter;
+  private FilterCheckboxController<GameInfo> hideSingleGamesFilter;
   @Mock
-  protected FilterCheckboxController<GameInfo> onlyGamesWithFriendsFilter;
+  private FilterCheckboxController<GameInfo> onlyGamesWithFriendsFilter;
   @Mock
-  protected FilterCheckboxController<GameInfo> onlyGeneratedMapsFilter;
+  private FilterCheckboxController<GameInfo> onlyGeneratedMapsFilter;
 
   @Mock
-  protected FilterMultiCheckboxController<GameType, GameInfo> gameTypeFilter;
+  private FilterMultiCheckboxController<GameType, GameInfo> gameTypeFilter;
   @Mock
-  protected FilterMultiCheckboxController<FeaturedMod, GameInfo> featuredModFilter;
+  private FilterMultiCheckboxController<FeaturedMod, GameInfo> featuredModFilter;
 
   @Mock
-  protected FilterTextFieldController<GameInfo> playerNameFilter;
+  private FilterTextFieldController<GameInfo> playerNameFilter;
 
 
   @InjectMocks
