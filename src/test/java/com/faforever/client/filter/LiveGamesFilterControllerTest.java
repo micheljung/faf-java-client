@@ -75,7 +75,7 @@ public class LiveGamesFilterControllerTest extends PlatformTest {
 
 
   @InjectMocks
-  protected LiveGamesFilterController instance;
+  private LiveGamesFilterController instance;
 
   @BeforeEach
   public void setUp() throws Exception {
