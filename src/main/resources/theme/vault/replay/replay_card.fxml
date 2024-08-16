@@ -61,16 +61,9 @@
             <Region styleClass="icon, mods-icon"/>
         </graphic>
     </Label>
-    <Label fx:id="tickDurationLabel" graphicTextGap="10.0" text="&lt;Duration&gt;" GridPane.columnIndex="0"
-           GridPane.rowIndex="8">
+    <Label fx:id="tickDurationLabel" graphicTextGap="10.0" text="&lt;Duration&gt;" GridPane.columnIndex="0" GridPane.rowIndex="8">
         <graphic>
-            <Region styleClass="icon, duration-icon"/>
-        </graphic>
-    </Label>
-    <Label fx:id="realTimeDurationLabel" graphicTextGap="10.0" text="&lt;Duration&gt;" GridPane.columnIndex="0"
-           GridPane.rowIndex="8">
-        <graphic>
-            <Region styleClass="icon, duration-icon"/>
+            <Region styleClass="icon, game-duration-icon" minWidth="30"/>
         </graphic>
     </Label>
     <Label fx:id="playerCountLabel" graphicTextGap="10.0" text="&lt;PlayerCount&gt;" GridPane.columnIndex="1"
@@ -89,6 +82,11 @@
            GridPane.rowIndex="7">
         <graphic>
             <Region styleClass="icon, balance-icon"/>
+        </graphic>
+    </Label>
+    <Label fx:id="realTimeDurationLabel" graphicTextGap="10.0" text="&lt;Duration&gt;" GridPane.columnIndex="1" GridPane.rowIndex="8">
+        <graphic>
+            <Region styleClass="icon, world-duration-icon" minWidth="30"/>
         </graphic>
     </Label>
 

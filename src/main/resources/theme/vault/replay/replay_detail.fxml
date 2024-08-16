@@ -74,13 +74,13 @@
                     <Label fx:id="durationLabel" graphicTextGap="10.0" text="&lt;Duration&gt;"
                            GridPane.columnIndex="3" GridPane.rowIndex="2">
                         <graphic>
-                            <Region styleClass="icon,duration-icon"/>
+                            <Region styleClass="icon,world-duration-icon" minWidth="30"/>
                         </graphic>
                     </Label>
                     <Label fx:id="replayDurationLabel" graphicTextGap="10.0" text="&lt;Duration&gt;"
                            GridPane.columnIndex="3" GridPane.rowIndex="3">
                         <graphic>
-                            <Region styleClass="icon,duration-icon"/>
+                            <Region styleClass="icon,game-duration-icon" minWidth="30"/>
                         </graphic>
                     </Label>
                     <Label fx:id="playerCountLabel" graphicTextGap="10.0" text="&lt;PlayerCount&gt;"

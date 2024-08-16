@@ -116,8 +116,7 @@ public class ReplayCardController extends VaultEntityCardController<Replay> {
             .map(quality -> !Double.isNaN(quality) ? i18n.get("percentage", Math.round(quality * 100)) : i18n.get("gameQuality.undefined"))
             .when(showing));
     ratingLabel.textProperty().bind(entity.map(Replay::averageRating).map(i18n::number).orElse("-").when(showing));
-    tickDurationLabel.visibleProperty()
-        .bind(tickDurationLabel.textProperty().isNotEmpty().and(realTimeDurationLabel.visibleProperty().not()));
+    tickDurationLabel.visibleProperty().bind(tickDurationLabel.textProperty().isNotEmpty());
     tickDurationLabel.textProperty().bind(entity.map(Replay::replayTicks)
             .map(ticks -> Duration.ofMillis(ticks * 100))
             .map(timeService::shortDuration)
