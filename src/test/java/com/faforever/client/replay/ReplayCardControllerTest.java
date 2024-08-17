@@ -149,8 +149,8 @@ public class ReplayCardControllerTest extends PlatformTest {
     assertTrue(instance.replayTileRoot.isVisible());
     assertTrue(instance.timeLabel.isVisible());
     assertTrue(instance.modLabel.isVisible());
-    assertFalse(instance.tickDurationLabel.isVisible());
-    assertFalse(instance.tickDurationLabel.isManaged());
+    assertTrue(instance.tickDurationLabel.isVisible());
+    assertTrue(instance.tickDurationLabel.isManaged());
     assertTrue(instance.realTimeDurationLabel.isVisible());
     assertTrue(instance.realTimeDurationLabel.isManaged());
     assertTrue(instance.playerCountLabel.isVisible());
@@ -181,8 +181,8 @@ public class ReplayCardControllerTest extends PlatformTest {
     assertTrue(instance.replayTileRoot.isVisible());
     assertTrue(instance.timeLabel.isVisible());
     assertTrue(instance.modLabel.isVisible());
-    assertFalse(instance.tickDurationLabel.isVisible());
-    assertFalse(instance.tickDurationLabel.isManaged());
+    assertTrue(instance.tickDurationLabel.isVisible());
+    assertTrue(instance.tickDurationLabel.isManaged());
     assertTrue(instance.realTimeDurationLabel.isVisible());
     assertTrue(instance.realTimeDurationLabel.isManaged());
     assertTrue(instance.playerCountLabel.isVisible());
@@ -216,24 +216,23 @@ public class ReplayCardControllerTest extends PlatformTest {
   }
 
   @Test
-  public void tickTimeNotDisplayedWhenRealTimeIs() {
+  public void tickTimeDisplayedWhenDefinedTogetherWithRealTime(){
     Replay onlineReplay = Instancio.of(Replay.class).set(field(Replay::replayTicks), 1000).create();
     runOnFxThreadAndWait(() -> instance.setEntity(onlineReplay));
 
     assertTrue(instance.realTimeDurationLabel.isVisible());
-    assertFalse(instance.tickDurationLabel.isVisible());
+    assertTrue(instance.tickDurationLabel.isVisible());
   }
 
   @Test
-  public void tickTimeDisplayedWhenRealTimeIsNot() {
+  public void tickTimeNotDisplayWhenNotDefined() {
     Replay onlineReplay = Instancio.of(Replay.class)
                                    .ignore(field(Replay::endTime))
-                                   .set(field(Replay::replayTicks), 1000)
+                                   .set(field(Replay::replayTicks), null)
                                    .create();
     runOnFxThreadAndWait(() -> instance.setEntity(onlineReplay));
 
-    assertFalse(instance.realTimeDurationLabel.isVisible());
-    assertTrue(instance.tickDurationLabel.isVisible());
+    assertFalse(instance.tickDurationLabel.isVisible());
   }
 
   @Test
