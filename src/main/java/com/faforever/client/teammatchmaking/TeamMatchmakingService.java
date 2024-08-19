@@ -398,7 +398,7 @@ public class TeamMatchmakingService implements InitializingBean {
     }
 
     if (!Objects.equals(party.getOwner(), playerService.getCurrentPlayer())) {
-      log.debug("Not party owner cannot join queues");
+      log.debug("Not party owner, cannot join queues");
       notificationService.addImmediateWarnNotification("teammatchmaking.notification.notPartyOwner.message");
       return CompletableFuture.completedFuture(false);
     }
@@ -423,7 +423,7 @@ public class TeamMatchmakingService implements InitializingBean {
 
   public void leaveQueues() {
     if (!Objects.equals(party.getOwner(), playerService.getCurrentPlayer())) {
-      log.debug("Not party owner cannot join queues");
+      log.debug("Not party owner, cannot leave queues");
       notificationService.addImmediateWarnNotification("teammatchmaking.notification.notPartyOwner.message");
       return;
     }
