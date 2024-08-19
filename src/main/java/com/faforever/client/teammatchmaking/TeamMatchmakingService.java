@@ -3,6 +3,7 @@ package com.faforever.client.teammatchmaking;
 import com.faforever.client.api.FafApiAccessor;
 import com.faforever.client.audio.AudioService;
 import com.faforever.client.chat.ChatService;
+import com.faforever.client.domain.api.Leaderboard;
 import com.faforever.client.domain.server.MatchmakerQueueInfo;
 import com.faforever.client.domain.server.PartyInfo;
 import com.faforever.client.domain.server.PartyInfo.PartyMember;
@@ -27,6 +28,7 @@ import com.faforever.client.notification.NotificationService;
 import com.faforever.client.notification.PersistentNotification;
 import com.faforever.client.notification.Severity;
 import com.faforever.client.notification.TransientNotification;
+import com.faforever.client.player.LeaderboardRating;
 import com.faforever.client.player.PlayerService;
 import com.faforever.client.player.ServerStatus;
 import com.faforever.client.preferences.MatchmakerPrefs;
@@ -121,6 +123,7 @@ public class TeamMatchmakingService implements InitializingBean {
   private final ObservableList<MatchmakerQueueInfo> queues = JavaFxUtil.attachListToMap(
       FXCollections.synchronizedObservableList(FXCollections.observableArrayList(
           queue -> new Observable[]{queue.selectedProperty(), queue.matchingStatusProperty()})), nameToQueue);
+  private final FilteredList<MatchmakerQueueInfo> queuesWithPotentialMatches = new FilteredList<>(queues, this::queueHasPotentialMatch);
   private final FilteredList<MatchmakerQueueInfo> selectedQueues = new FilteredList<>(queues,
                                                                                       MatchmakerQueueInfo::isSelected);
   private final FilteredList<MatchmakerQueueInfo> validQueues = new FilteredList<>(selectedQueues);
@@ -245,6 +248,27 @@ public class TeamMatchmakingService implements InitializingBean {
     matchmakerPrefs.getFactions().subscribe(this::sendFactions);
 
     partyMembersNotReady.bind(playersInGame.emptyProperty().map(empty -> !empty));
+  }
+
+  public ObservableList<MatchmakerQueueInfo> getQueuesWithPotentialMatches() {
+    return queuesWithPotentialMatches;
+  }
+
+  private boolean queueHasPotentialMatch(MatchmakerQueueInfo queue) {
+    LeaderboardRating rating = playerService.getCurrentPlayer().getLeaderboardRatings().get(queue.getLeaderboard().technicalName());
+    return queue.getActiveRatingGroups()
+                .stream()
+                .anyMatch(activeRating -> couldMatch(activeRating, rating, queue.getLeaderboard()));
+  }
+
+  private static boolean couldMatch(Integer otherRating, LeaderboardRating rating, Leaderboard leaderboard) {
+    log.info("triggered");
+    // 1v1 uses a different way of matching people.
+    if (Objects.equals(leaderboard.technicalName(), "ladder_1v1")) {
+      return Math.abs(otherRating - rating.mean()) < 100;
+    } else {
+      return Math.abs(otherRating - rating.mean() - 3 * rating.deviation()) < 100;
+    }
   }
 
   private void sendFactions() {

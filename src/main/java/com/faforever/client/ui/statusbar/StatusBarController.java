@@ -1,6 +1,7 @@
 package com.faforever.client.ui.statusbar;
 
 import com.faforever.client.chat.ChatService;
+import com.faforever.client.domain.server.MatchmakerQueueInfo;
 import com.faforever.client.fx.FxApplicationThreadExecutor;
 import com.faforever.client.fx.JavaFxUtil;
 import com.faforever.client.fx.NodeController;
@@ -8,6 +9,7 @@ import com.faforever.client.fx.SimpleChangeListener;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.net.ConnectionState;
 import com.faforever.client.task.TaskService;
+import com.faforever.client.teammatchmaking.TeamMatchmakingService;
 import com.faforever.client.update.Version;
 import com.faforever.client.user.LoginService;
 import com.google.common.base.Strings;
@@ -16,6 +18,7 @@ import javafx.beans.binding.Bindings;
 import javafx.concurrent.Worker;
 import javafx.css.PseudoClass;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressBar;
@@ -27,6 +30,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -39,6 +43,7 @@ public class StatusBarController extends NodeController<Node> {
   private final I18n i18n;
   private final ChatService chatService;
   private final TaskService taskService;
+  private final TeamMatchmakingService teamMatchmakingService;
   private final FxApplicationThreadExecutor fxApplicationThreadExecutor;
 
   public Label chatConnectionStatusIcon;
@@ -50,6 +55,11 @@ public class StatusBarController extends NodeController<Node> {
   public Label taskProgressLabel;
   public Label versionLabel;
   public HBox root;
+  public HBox messagePane;
+  public Label messageText;
+  public Button joinButton;
+
+  private MatchmakerQueueInfo queueToJoin;
 
   @Override
   protected void onInitialize() {
@@ -100,6 +110,17 @@ public class StatusBarController extends NodeController<Node> {
         setCurrentWorkerInStatusBar(runningWorkers.iterator().next());
       }
     });
+
+    JavaFxUtil.addListener(teamMatchmakingService.getQueuesWithPotentialMatches(), (Observable observable) -> {
+      // Can't we use the observable list directly? Why do we have to make the call again?
+      List<MatchmakerQueueInfo> queues = teamMatchmakingService.getQueuesWithPotentialMatches();
+      if (queues.isEmpty()) {
+        queueToJoin = null;
+      } else {
+        queueToJoin = queues.getFirst();
+      }
+      showJoinQueueButton();
+    });
   }
 
   @Override
@@ -133,6 +154,21 @@ public class StatusBarController extends NodeController<Node> {
           worker.titleProperty(), worker.messageProperty()
       ));
     });
+  }
+
+  private void showJoinQueueButton() {
+    if (queueToJoin == null) {
+      messagePane.setVisible(false);
+      return;
+    }
+    messagePane.setVisible(true);
+    messageText.setText(i18n.get("teammatchmaking.notification.queueMatchPotential", queueToJoin.getTeamSize()));
+  }
+
+  public void onJoinQueueClicked() {
+    queueToJoin.setSelected(true);
+    teamMatchmakingService.joinQueues();
+    //switch tab to matchmaker
   }
 
   public void onFafReconnectClicked() {
