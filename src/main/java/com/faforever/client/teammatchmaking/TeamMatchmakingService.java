@@ -122,7 +122,7 @@ public class TeamMatchmakingService implements InitializingBean {
   @Getter
   private final ObservableList<MatchmakerQueueInfo> queues = JavaFxUtil.attachListToMap(
       FXCollections.synchronizedObservableList(FXCollections.observableArrayList(
-          queue -> new Observable[]{queue.selectedProperty(), queue.matchingStatusProperty()})), nameToQueue);
+          queue -> new Observable[]{queue.selectedProperty(), queue.matchingStatusProperty(), queue.getActiveRatingGroups()})), nameToQueue);
   private final FilteredList<MatchmakerQueueInfo> queuesWithPotentialMatches = new FilteredList<>(queues, this::queueHasPotentialMatch);
   private final FilteredList<MatchmakerQueueInfo> selectedQueues = new FilteredList<>(queues,
                                                                                       MatchmakerQueueInfo::isSelected);
@@ -262,7 +262,6 @@ public class TeamMatchmakingService implements InitializingBean {
   }
 
   private static boolean couldMatch(Integer otherRating, LeaderboardRating rating, Leaderboard leaderboard) {
-    log.info("triggered");
     // 1v1 uses a different way of matching people.
     if (Objects.equals(leaderboard.technicalName(), "ladder_1v1")) {
       return Math.abs(otherRating - rating.mean()) < 100;
