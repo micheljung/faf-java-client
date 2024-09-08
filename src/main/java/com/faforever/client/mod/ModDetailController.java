@@ -30,7 +30,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -71,7 +70,6 @@ public class ModDetailController extends NodeController<Node> {
   public Label versionLabel;
   public Label dependenciesTitle;
   public VBox dependenciesContainer;
-  public Label progressLabel;
   public ScrollPane scrollPane;
   public Button uninstallButton;
   public Button installButton;
@@ -79,7 +77,6 @@ public class ModDetailController extends NodeController<Node> {
   public Label nameLabel;
   public Label idLabel;
   public Label uploaderLabel;
-  public ProgressBar progressBar;
   public Label modDescriptionLabel;
   public Node modDetailRoot;
   public ReviewsController<ModVersionReview> reviewsController;
