@@ -25,10 +25,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.time.OffsetDateTime;
 import java.time.format.FormatStyle;
 import java.util.List;
-import java.util.Optional;
 
 
 @Slf4j
@@ -68,13 +66,7 @@ public class LeaderboardController extends NodeController<StackPane> {
 
     leagueSeasons.map(FXCollections::observableList).when(showing).subscribe(seasons -> {
       seasonPicker.getItems().setAll(seasons);
-      Optional<LeagueSeason> currentSeason = seasons.stream()
-                                                    .filter(season -> season.startDate().isBefore(OffsetDateTime.now()))
-                                                    .findFirst();
-      currentSeason.ifPresentOrElse(
-          season -> seasonPicker.getSelectionModel().select(season),
-          () -> seasonPicker.getSelectionModel().selectFirst()
-      );
+      seasonPicker.getSelectionModel().selectFirst();
     });
 
     seasonDateLabel.textProperty().bind(leagueSeason.map(seasonBean -> {
