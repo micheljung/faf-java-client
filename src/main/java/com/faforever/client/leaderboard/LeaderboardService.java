@@ -107,9 +107,11 @@ public class LeaderboardService {
                                                                                                          com.faforever.commons.api.dto.LeagueSeason.class)
                                                                                                      .collection()
                                                                                                      .setFilter(
-                                                                                                         qBuilder().intNum(
-                                                                                                                       "league.id")
-                                                                                                                   .eq(league.id()))
+                                                                                                         qBuilder().intNum("league.id")
+                                                                                                                   .eq(league.id())
+                                                                                                                   .and()
+                                                                                                                   .instant("startDate")
+                                                                                                                   .before(OffsetDateTime.now().toInstant(), false))
                                                                                                      .addSortingRule(
                                                                                                          "startDate",
                                                                                                          false);
