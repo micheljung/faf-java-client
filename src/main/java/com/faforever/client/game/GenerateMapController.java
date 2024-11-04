@@ -13,6 +13,8 @@ import com.faforever.client.notification.NotificationService;
 import com.faforever.client.preferences.GeneratorPrefs;
 import com.google.common.annotations.VisibleForTesting;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -90,14 +92,15 @@ public class GenerateMapController extends NodeController<Pane> {
       IntStream.range(2, 17).boxed().collect(Collectors.toList()));
   private final FilteredList<Integer> selectableSpawnCounts = new FilteredList<>(validSpawnCount);
   public Spinner<Integer> numTeamsSpinner;
-  private BooleanBinding customizationAllowed;
+  private final BooleanProperty disableCustomization = new SimpleBooleanProperty();
 
   @Override
   protected void onInitialize() {
-    customizationAllowed = previousMapName.textProperty().isNotEmpty()
-                                          .or(generationTypeComboBox.valueProperty()
-                                                                    .isNotEqualTo(GenerationType.CASUAL))
-                                          .or(commandLineArgsText.textProperty().isNotEmpty());
+    disableCustomization.bind(previousMapName.textProperty()
+                                             .isNotEmpty()
+                                             .or(generationTypeComboBox.valueProperty()
+                                                                       .isNotEqualTo(GenerationType.CASUAL))
+                                             .or(commandLineArgsText.textProperty().isNotEmpty()));
 
     JavaFxUtil.bindManagedToVisible(commandLineLabel, commandLineArgsText);
     initCommandlineArgs();
@@ -227,21 +230,21 @@ public class GenerateMapController extends NodeController<Pane> {
   }
 
   private void initSymmetryComboBox() {
-    symmetryComboBox.disableProperty().bind(customizationAllowed);
+    symmetryComboBox.disableProperty().bind(disableCustomization);
   }
 
   private void initMapStyleComboBox() {
-    mapStyleComboBox.disableProperty().bind(customizationAllowed
+    mapStyleComboBox.disableProperty().bind(disableCustomization
                                                 .or(customStyleCheckBox.selectedProperty()));
   }
 
   private void initCustomStyleOptions() {
     customStyleCheckBox.setSelected(generatorPrefs.getCustomStyle());
     generatorPrefs.customStyleProperty().bind(customStyleCheckBox.selectedProperty());
-    customStyleCheckBox.disableProperty().bind(customizationAllowed);
+    customStyleCheckBox.disableProperty().bind(disableCustomization);
     fixedSeedCheckBox.setSelected(generatorPrefs.getFixedSeed());
     generatorPrefs.fixedSeedProperty().bind(fixedSeedCheckBox.selectedProperty());
-    fixedSeedCheckBox.disableProperty().bind(customizationAllowed);
+    fixedSeedCheckBox.disableProperty().bind(disableCustomization);
 
     reclaimDensitySlider.setLabelFormatter(
         new LessMoreStringConverter(reclaimDensitySlider.getMin(), reclaimDensitySlider.getMax()));
@@ -261,7 +264,7 @@ public class GenerateMapController extends NodeController<Pane> {
     seedTextField.setText(String.valueOf(generatorPrefs.getSeed()));
     generatorPrefs.seedProperty().bind(seedTextField.textProperty());
 
-    BooleanBinding customizationAllowedOrNoFixedSeed = customizationAllowed.or(
+    BooleanBinding customizationAllowedOrNoFixedSeed = disableCustomization.or(
         fixedSeedCheckBox.selectedProperty().not());
 
     seedTextField.disableProperty().bind(customizationAllowedOrNoFixedSeed);
@@ -270,13 +273,13 @@ public class GenerateMapController extends NodeController<Pane> {
 
   private void bindCustomStyleDisabledPropertyNonSliders(Node... nodes) {
     for (Node node : nodes) {
-      node.disableProperty().bind(customizationAllowed.or(customStyleCheckBox.selectedProperty().not()));
+      node.disableProperty().bind(disableCustomization.or(customStyleCheckBox.selectedProperty().not()));
     }
   }
 
   private void bindCustomStyleDisabledPropertySlider(RangeSlider slider, ComboBox<String> relatedComboBox) {
     slider.disableProperty()
-          .bind(customizationAllowed.or(customStyleCheckBox.selectedProperty().not())
+          .bind(disableCustomization.or(customStyleCheckBox.selectedProperty().not())
                                     .or(relatedComboBox.valueProperty()
                                                        .isEqualTo(MapGeneratorService.GENERATOR_RANDOM_OPTION)));
   }
