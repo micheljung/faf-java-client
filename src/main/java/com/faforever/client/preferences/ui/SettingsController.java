@@ -119,6 +119,7 @@ public class SettingsController extends NodeController<Node> {
   public Toggle randomColorsToggle;
   public Toggle defaultColorsToggle;
   public CheckBox hideFoeToggle;
+  public CheckBox forceRelayToggle;
   public TextField dataLocationTextField;
   public TextField gameLocationTextField;
   public TextField vaultLocationTextField;
@@ -308,6 +309,7 @@ public class SettingsController extends NodeController<Node> {
 
   private void bindGamePreferences() {
     ForgedAlliancePrefs forgedAlliancePrefs = preferences.getForgedAlliance();
+    forceRelayToggle.selectedProperty().bindBidirectional(forgedAlliancePrefs.forceRelayProperty());
     gameLocationTextField.textProperty()
         .bindBidirectional(forgedAlliancePrefs.installationPathProperty(), PATH_STRING_CONVERTER);
     autoDownloadMapsToggle.selectedProperty().bindBidirectional(forgedAlliancePrefs.autoDownloadMapsProperty());

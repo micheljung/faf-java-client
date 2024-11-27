@@ -22,6 +22,7 @@ public class ForgedAlliancePrefs {
   private final ObjectProperty<Path> preferencesFile = new SimpleObjectProperty<>();
   private final ObjectProperty<Path> vaultBaseDirectory = new SimpleObjectProperty<>();
   private final BooleanProperty warnNonAsciiVaultPath = new SimpleBooleanProperty(true);
+  private final BooleanProperty forceRelay = new SimpleBooleanProperty(false);
   private final BooleanProperty autoDownloadMaps = new SimpleBooleanProperty(true);
   private final BooleanProperty allowIpv6 = new SimpleBooleanProperty(false);
 
@@ -49,6 +50,18 @@ public class ForgedAlliancePrefs {
 
   public ObjectProperty<Path> preferencesFileProperty() {
     return preferencesFile;
+  }
+
+  public boolean isForceRelay() {
+    return forceRelay.get();
+  }
+
+  public void setForceRelay(boolean forceRelay) {
+    this.forceRelay.set(forceRelay);
+  }
+
+  public BooleanProperty forceRelayProperty() {
+    return forceRelay;
   }
 
   public boolean isAutoDownloadMaps() {
