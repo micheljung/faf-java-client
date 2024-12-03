@@ -283,7 +283,7 @@ dependencies {
   implementation("io.github.sheikah45.fx2j:fx2j-api:0.1.0")
   implementation("com.install4j:install4j-runtime:10.0.8")
 
-  testImplementation("org.instancio:instancio-junit:5.0.2")
+  testImplementation("org.instancio:instancio-junit:5.2.0")
   testImplementation("com.squareup.okhttp3:okhttp")
   testImplementation("com.squareup.okhttp3:mockwebserver")
   testImplementation("io.projectreactor:reactor-test")
