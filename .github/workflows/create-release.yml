@@ -100,7 +100,7 @@ jobs:
           ./gradlew -Pversion="${{ steps.set_version.outputs.tag }}" \
           -PjavafxPlatform=win \
           -Pinstall4jHomeDir=$HOME/$INSTALL4J_DIR \
-          -Pinstall4jLicense=${{ secrets.INSTALL4J_LICENSE }} \
+          -Pinstall4jLicense=${{ secrets.INSTALL4J_11_LICENSE }} \
           --info \
           --stacktrace \
           buildInstall4jMediaFiles
@@ -110,7 +110,7 @@ jobs:
           ./gradlew -Pversion="${{ steps.set_version.outputs.tag }}" \
           -PjavafxPlatform=linux \
           -Pinstall4jHomeDir=$HOME/$INSTALL4J_DIR \
-          -Pinstall4jLicense=${{ secrets.INSTALL4J_LICENSE }} \
+          -Pinstall4jLicense=${{ secrets.INSTALL4J_11_LICENSE }} \
           --info \
           --stacktrace \
           buildInstall4jMediaFiles
