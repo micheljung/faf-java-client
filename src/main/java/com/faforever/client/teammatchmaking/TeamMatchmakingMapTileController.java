@@ -8,15 +8,16 @@ import com.faforever.client.i18n.I18n;
 import com.faforever.client.map.MapService;
 import com.faforever.client.map.MapService.PreviewSize;
 import com.faforever.client.map.generator.MapGeneratorService;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,19 +43,16 @@ public class TeamMatchmakingMapTileController extends NodeController<Pane> {
   public Label authorLabel;
   public Label sizeLabel;
   public VBox authorBox;
+  public Region relevanceIcon;
 
   protected final ObjectProperty<MapVersion> entity = new SimpleObjectProperty<>();
-  private DoubleProperty relevanceLevel = new SimpleDoubleProperty(0);;
+  private final BooleanProperty isRelevant = new SimpleBooleanProperty(false);
 
-  public double getRelevanceLevel(){
-    return this.relevanceLevel.get();
+
+  public void setIsRelevant(boolean isRelevant) {
+    this.isRelevant.set(isRelevant);
   }
-  public void setRelevanceLevel(double value) {
-    this.relevanceLevel.set(value);
-  }
-  public DoubleProperty relevanceLevelProperty() {
-    return this.relevanceLevel;
-  }
+
 
   @Override
   public Pane getRoot() {
@@ -68,14 +66,16 @@ public class TeamMatchmakingMapTileController extends NodeController<Pane> {
 
 
   @Override
-  protected void onInitialize(){
+  protected void onInitialize() {
     thumbnailImageView.imageProperty().bind(entity.map(mapVersionBean -> mapService.loadPreview(mapVersionBean, PreviewSize.SMALL))
                                                   .flatMap(imageViewHelper::createPlaceholderImageOnErrorObservable));
-    thumbnailImageView.effectProperty().bind(relevanceLevel.map(relevanceLevel -> {
+    thumbnailImageView.effectProperty().bind(isRelevant.map(isRel -> {
       ColorAdjust grayscaleEffect = new ColorAdjust();
-      grayscaleEffect.setSaturation(-1 + relevanceLevel.intValue());
+      grayscaleEffect.setSaturation(isRel ? 0 : -1);
       return grayscaleEffect;
     }));
+    isRelevant.addListener((observable, oldValue, newValue) -> updateRelevanceIcon(newValue));
+
     ObservableValue<Map> mapObservable = entity.map(MapVersion::map);
 
     nameLabel.textProperty().bind(mapObservable.map(map -> {
@@ -97,5 +97,14 @@ public class TeamMatchmakingMapTileController extends NodeController<Pane> {
       }
     }));
     sizeLabel.textProperty().bind(entity.map(MapVersion::size).map(size -> i18n.get("mapPreview.size", size.widthInKm(), size.heightInKm())));
+  }
+
+
+  private void updateRelevanceIcon(boolean isRelevant) {
+    if (isRelevant) {
+      relevanceIcon.getStyleClass().setAll("icon", "icon16x16", "check-icon", "icon-map-available");
+    } else {
+      relevanceIcon.getStyleClass().setAll("icon", "icon16x16", "x-icon", "icon-map-not-available");
+    }
   }
 }

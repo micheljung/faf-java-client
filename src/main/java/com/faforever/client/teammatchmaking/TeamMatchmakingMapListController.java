@@ -185,7 +185,7 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
     Integer playerBracketIndex = this.playerBracketIndex.getValue();
     List<MatchmakerQueueMapPool> pools = this.sortedMapPools.getValue();
     Map<MatchmakerQueueMapPool, List<MapVersion>> brackets = this.brackets.get();
-    double relevanceLevel = 1;
+    boolean isRelevant = true;
     if (playerBracketIndex != null) {
       int bracketDistance = brackets.entrySet()
                                     .stream()
@@ -197,16 +197,12 @@ public class TeamMatchmakingMapListController extends NodeController<Pane> {
                                     .min()
                                     .orElseThrow();
 
-      relevanceLevel = switch (bracketDistance) {
-        case 0 -> 1;
-        case 1 -> 0.2;
-        default -> 0;
-      };
+      isRelevant = bracketDistance == 0;
     }
 
     TeamMatchmakingMapTileController controller = uiService.loadFxml(
         "theme/play/teammatchmaking/matchmaking_map_tile.fxml");
-    controller.setRelevanceLevel(relevanceLevel);
+    controller.setIsRelevant(isRelevant);
     controller.setMapVersion(mapVersion);
     return controller.getRoot();
   }
