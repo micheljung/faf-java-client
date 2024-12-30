@@ -65,6 +65,7 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -430,11 +431,13 @@ public class GameRunner implements InitializingBean {
     final var analysisResult = logAnalyzerService.analyzeLogContents(logContent);
     if (!analysisResult.isOk()) {
       final StringBuilder message = new StringBuilder();
+      final List<Action> actions = new ArrayList<>(analysisResult.actions());
+      actions.add(new DismissAction(i18n));
       analysisResult.analysisMessages().forEach(msg -> message.append(" - ").append(msg).append(System.lineSeparator()));
       notificationService.addNotification(new ImmediateNotification(i18n.get("game.log.analysis"),
                                                                     message.toString(),
                                                                     WARN,
-                                                                    List.of(new DismissAction(i18n))));
+                                                                    actions));
     }
   }
 
