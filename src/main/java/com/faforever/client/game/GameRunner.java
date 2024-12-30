@@ -18,6 +18,7 @@ import com.faforever.client.fx.PlatformService;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.leaderboard.LeaderboardService;
 import com.faforever.client.logging.LoggingService;
+import com.faforever.client.logging.analysis.LogAnalyzerService;
 import com.faforever.client.main.event.ShowReplayEvent;
 import com.faforever.client.map.MapService;
 import com.faforever.client.mapstruct.GameMapper;
@@ -110,6 +111,7 @@ public class GameRunner implements InitializingBean {
   private final NavigationHandler navigationHandler;
   private final NotificationPrefs notificationPrefs;
   private final FxApplicationThreadExecutor fxApplicationThreadExecutor;
+  private final LogAnalyzerService logAnalyzerService;
 
   private final MaskPatternLayout logMasker = new MaskPatternLayout();
   private final SimpleObjectProperty<Integer> runningGameId = new SimpleObjectProperty<>();
@@ -407,7 +409,9 @@ public class GameRunner implements InitializingBean {
     Optional<Path> logFile = loggingService.getMostRecentGameLogFile();
     logFile.ifPresent(file -> {
       try {
-        Files.writeString(file, logMasker.maskMessage(Files.readString(file)));
+        final String logContent = Files.readString(file);
+        runLogAnalysis(logContent);
+        Files.writeString(file, logMasker.maskMessage(logContent));
       } catch (IOException e) {
         log.warn("Could not open log file", e);
       }
@@ -419,6 +423,18 @@ public class GameRunner implements InitializingBean {
       } else if (notificationPrefs.isAfterGameReviewEnabled()) {
         askForGameRate();
       }
+    }
+  }
+
+  private void runLogAnalysis(String logContent) {
+    final var analysisResult = logAnalyzerService.analyzeLogContents(logContent);
+    if (!analysisResult.isOk()) {
+      final StringBuilder message = new StringBuilder();
+      analysisResult.analysisMessages().forEach(msg -> message.append(" - ").append(msg).append(System.lineSeparator()));
+      notificationService.addNotification(new ImmediateNotification(i18n.get("game.log.analysis"),
+                                                                    message.toString(),
+                                                                    WARN,
+                                                                    List.of(new DismissAction(i18n))));
     }
   }
 
