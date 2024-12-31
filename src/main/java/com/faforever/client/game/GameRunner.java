@@ -466,13 +466,13 @@ public class GameRunner implements InitializingBean {
       if (!analysisResult.isOk()) {
         final StringBuilder message = new StringBuilder();
         final List<Action> actions = new ArrayList<>();
-        actions.add(new DismissAction(i18n));
         analysisResult.result().forEach((msg, action) -> {
           message.append(" - ").append(msg).append(System.lineSeparator());
           if (action != null) {
             actions.add(action);
           }
         });
+        actions.add(new DismissAction(i18n));
 
         final Region infoIcon = new Region();
         infoIcon.setId("btnInfoIcon");
