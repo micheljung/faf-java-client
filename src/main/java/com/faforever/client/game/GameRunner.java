@@ -18,6 +18,7 @@ import com.faforever.client.fx.PlatformService;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.leaderboard.LeaderboardService;
 import com.faforever.client.logging.LoggingService;
+import com.faforever.client.logging.analysis.AnalysisResult;
 import com.faforever.client.logging.analysis.LogAnalyzerService;
 import com.faforever.client.main.event.ShowReplayEvent;
 import com.faforever.client.map.MapService;
@@ -55,6 +56,9 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Region;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -407,37 +411,25 @@ public class GameRunner implements InitializingBean {
     fafServerAccessor.setTimeoutLoginReconnectSeconds(30);
     int exitCode = finishedProcess.exitValue();
     log.info("Forged Alliance terminated with exit code {}", exitCode);
-    Optional<Path> logFile = loggingService.getMostRecentGameLogFile();
-    logFile.ifPresent(file -> {
-      try {
-        final String logContent = Files.readString(file);
-        runLogAnalysis(logContent);
-        Files.writeString(file, logMasker.maskMessage(logContent));
-      } catch (IOException e) {
-        log.warn("Could not open log file", e);
-      }
-    });
+    Optional<Path> logFilePath = loggingService.getMostRecentGameLogFile();
+    Optional<String> logFileContent = logFilePath
+        .map(file -> {
+          try {
+            final String logFileText = logMasker.maskMessage(Files.readString(file));
+            Files.writeString(file, logFileText);
+            return logFileText;
+          } catch (IOException e) {
+            log.warn("Could not open log file", e);
+            return null;
+          }
+        });
 
     if (!gameKilled) {
       if (exitCode != 0) {
-        alertOnBadExit(exitCode, logFile);
+        alertOnBadExit(exitCode, logFilePath, logFileContent);
       } else if (notificationPrefs.isAfterGameReviewEnabled()) {
         askForGameRate();
       }
-    }
-  }
-
-  private void runLogAnalysis(String logContent) {
-    final var analysisResult = logAnalyzerService.analyzeLogContents(logContent);
-    if (!analysisResult.isOk()) {
-      final StringBuilder message = new StringBuilder();
-      final List<Action> actions = new ArrayList<>(analysisResult.actions());
-      actions.add(new DismissAction(i18n));
-      analysisResult.analysisMessages().forEach(msg -> message.append(" - ").append(msg).append(System.lineSeparator()));
-      notificationService.addNotification(new ImmediateNotification(i18n.get("game.log.analysis"),
-                                                                    message.toString(),
-                                                                    WARN,
-                                                                    actions));
     }
   }
 
@@ -452,20 +444,52 @@ public class GameRunner implements InitializingBean {
             new Action(i18n.get("game.rate"), () -> navigationHandler.navigateTo(new ShowReplayEvent(game.getId()))))));
   }
 
-  private void alertOnBadExit(int exitCode, Optional<Path> logFile) {
+  private void alertOnBadExit(int exitCode, Optional<Path> logFilePath, Optional<String> logFileContent) {
     if (exitCode == -1073741515) {
       notificationService.addImmediateWarnNotification("game.crash.notInitialized");
     } else {
       notificationService.addNotification(new ImmediateNotification(i18n.get("errorTitle"),
                                                                     i18n.get("game.crash", exitCode,
-                                                                             logFile.map(Path::toString).orElse("")),
+                                                                             logFilePath.map(Path::toString).orElse("")),
                                                                     WARN, List.of(new Action(i18n.get("game.open.log"),
                                                                                              () -> platformService.reveal(
-                                                                                                 logFile.orElse(
+                                                                                                 logFilePath.orElse(
                                                                                                      operatingSystem.getLoggingDirectory()))),
-                                                                                  new DismissAction(i18n))));
+                                                                                  new DismissAction(i18n)),
+                                                                    getAnalysisButtonIfNecessary(logFileContent).orElse(null)));
     }
   }
+
+  private Optional<Parent> getAnalysisButtonIfNecessary(Optional<String> logFileContent) {
+    return logFileContent.map(content -> {
+      final AnalysisResult analysisResult = logAnalyzerService.analyzeLogContents(content);
+      if (!analysisResult.isOk()) {
+        final StringBuilder message = new StringBuilder();
+        final List<Action> actions = new ArrayList<>();
+        actions.add(new DismissAction(i18n));
+        analysisResult.result().forEach((msg, action) -> {
+          message.append(" - ").append(msg).append(System.lineSeparator());
+          if (action != null) {
+            actions.add(action);
+          }
+        });
+
+        final Region infoIcon = new Region();
+        infoIcon.setId("btnInfoIcon");
+        infoIcon.getStyleClass().add("icon");
+        infoIcon.getStyleClass().add("icon16x16");
+        infoIcon.getStyleClass().add("info-icon");
+        final Button showAnalysisBtn = new Button(i18n.get("game.log.analysis.solutionBtn"), infoIcon);
+        showAnalysisBtn.setDefaultButton(true);
+        showAnalysisBtn.setOnAction(event -> notificationService.addNotification(
+            new ImmediateNotification(i18n.get("game.log.analysis"), message.toString(), WARN, actions)));
+
+        return showAnalysisBtn;
+      }
+      return null;
+    });
+  }
+
 
   private void killGame() {
     if (isRunning()) {

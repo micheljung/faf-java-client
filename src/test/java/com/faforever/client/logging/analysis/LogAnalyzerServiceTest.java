@@ -1,15 +1,19 @@
 package com.faforever.client.logging.analysis;
 
 import com.faforever.client.config.ClientProperties;
+import com.faforever.client.fx.PlatformService;
 import com.faforever.client.i18n.I18n;
+import com.faforever.client.notification.Action;
 import com.faforever.client.test.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.util.Collection;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -25,6 +29,9 @@ public class LogAnalyzerServiceTest extends ServiceTest {
   @Mock
   private ClientProperties clientProperties;
 
+  @Mock
+  private PlatformService platformService;
+
   @InjectMocks
   private LogAnalyzerService logAnalyzerService;
 
@@ -36,21 +43,20 @@ public class LogAnalyzerServiceTest extends ServiceTest {
 
     AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
 
-    assertTrue(result.analysisMessages().contains(MINIMIZED_EXPECTED_TEXT));
-    assertTrue(result.actions().isEmpty());
+    assertTrue(result.result().containsKey(MINIMIZED_EXPECTED_TEXT));
   }
 
   @Test
   public void testAnalyzeLogContentsWhenXactTrace() {
     final String logContents = "warning: SND\nXACT";
 
-    when(i18n.get("game.log.analysis.moreInfo")).thenReturn(MORE_INFO_BUTTON);
+    when(i18n.get("game.log.analysis.moreInfoBtn")).thenReturn(MORE_INFO_BUTTON);
     when(i18n.get("game.log.analysis.snd", MORE_INFO_BUTTON)).thenReturn(SOUND_EXPECTED_TEXT);
 
     AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
 
-    assertTrue(result.analysisMessages().contains(SOUND_EXPECTED_TEXT));
-    assertEquals(1, result.actions().size());
+    assertEquals(1, result.result().size());
+    assertNotNull(result.result().get(SOUND_EXPECTED_TEXT));
   }
 
   @Test
@@ -58,15 +64,15 @@ public class LogAnalyzerServiceTest extends ServiceTest {
     final String logContents = "info: Minimized true\nwarning: SND\nXACT";
 
     when(i18n.get("game.log.analysis.minimized")).thenReturn(MINIMIZED_EXPECTED_TEXT);
-    when(i18n.get("game.log.analysis.moreInfo")).thenReturn(MORE_INFO_BUTTON);
+    when(i18n.get("game.log.analysis.moreInfoBtn")).thenReturn(MORE_INFO_BUTTON);
     when(i18n.get("game.log.analysis.snd", MORE_INFO_BUTTON)).thenReturn(SOUND_EXPECTED_TEXT);
 
     AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
 
-    Collection<String> results = result.analysisMessages();
-    assertTrue(results.contains(MINIMIZED_EXPECTED_TEXT));
-    assertTrue(results.contains(SOUND_EXPECTED_TEXT));
-    assertEquals(1, result.actions().size());
+    Map<String, Action> results = result.result();
+    assertEquals(2, results.size());
+    assertNotNull(results.get(SOUND_EXPECTED_TEXT));
+    assertNull(results.get(MINIMIZED_EXPECTED_TEXT));
   }
 
   @Test
@@ -75,7 +81,6 @@ public class LogAnalyzerServiceTest extends ServiceTest {
 
     AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
 
-    assertTrue(result.analysisMessages().isEmpty());
-    assertTrue(result.actions().isEmpty());
+    assertTrue(result.result().isEmpty());
   }
 }

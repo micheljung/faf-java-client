@@ -2,10 +2,10 @@ package com.faforever.client.logging.analysis;
 
 import com.faforever.client.notification.Action;
 
-import java.util.Collection;
+import java.util.Map;
 
-public record AnalysisResult(Collection<String> analysisMessages, Collection<Action> actions) {
+public record AnalysisResult(Map<String, Action> result) {
   public boolean isOk() {
-    return null == analysisMessages || analysisMessages.isEmpty();
+    return result.isEmpty();
   }
 }
