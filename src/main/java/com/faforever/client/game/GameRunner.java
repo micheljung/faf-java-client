@@ -477,7 +477,7 @@ public class GameRunner implements InitializingBean {
         final Region infoIcon = new Region();
         infoIcon.setId("btnInfoIcon");
         infoIcon.getStyleClass().add("icon");
-        infoIcon.getStyleClass().add("icon16x16");
+        infoIcon.getStyleClass().add("icon24x24");
         infoIcon.getStyleClass().add("info-icon");
         final Button showAnalysisBtn = new Button(i18n.get("game.log.analysis.solutionBtn"), infoIcon);
         showAnalysisBtn.setDefaultButton(true);
