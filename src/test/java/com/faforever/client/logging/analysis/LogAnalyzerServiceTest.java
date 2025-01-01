@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,6 +44,7 @@ public class LogAnalyzerServiceTest extends ServiceTest {
 
     AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
 
+    assertFalse(result.isOk());
     assertTrue(result.result().containsKey(MINIMIZED_EXPECTED_TEXT));
   }
 
@@ -55,6 +57,7 @@ public class LogAnalyzerServiceTest extends ServiceTest {
 
     AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
 
+    assertFalse(result.isOk());
     assertEquals(1, result.result().size());
     assertNotNull(result.result().get(SOUND_EXPECTED_TEXT));
   }
@@ -70,6 +73,8 @@ public class LogAnalyzerServiceTest extends ServiceTest {
     AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
 
     Map<String, Action> results = result.result();
+
+    assertFalse(result.isOk());
     assertEquals(2, results.size());
     assertNotNull(results.get(SOUND_EXPECTED_TEXT));
     assertNull(results.get(MINIMIZED_EXPECTED_TEXT));
@@ -81,6 +86,7 @@ public class LogAnalyzerServiceTest extends ServiceTest {
 
     AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
 
+    assertTrue(result.isOk());
     assertTrue(result.result().isEmpty());
   }
 }
