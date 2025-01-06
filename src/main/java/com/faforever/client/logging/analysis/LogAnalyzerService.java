@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class LogAnalyzerService {
   private final PlatformService platformService;
 
   @NotNull
-  public AnalysisResult analyzeLogContents(final String logContents) {
+  public Map<String, Action> analyzeLogContents(final String logContents) {
     final Map<String, Action> analysisResult = new HashMap<>();
 
     if (StringUtils.contains(logContents, GAME_MINIMIZED_TRACE)) {
@@ -39,6 +40,6 @@ public class LogAnalyzerService {
       analysisResult.put(i18n.get("game.log.analysis.snd", moreInfoButtonCaption), openSoundHelpAction);
     }
 
-    return new AnalysisResult(analysisResult);
+    return Collections.unmodifiableMap(analysisResult);
   }
 }

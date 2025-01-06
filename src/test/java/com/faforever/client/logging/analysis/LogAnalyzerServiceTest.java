@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,10 +41,9 @@ public class LogAnalyzerServiceTest extends ServiceTest {
 
     when(i18n.get("game.log.analysis.minimized")).thenReturn(MINIMIZED_EXPECTED_TEXT);
 
-    AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
+    Map<String, Action> result = logAnalyzerService.analyzeLogContents(logContents);
 
-    assertFalse(result.isOk());
-    assertTrue(result.result().containsKey(MINIMIZED_EXPECTED_TEXT));
+    assertTrue(result.containsKey(MINIMIZED_EXPECTED_TEXT));
   }
 
   @Test
@@ -55,11 +53,10 @@ public class LogAnalyzerServiceTest extends ServiceTest {
     when(i18n.get("game.log.analysis.moreInfoBtn")).thenReturn(MORE_INFO_BUTTON);
     when(i18n.get("game.log.analysis.snd", MORE_INFO_BUTTON)).thenReturn(SOUND_EXPECTED_TEXT);
 
-    AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
+    Map<String, Action> result = logAnalyzerService.analyzeLogContents(logContents);
 
-    assertFalse(result.isOk());
-    assertEquals(1, result.result().size());
-    assertNotNull(result.result().get(SOUND_EXPECTED_TEXT));
+    assertEquals(1, result.size());
+    assertNotNull(result.get(SOUND_EXPECTED_TEXT));
   }
 
   @Test
@@ -70,23 +67,19 @@ public class LogAnalyzerServiceTest extends ServiceTest {
     when(i18n.get("game.log.analysis.moreInfoBtn")).thenReturn(MORE_INFO_BUTTON);
     when(i18n.get("game.log.analysis.snd", MORE_INFO_BUTTON)).thenReturn(SOUND_EXPECTED_TEXT);
 
-    AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
+    Map<String, Action> result = logAnalyzerService.analyzeLogContents(logContents);
 
-    Map<String, Action> results = result.result();
-
-    assertFalse(result.isOk());
-    assertEquals(2, results.size());
-    assertNotNull(results.get(SOUND_EXPECTED_TEXT));
-    assertNull(results.get(MINIMIZED_EXPECTED_TEXT));
+    assertEquals(2, result.size());
+    assertNotNull(result.get(SOUND_EXPECTED_TEXT));
+    assertNull(result.get(MINIMIZED_EXPECTED_TEXT));
   }
 
   @Test
   public void testAnalyzeLogContentsWhenNoRelevantTraces() {
     final String logContents = "Some other log content";
 
-    AnalysisResult result = logAnalyzerService.analyzeLogContents(logContents);
+    Map<String, Action> result = logAnalyzerService.analyzeLogContents(logContents);
 
-    assertTrue(result.isOk());
-    assertTrue(result.result().isEmpty());
+    assertTrue(result.isEmpty());
   }
 }

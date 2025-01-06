@@ -18,7 +18,6 @@ import com.faforever.client.fx.PlatformService;
 import com.faforever.client.i18n.I18n;
 import com.faforever.client.leaderboard.LeaderboardService;
 import com.faforever.client.logging.LoggingService;
-import com.faforever.client.logging.analysis.AnalysisResult;
 import com.faforever.client.logging.analysis.LogAnalyzerService;
 import com.faforever.client.main.event.ShowReplayEvent;
 import com.faforever.client.map.MapService;
@@ -71,6 +70,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -462,11 +462,11 @@ public class GameRunner implements InitializingBean {
 
   private Optional<Parent> getAnalysisButtonIfNecessary(Optional<String> logFileContent) {
     return logFileContent.map(content -> {
-      final AnalysisResult analysisResult = logAnalyzerService.analyzeLogContents(content);
-      if (!analysisResult.isOk()) {
+      final Map<String, Action> analysisResult = logAnalyzerService.analyzeLogContents(content);
+      if (!analysisResult.isEmpty()) {
         final StringBuilder message = new StringBuilder();
         final List<Action> actions = new ArrayList<>();
-        analysisResult.result().forEach((msg, action) -> {
+        analysisResult.forEach((msg, action) -> {
           message.append(" - ").append(msg).append(System.lineSeparator());
           if (action != null) {
             actions.add(action);
