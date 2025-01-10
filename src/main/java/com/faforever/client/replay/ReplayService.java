@@ -21,6 +21,7 @@ import com.faforever.client.notification.Action;
 import com.faforever.client.notification.NotificationService;
 import com.faforever.client.notification.PersistentNotification;
 import com.faforever.client.preferences.DataPrefs;
+import com.faforever.client.preferences.Preferences;
 import com.faforever.client.task.TaskService;
 import com.faforever.client.user.LoginService;
 import com.faforever.client.util.FileSizeReader;
@@ -102,6 +103,7 @@ public class ReplayService {
   private final ReplayMapper replayMapper;
   private final DataPrefs dataPrefs;
   private final ObjectFactory<ReplayDownloadTask> replayDownloadTaskFactory;
+  private final ReplayWatchingService replayWatchingService;
 
   @VisibleForTesting
   static Integer parseSupComVersion(ReplayDataParser parser) {
@@ -259,6 +261,7 @@ public class ReplayService {
     if (item.replayFile() != null) {
       try {
         runReplayFile(item.replayFile());
+        this.replayWatchingService.updateReplayWatchHistory(item.id());
       } catch (Exception e) {
         log.error("Could not read replay file `{}`", item.replayFile(), e);
         notificationService.addImmediateErrorNotification(e, "replay.couldNotParse");
@@ -333,6 +336,7 @@ public class ReplayService {
     downloadReplay(replayId).thenAccept((path) -> {
       try {
         runReplayFile(path);
+        this.replayWatchingService.updateReplayWatchHistory(replayId);
       } catch (IOException | CompressorException e) {
         throw new RuntimeException(e);
       }
