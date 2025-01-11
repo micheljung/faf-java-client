@@ -2,7 +2,7 @@ import com.install4j.gradle.Install4jTask
 import org.gradle.internal.os.OperatingSystem
 
 plugins {
-  id("org.springframework.boot") version "3.3.5"
+  id("org.springframework.boot") version "3.4.1"
   id("com.install4j.gradle") version "11.0.1"
   id("de.undercouch.download") version "5.6.0"
   id("jacoco")
@@ -237,7 +237,7 @@ dependencies {
           }
   implementation("com.github.FAForever.faf-java-commons:faf-commons-api:${commonsVersion}")
   implementation("com.github.FAForever.faf-java-commons:faf-commons-lobby:${commonsVersion}")
-  implementation("com.google.guava:guava:33.3.0-jre")
+  implementation("com.google.guava:guava:33.4.0-jre")
   implementation("org.apache.commons:commons-compress:1.27.1")
   implementation("net.java.dev.jna:jna:5.16.0")
   implementation("net.java.dev.jna:jna-platform:5.16.0")
@@ -284,8 +284,8 @@ dependencies {
   implementation("com.install4j:install4j-runtime:11.0.1")
 
   testImplementation("org.instancio:instancio-junit:5.2.1")
-  testImplementation("com.squareup.okhttp3:okhttp")
-  testImplementation("com.squareup.okhttp3:mockwebserver")
+  testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
+  testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.testfx:testfx-core:4.0.18") {
     exclude module: 'guava'
