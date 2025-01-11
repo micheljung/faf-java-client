@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ReplayWatchingService {
+public class ReplayWatchedService {
 
   private final Preferences preferences;
 
@@ -22,7 +22,7 @@ public class ReplayWatchingService {
 
   OffsetDateTime getReplayWatchedDateTime(Integer replayId) {
     if (wasReplayWatched(replayId)) {
-    return preferences.getReplayHistory().getWatchedReplayMap().get(replayId);
+      return preferences.getReplayHistory().getWatchedReplayMap().get(replayId);
     } else {
       return null;
     }

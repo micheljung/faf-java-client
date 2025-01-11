@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -56,7 +55,7 @@ public class ReplayCardController extends VaultEntityCardController<Replay> {
 
   private final UiService uiService;
   private final ReplayService replayService;
-  private final ReplayWatchingService replayWatchingService;
+  private final ReplayWatchedService replayWatchedService;
   private final TimeService timeService;
   private final MapService mapService;
   private final RatingService ratingService;
@@ -142,7 +141,7 @@ public class ReplayCardController extends VaultEntityCardController<Replay> {
 
     replayWatchedLabel.visibleProperty().bind(replayWatchedLabel.textProperty().isNotEmpty());
     replayWatchedLabel.textProperty().bind( entity.map(Replay::id).when(showing).map(
-        replayWatchingService::getReplayWatchedDateTime).map(timeService::asDate).map(date -> {
+        replayWatchedService::getReplayWatchedDateTime).map(timeService::asDate).map(date -> {
           if( date != null ) {
             replayTileRoot.setStyle("-fx-border-color: -card-watched-color;");
             replayTileRoot.setStyle("-fx-border-width: 7;");
