@@ -1135,6 +1135,18 @@
   -fx-background-color: linear-gradient(to top, #00000000 0%, #00000000 10%, #00000033 20%, #0000004d 30%, #00000066 40%, #00000080 50%, #00000099 60%, #000000b3 70%);
 }
 
+.icon-map-available {
+  -fx-background-color: -good;
+  -fx-padding: 0;
+  -fx-margin: 0;
+}
+
+.icon-map-not-available {
+  -fx-background-color: -bad;
+  -fx-padding: 0;
+  -fx-margin: 0;
+}
+
 .tmm-maplist {
  -fx-padding: 20 8 20 20; //related to PADDING constant, do not change without adjusting it
 }
