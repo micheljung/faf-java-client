@@ -10,10 +10,13 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
@@ -30,6 +33,7 @@ public class MatchmakerQueueInfo {
   private final BooleanProperty selected = new SimpleBooleanProperty(true);
   private final ObjectProperty<MatchingStatus> matchingStatus = new SimpleObjectProperty<>();
   private final ObjectProperty<Leaderboard> leaderboard = new SimpleObjectProperty<>();
+  private final ObservableList<Integer> activeRatingGroups = FXCollections.observableArrayList();
 
   public Integer getId() {
     return id.get();
@@ -137,5 +141,13 @@ public class MatchmakerQueueInfo {
 
   public BooleanProperty selectedProperty() {
     return selected;
+  }
+
+  public ObservableList<Integer> getActiveRatingGroups() {
+    return activeRatingGroups;
+  }
+
+  public void setActiveRatingGroups(List<Integer> activeRatingGroups) {
+    this.activeRatingGroups.setAll(activeRatingGroups);
   }
 }
