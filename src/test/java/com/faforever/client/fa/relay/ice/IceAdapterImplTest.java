@@ -118,6 +118,7 @@ public class IceAdapterImplTest extends ServiceTest {
     PlayerInfo currentPlayer = PlayerInfoBuilder.create().defaultValues().get();
     when(playerService.getCurrentPlayer()).thenReturn(currentPlayer);
     when(tokenRetriever.getRefreshedTokenValue()).thenReturn(Mono.just("someToken"));
+    forgedAlliancePrefs.setForceRelay(true);
     forgedAlliancePrefs.setShowIceAdapterDebugWindow(true);
 
     List<String> command = instance.buildCommand(Path.of("."), 0, 0, 4711);
@@ -142,8 +143,9 @@ public class IceAdapterImplTest extends ServiceTest {
     assertEquals("someToken", command.get(16));
     assertEquals("--icebreaker-base-url", command.get(17));
     assertEquals("http://faf-api/ice", command.get(18));
-    assertEquals("--debug-window", command.get(19));
-    assertEquals("--info-window", command.get(20));
+    assertEquals("--force-relay", command.get(19));
+    assertEquals("--debug-window", command.get(20));
+    assertEquals("--info-window", command.get(21));
   }
 
   @Test
